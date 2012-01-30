@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    	<string name="emergency">Emergency</string>
+    	<string name="transport">Transport</string>
+    	<string name="finance">Finance</string>
+    	<string name="shopping">Shopping</string>
+    	<string name="services">Services</string>
+    	
+</resources>

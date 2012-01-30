@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/mnu_follow" android:icon="@drawable/ic_menu_mylocation" android:title="@string/follow" android:menuCategory="container"></item>
+    <item android:id="@+id/mnu_stop_follow" android:icon="@drawable/ic_menu_mylocation" android:title="@string/stop_follow" android:visible="true" android:menuCategory="container"></item>
+    <item android:id="@+id/mnu_cancel" android:title="@string/cancel" android:icon="@drawable/ic_menu_stop" android:menuCategory="container"></item>
+    <item android:id="@+id/mnu_refresh" android:title="@string/search_again" android:icon="@drawable/ic_menu_refresh" android:menuCategory="container"></item>
+</menu>

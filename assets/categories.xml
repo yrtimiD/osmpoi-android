@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<category name="All">
+	<custom name="custom_search"/>
+	<starred name="starred"/>
+	<category name="emergency" >
+		<search name="hospital" />
+		<search name="clinic" />
+		<search name="doctors" />
+		<search name="ambulance_station" />
+		<search name="phone" />
+		<search name="emergency_bay" />
+	</category>
+	<category name="transport">
+		<search name="bus_stop" query="highway=bus_stop"/>
+		<search name="bus_station" query="amenity=bus_station"/>
+		<search name="railway_station" query="railway=station | building=train_station"/>
+		<search name="airport" query="aeroway=aerodrome" />
+		<search name="parking" query="amenity=parking" />
+	</category>
+	<category name="finance">
+		<search name="bank" query="amenity=bank"/>
+		<search name="atm" query="amenity=atm | atm=yes"/>
+	</category>
+	<category name="shopping">
+		<search name="all_in_this_category" query="shop=*" />
+		<inline name="super_market" query="shop=supermarket" select="operator*"/>
+		<category name="mall" query="shop=mall"/>
+		<search name="convenience" query="shop=convenience" />
+	</category>
+	<category name="services">
+		<search name="toilet" query="amenity=toilets" />
+		<search name="telephone" query="amenity=telephone" />
+	</category>
+	<category name="food">
+		<search name="cafe" query="amenity=cafe" />
+		<search name="restaurant" query="amenity=restaurant" />
+		<search name="fast_food" query="amenity=fast_food" />
+		<search name="pub" query="amenity=pub" />
+	</category>
+	
+</category>

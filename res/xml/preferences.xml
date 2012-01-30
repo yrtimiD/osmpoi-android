@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orderingFromXml="true" android:persistent="true">
+
+    <PreferenceCategory
+        android:orderingFromXml="true"
+        android:title="@string/data_source" >
+        <ListPreference
+            android:dialogTitle="@string/search_source"
+            android:entries="@array/search_sources"
+            android:entryValues="@array/search_sources_values"
+            android:key="search_source"
+            android:summary="@string/search_source_summary"
+            android:title="@string/search_source" android:defaultValue="DB"/>
+
+        <PreferenceScreen
+            android:summary="@string/imported_db_summary"
+            android:title="@string/imported_db" >
+            <Preference
+                android:key="preference_import_pbf"
+                android:summary="@string/preference_import_pbf_summary"
+                android:title="Import PBF" />
+
+            <PreferenceScreen
+                android:title="Import Settings" >
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="preference_import_build_grid"
+                    android:title="Build grid" />
+                <PreferenceScreen
+                    android:title="Import nodes">
+                     <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_nodes_highway"
+                        android:title="Highway" />
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="include_nodes_other"
+                        android:title="All other" />
+                </PreferenceScreen>
+                <PreferenceScreen
+                    android:title="Import ways">
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="include_way_building"
+                        android:title="Buildings" android:persistent="true"/>
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="include_way_highway"
+                        android:title="Roads" android:persistent="true"/>
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_ways_other"
+                        android:title="All other" android:persistent="false"/>
+                </PreferenceScreen>
+                <PreferenceScreen
+                    android:title="Import relations" >
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_landuse"
+                        android:title="Landuses" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_natural"
+                        android:title="Naturals" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_leisure"
+                        android:title="Leisures" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_boundary"
+                        android:title="Boundaries" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_area"
+                        android:title="Areas" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_waterway"
+                        android:title="Waterways" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="include_relations_other"
+                        android:title="All other" />
+                    </PreferenceScreen>
+                    
+ 				<CheckBoxPreference
+                    android:defaultValue="True"
+                    android:key="preference_clear_db_before_import"
+                    android:title="Clear DB before import (debug)" />
+            </PreferenceScreen>
+
+            <Preference
+                android:key="preference_clear_db"
+                android:persistent="false"
+                android:title="Clear DB (debug)" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:enabled="false"
+            android:selectable="true"
+            android:summary="TODO"
+            android:title="Online" >
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:orderingFromXml="true"
+        android:title="@string/ui" >
+        <ListPreference
+            android:dialogTitle="@string/result_language"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages_code"
+            android:key="result_language"
+            android:title="@string/result_language" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:orderingFromXml="true"
+        android:title="@string/about" >
+        <Preference
+            android:key="preference_about"
+            android:persistent="false"
+            android:title="@string/about" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
