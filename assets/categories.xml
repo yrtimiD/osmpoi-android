@@ -16,6 +16,9 @@
 		<search name="railway_station" query="railway=station | building=train_station"/>
 		<search name="airport" query="aeroway=aerodrome" />
 		<search name="parking" query="amenity=parking" />
+		<search name="fuel" query="amenity=fuel" />
+		<inline name="fuel_operator" query="amenity=fuel" select="operator*" />
+		<search name="car_wash" query="amenity=car_wash" />
 	</category>
 	<category name="finance">
 		<search name="bank" query="amenity=bank"/>
@@ -23,9 +26,10 @@
 	</category>
 	<category name="shopping">
 		<search name="all_in_this_category" query="shop=*" />
-		<inline name="super_market" query="shop=supermarket" select="operator*"/>
+		<inline name="supermarket" query="shop=supermarket" select="operator*"/>
 		<category name="mall" query="shop=mall"/>
 		<search name="convenience" query="shop=convenience" />
+		<inline name="shop_operator" query="shop=*" select="operator*" />
 	</category>
 	<category name="services">
 		<search name="toilet" query="amenity=toilets" />

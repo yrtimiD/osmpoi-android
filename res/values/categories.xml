@@ -5,5 +5,22 @@
     	<string name="finance">Finance</string>
     	<string name="shopping">Shopping</string>
     	<string name="services">Services</string>
+    		<string name="starred">Starred</string>
+	<string name="food">Food</string>
+	<string name="bus_stop">Bus stop</string>
+	<string name="bus_station">Bus Station</string>
+	<string name="railway_station">Railway Station</string>
+	<string name="airport">Airport</string>
+	<string name="parking">Parking</string>
+	<string name="bank">Bank</string>
+	<string name="atm">ATM</string>
+	<string name="all_in_this_category">All in category</string>
+	<string name="supermarket">Supermarket</string>
+	<string name="mall">Mall</string>
+	<string name="convenience">Convenience</string>
+	<string name="toilet">Toilet</string>
+	<string name="telephone">Telephone</string>
+	<string name="fuel">Fuel</string>
+	<string name="car_wash">Car wash</string>
     	
 </resources>

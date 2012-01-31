@@ -76,7 +76,8 @@ public class CategoriesLoader {
 			Log.d("Unknown category element: "+elementName);
 			return null;
 		}
-
+		
+		cat.setLocalizable(true);
 		cat.setName(name);
 		cat.setQuery(query);
 		cat.setSelect(select);

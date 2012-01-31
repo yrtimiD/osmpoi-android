@@ -76,7 +76,9 @@ public class CategoriesListAdapter extends BaseAdapter {
 		
 		
 		Category cat = category.getSubCategories().get(position);
-		text.setText(getLocalName(cat.getName()));
+		
+		String name = (cat.isLocalizable())?getLocalName(cat.getName()):cat.getName();
+		text.setText(name);
 		
 		return convertView;
 	}

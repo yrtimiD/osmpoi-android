@@ -27,6 +27,7 @@ public class Category implements Parcelable {
 	private String name;
 	private String query;
 	private String select;
+	private Boolean localizable = false;
 	
 	public Category(Type type) {
 		this.type = type;
@@ -82,6 +83,15 @@ public class Category implements Parcelable {
 	public void setSelect(String select) {
 		this.select = select;
 	}
+	
+	public Boolean isLocalizable() {
+		return localizable;
+	}
+	
+	public void setLocalizable(Boolean isLocalizable) {
+		this.localizable = isLocalizable;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see android.os.Parcelable#describeContents()

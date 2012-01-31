@@ -41,4 +41,6 @@
 	<string name="clean_db_confirm">This will destroy previously imported data!</string>
 	<string name="custom_search">Custom search</string>
 	<string name="cant_parse">Query can not be recognized</string>
+	
+	
 </resources>
