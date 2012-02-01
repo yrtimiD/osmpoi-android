@@ -3,6 +3,8 @@
  */
 package il.yrtimid.osm.osmpoi.tagmatchers;
 
+import il.yrtimid.osm.osmpoi.domain.Entity;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,5 +136,10 @@ public abstract class TagMatcher {
 		parts.add(currentPart.toString().trim());
 
 		return parts.toArray(new String[parts.size()]);
+	}
+
+	public Boolean isMatch(Entity entity){
+		//TODO implement
+		return false;
 	}
 }

@@ -69,11 +69,13 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
-            <TableLayout
-                android:id="@+id/tableLayout1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
-            </TableLayout>
+            <LinearLayout
+                android:id="@+id/tagsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+            </LinearLayout>
+         
         </ScrollView>
     </LinearLayout>
 

@@ -7,9 +7,11 @@ import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -154,12 +156,9 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Category cat = (Category)parent.getItemAtPosition(position);
-		Intent intent;
 		switch (cat.getType()){
 		case NONE:
-			intent = new Intent(this, SearchActivity.class);
-			intent.putExtra(EXTRA_CATEGORY, cat);
-			startActivity(intent);
+			showCategory(cat);
 			break;
 		case STARRED:
 			break;
@@ -183,13 +182,34 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			search();
 			break;
 		case INLINE_SEARCH:
-			
-			CategoriesLoader.loadInlineCategories(this, cat);
-			intent = new Intent(this, SearchActivity.class);
-			intent.putExtra(EXTRA_CATEGORY, cat);
-			startActivity(intent);
+			if (cat.getSubCategoriesCount()>0){
+				showCategory(cat);
+			}else {
+				AsyncTask<Category, Void, Category> asyncLoad = new AsyncTask<Category, Void, Category>(){
+	
+					@Override
+					protected Category doInBackground(Category... params) {
+						CategoriesLoader.loadInlineCategories(SearchActivity.this, params[0]);		
+						return params[0];
+					}
+					@Override
+					protected void onPostExecute(Category result) {
+						super.onPostExecute(result);
+						SearchActivity.this.dismissWaiting();
+						SearchActivity.this.showCategory(result);
+					}
+				};
+				showWaiting(getString(R.string.category), null);
+				asyncLoad.execute(cat);
+			}
 			break;
 		}
+	}
+
+	private void showCategory(Category cat) {
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra(EXTRA_CATEGORY, cat);
+		startActivity(intent);
 	}
 
 	/* (non-Javadoc)
@@ -201,9 +221,19 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			TextView txtAccuracy = (TextView) findViewById(R.id.textAccuracy);
 			Util.updateAccuracyText(txtAccuracy, OsmPoiApplication.getCurrentLocation());
 		}
-
 	}
 	
-
+	private ProgressDialog progressDialog = null;
+	public void showWaiting(String title, String message){
+		if (message == null) message = getString(R.string.loading);
+		progressDialog = ProgressDialog.show(this, title, message, true, true);
+	}
+	
+	public void dismissWaiting(){
+		if (progressDialog != null){
+			progressDialog.dismiss();
+			progressDialog = null;
+		}
+	}
 
 }

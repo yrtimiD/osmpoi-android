@@ -35,47 +35,43 @@ public final class R {
         public static final int ic_way=0x7f02000d;
     }
     public static final class id {
-        public static final int btnLocate=0x7f08001a;
-        public static final int btnMoreResults=0x7f08001f;
-        public static final int buttonsLayout=0x7f080019;
+        public static final int btnMoreResults=0x7f08001c;
         public static final int editText1=0x7f08000a;
         public static final int file_picker_image=0x7f08000b;
         public static final int file_picker_text=0x7f08000c;
         public static final int imageType=0x7f080013;
         public static final int itemViewID=0x7f080014;
-        public static final int latLonLayout=0x7f080016;
         public static final int layoutMain=0x7f08000f;
-        public static final int linearLayout1=0x7f08001c;
+        public static final int linearLayout1=0x7f080016;
         public static final int linearLayoutAccuracy=0x7f080007;
         public static final int linearLayoutAccuracy_ref=0x7f08000e;
         public static final int listCategories=0x7f080010;
-        public static final int listResults=0x7f08001e;
-        public static final int mnu_cancel=0x7f080027;
-        public static final int mnu_follow=0x7f080025;
-        public static final int mnu_open=0x7f080023;
-        public static final int mnu_refresh=0x7f080028;
-        public static final int mnu_settings=0x7f080024;
-        public static final int mnu_stop_follow=0x7f080026;
+        public static final int listResults=0x7f08001b;
+        public static final int mnu_cancel=0x7f080023;
+        public static final int mnu_follow=0x7f080021;
+        public static final int mnu_open=0x7f08001f;
+        public static final int mnu_refresh=0x7f080024;
+        public static final int mnu_settings=0x7f080020;
+        public static final int mnu_stop_follow=0x7f080022;
         public static final int progressNodesCount=0x7f080001;
         public static final int progressRelationsCount=0x7f080005;
         public static final int progressWaysCount=0x7f080003;
         public static final int resultItemViewLayout=0x7f080012;
         public static final int rootLayout=0x7f080011;
         public static final int star=0x7f080015;
-        public static final int tableLayout1=0x7f08001b;
-        public static final int tableRow1=0x7f080020;
+        public static final int tagsLayout=0x7f080019;
         public static final int textAccuracy=0x7f080009;
-        public static final int textKey=0x7f080021;
+        public static final int textKey=0x7f08001d;
         public static final int textLat=0x7f080017;
         public static final int textLon=0x7f080018;
         public static final int textNoSearchSource=0x7f08000d;
         public static final int textNodesCount=0x7f080002;
         public static final int textRelationsCount=0x7f080006;
-        public static final int textValue=0x7f080022;
+        public static final int textValue=0x7f08001e;
         public static final int textView1=0x7f080008;
         public static final int textWaysCount=0x7f080004;
         public static final int text_about_app_name=0x7f080000;
-        public static final int txtCount=0x7f08001d;
+        public static final int txtCount=0x7f08001a;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -89,11 +85,10 @@ public final class R {
         public static final int file_picker_list_item=0x7f030008;
         public static final int main=0x7f030009;
         public static final int result_item=0x7f03000a;
-        public static final int result_item_full_dialog=0x7f03000b;
-        public static final int result_item_full_view=0x7f03000c;
-        public static final int results_view=0x7f03000d;
-        public static final int results_view_footer=0x7f03000e;
-        public static final int tag_row=0x7f03000f;
+        public static final int result_item_full_view=0x7f03000b;
+        public static final int results_view=0x7f03000c;
+        public static final int results_view_footer=0x7f03000d;
+        public static final int tag_row=0x7f03000e;
     }
     public static final class menu {
         public static final int item_menu=0x7f070000;
@@ -122,6 +117,7 @@ public final class R {
         public static final int cant_create_search_source=0x7f060043;
         public static final int cant_parse=0x7f060058;
         public static final int car_wash=0x7f060015;
+        public static final int category=0x7f06005d;
         public static final int clean_db_confirm=0x7f060056;
         public static final int clear=0x7f06004b;
         public static final int clinic=0x7f060017;
@@ -145,6 +141,7 @@ public final class R {
         public static final int import_confirm=0x7f06003f;
         public static final int imported_db=0x7f060050;
         public static final int imported_db_summary=0x7f060051;
+        public static final int loading=0x7f06005c;
         public static final int locate=0x7f06003b;
         public static final int mall=0x7f060010;
         public static final int no_file_picker=0x7f060044;

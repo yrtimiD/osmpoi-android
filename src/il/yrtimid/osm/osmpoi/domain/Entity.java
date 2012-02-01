@@ -86,7 +86,7 @@ public abstract class Entity implements Parcelable {
 	 * 
 	 * @return The tags.
 	 */
-	public Collection<Tag> getTags() {
+	public TagCollection getTags() {
 		return entityData.getTags();
 	}
 	

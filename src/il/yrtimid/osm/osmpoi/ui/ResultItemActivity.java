@@ -1,7 +1,5 @@
 package il.yrtimid.osm.osmpoi.ui;
 
-import java.util.List;
-
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import android.app.Activity;
@@ -13,8 +11,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 public class ResultItemActivity extends Activity {
@@ -30,7 +28,7 @@ public class ResultItemActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		this.entity = (Entity) extras.getParcelable(ENTITY);
 		
-		TableLayout table = (TableLayout) findViewById(R.id.tableLayout1);
+		ViewGroup tags = (ViewGroup) findViewById(R.id.tagsLayout);
 		
 		setIcon();
 		
@@ -48,12 +46,13 @@ public class ResultItemActivity extends Activity {
 		}		
 		
 		LayoutInflater inflater = LayoutInflater.from(this);
-		for(Tag tag: entity.getTags()){
+		
+		for(Tag tag: entity.getTags().getSorted()){
 			
 			View v = inflater.inflate(R.layout.tag_row, null);
 			((TextView)v.findViewById(R.id.textKey)).setText(tag.getKey());
 			((TextView)v.findViewById(R.id.textValue)).setText(tag.getValue());
-			table.addView(v);
+			tags.addView(v);
 		}
 	}
 

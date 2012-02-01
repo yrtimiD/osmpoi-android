@@ -1,9 +1,10 @@
 // This software is released into the Public Domain.  See copying.txt for details.
 package il.yrtimid.osm.osmpoi.domain;
 
+import java.util.Comparator;
+
 import android.os.Parcel;
 import android.os.Parcelable;
-
 
 /**
  * A data class representing a single OSM tag.
@@ -12,16 +13,15 @@ import android.os.Parcelable;
  */
 public class Tag implements Comparable<Tag>, Parcelable {
 
-    /**
-     * The key identifying the tag.
-     */
+	/**
+	 * The key identifying the tag.
+	 */
 	private String key;
 	/**
 	 * The value associated with the tag.
 	 */
 	private String value;
-	
-	
+
 	/**
 	 * Creates a new instance.
 	 * 
@@ -34,7 +34,7 @@ public class Tag implements Comparable<Tag>, Parcelable {
 		this.key = key;
 		this.value = value;
 	}
-	
+
 	/**
 	 * @param source
 	 */
@@ -42,12 +42,10 @@ public class Tag implements Comparable<Tag>, Parcelable {
 		this.key = source.readString();
 		this.value = source.readString();
 	}
-	
-
 
 	/**
-	 * Compares this tag to the specified tag. The tag comparison is based on
-	 * a comparison of key and value in that order.
+	 * Compares this tag to the specified tag. The tag comparison is based on a
+	 * comparison of key and value in that order.
 	 * 
 	 * @param tag
 	 *            The tag to compare to.
@@ -56,41 +54,39 @@ public class Tag implements Comparable<Tag>, Parcelable {
 	 */
 	public int compareTo(Tag tag) {
 		int keyResult;
-		
+
 		keyResult = this.key.compareTo(tag.key);
-		
+
 		if (keyResult != 0) {
 			return keyResult;
 		}
-		
+
 		return this.value.compareTo(tag.value);
 	}
-	
-	
+
 	/**
 	 * @return The key.
 	 */
 	public String getKey() {
 		return key;
 	}
-	
-	
+
 	/**
 	 * @return The value.
 	 */
 	public String getValue() {
 		return value;
 	}
-  
-    /** 
-     * ${@inheritDoc}.
-     */
-    @Override
-    public String toString() {
-        return "Tag('" + getKey() + "'='" + getValue() + "')";
-    }
 
-    public static final Parcelable.Creator<Tag> CREATOR = new Parcelable.Creator<Tag>() {
+	/**
+	 * ${@inheritDoc}.
+	 */
+	@Override
+	public String toString() {
+		return "Tag('" + getKey() + "'='" + getValue() + "')";
+	}
+
+	public static final Parcelable.Creator<Tag> CREATOR = new Parcelable.Creator<Tag>() {
 
 		@Override
 		public Tag createFromParcel(Parcel source) {
@@ -103,8 +99,9 @@ public class Tag implements Comparable<Tag>, Parcelable {
 		}
 	};
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.Parcelable#describeContents()
 	 */
 	@Override
@@ -112,8 +109,9 @@ public class Tag implements Comparable<Tag>, Parcelable {
 		return 0;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
 	 */
 	@Override

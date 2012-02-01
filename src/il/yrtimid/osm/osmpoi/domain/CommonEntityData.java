@@ -19,12 +19,12 @@ public class CommonEntityData implements Parcelable {
 
 	private long id;
 	private long timestamp;
-	private Collection<Tag> tags;
+	private TagCollection tags;
 
 	public CommonEntityData(Parcel source) {
 		this.id = source.readLong();
 		this.timestamp = source.readLong();
-		this.tags = new ArrayList<Tag>();
+		this.tags = new TagCollection();
 		source.readTypedList((List<Tag>) this.tags, Tag.CREATOR);
 	}
 
@@ -43,7 +43,7 @@ public class CommonEntityData implements Parcelable {
 	public CommonEntityData(long id, long timestamp, Collection<Tag> tags) {
 		this.id = id;
 		this.timestamp = timestamp;
-		this.tags = tags;
+		this.tags = new TagCollection(tags);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class CommonEntityData implements Parcelable {
 	 * 
 	 * @return The tags.
 	 */
-	public Collection<Tag> getTags() {
+	public TagCollection getTags() {
 		return tags;
 	}
 
@@ -152,7 +152,7 @@ public class CommonEntityData implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(id);
 		dest.writeLong(timestamp);
-		dest.writeTypedList(new ArrayList<Tag>(tags));
+		dest.writeTypedList(tags);
 	}
 
 }
