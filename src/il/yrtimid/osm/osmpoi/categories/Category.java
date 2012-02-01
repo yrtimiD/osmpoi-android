@@ -42,6 +42,7 @@ public class Category implements Parcelable {
 		this.name = source.readString();
 		this.query = source.readString();
 		this.select = source.readString();
+		this.localizable = (Boolean)source.readValue(Boolean.class.getClassLoader());
 	}
 
 	public List<Category> getSubCategories() {
@@ -111,6 +112,7 @@ public class Category implements Parcelable {
 		dest.writeString(name);
 		dest.writeString(query);
 		dest.writeString(select);
+		dest.writeValue(localizable);
 	}
 	
 	public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {

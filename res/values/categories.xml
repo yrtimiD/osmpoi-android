@@ -22,5 +22,14 @@
 	<string name="telephone">Telephone</string>
 	<string name="fuel">Fuel</string>
 	<string name="car_wash">Car wash</string>
+	<string name="hospital">Hospital</string>
+	<string name="clinic">Clinic</string>
+	<string name="doctors">Doctors</string>
+	<string name="ambulance_station">Ambulance station</string>
+	<string name="emergency_phone">Emergency phone</string>
+	<string name="emergency_bay">Emergency bay</string>
+	<string name="police">Police</string>
+	<string name="post_box">Post box</string>
+	<string name="post_office">Post Office</string>
     	
 </resources>

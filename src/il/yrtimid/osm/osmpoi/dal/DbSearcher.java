@@ -38,17 +38,25 @@ public class DbSearcher extends DbOpenHelper {
 
 	private Integer[] getGrid(Point p, int count){
 		SQLiteDatabase db = getReadableDatabase();
-		Cursor cur = db.rawQuery("select id from grid order by (abs((minLat+maxLat)/2-?)+abs((minLon+maxLon)/2-?)) limit ?;", 
-				new String[]{p.getLatitude().toString(),p.getLongitude().toString(), Integer.toString(count)});
-		
-		List<Integer> ids = new ArrayList<Integer>();
-		if (cur.moveToFirst()){
-			do{
-				ids.add(cur.getInt(0));
-			}while(cur.moveToNext());
+		Cursor cur = null;
+		try{
+			cur = db.rawQuery("select id from grid order by (abs((minLat+maxLat)/2-?)+abs((minLon+maxLon)/2-?)) limit ?;", 
+					new String[]{p.getLatitude().toString(),p.getLongitude().toString(), Integer.toString(count)});
+			
+			List<Integer> ids = new ArrayList<Integer>();
+			if (cur.moveToFirst()){
+				do{
+					ids.add(cur.getInt(0));
+				}while(cur.moveToNext());
+			}
+			
+			return ids.toArray(new Integer[ids.size()]);
+		}catch(Exception e){
+			Log.wtf("getGrid", e);
+			return null;
+		}finally{
+			if (cur != null) cur.close();
 		}
-		
-		return ids.toArray(new Integer[ids.size()]);
 	}
 	
 	public boolean findAroundPlace(Point point, int maxResults, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
@@ -234,7 +242,7 @@ public class DbSearcher extends DbOpenHelper {
 	private Cursor getNodesAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset){
 		SQLiteDatabase db;
 		try {
-			db = getReadableDatabase(); 
+
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher);
 
@@ -251,6 +259,7 @@ public class DbSearcher extends DbOpenHelper {
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
 			Log.d(Util.join(", ", (Object[])args));
+			db = getReadableDatabase();
 			Cursor cur = db.rawQuery(query, args);
 			
 			return cur;

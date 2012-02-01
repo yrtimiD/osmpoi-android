@@ -3,12 +3,13 @@
 	<custom name="custom_search"/>
 	<starred name="starred"/>
 	<category name="emergency" >
-		<search name="hospital" />
-		<search name="clinic" />
-		<search name="doctors" />
-		<search name="ambulance_station" />
-		<search name="phone" />
-		<search name="emergency_bay" />
+		<search name="hospital" query="amenity=hospital"/>
+		<search name="clinic" query="amenity=clinic"/>
+		<search name="doctors" query="amenity=doctors"/>
+		<search name="ambulance_station" query="emergency=ambulance_station" />
+		<search name="emergency_phone" query="emergency=phone"/>
+		<search name="emergency_bay" query="highway=emergency_bay" />
+		<search name="police" query="amenity=police" />
 	</category>
 	<category name="transport">
 		<search name="bus_stop" query="highway=bus_stop"/>
@@ -27,13 +28,15 @@
 	<category name="shopping">
 		<search name="all_in_this_category" query="shop=*" />
 		<inline name="supermarket" query="shop=supermarket" select="operator*"/>
-		<category name="mall" query="shop=mall"/>
+		<search name="mall" query="shop=mall"/>
 		<search name="convenience" query="shop=convenience" />
 		<inline name="shop_operator" query="shop=*" select="operator*" />
 	</category>
 	<category name="services">
 		<search name="toilet" query="amenity=toilets" />
 		<search name="telephone" query="amenity=telephone" />
+		<search name="post_box" query="amenity=post_box" />
+		<search name="post_office" query="amenity=post_office" />
 	</category>
 	<category name="food">
 		<search name="cafe" query="amenity=cafe" />

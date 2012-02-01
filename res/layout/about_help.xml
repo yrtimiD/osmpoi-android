@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="How to start:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/how_to_start"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+     <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_margin="2dip"
+        android:background="@android:color/white"/>
+     
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Where to get PBF files:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dip"
+        android:layout_marginLeft="5dip"
+        android:autoLink="all"
+        android:text="http://download.geofabrik.de/osm/" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dip"
+        android:layout_marginLeft="5dip"
+        android:autoLink="all"
+        android:text="http://wiki.openstreetmap.org/wiki/Planet.osm" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_margin="2dip"
+        android:background="@android:color/white" android:visibility="gone" />
+
+</LinearLayout>
