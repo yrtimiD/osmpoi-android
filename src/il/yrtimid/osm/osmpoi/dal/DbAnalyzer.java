@@ -82,7 +82,7 @@ public class DbAnalyzer extends DbOpenHelper {
 	
 	public Long createInlineResults(String query, String select){
 		//query="shop=*"
-		TagMatcher matcher = TagMatcher.Parse(query);
+		TagMatcher matcher = TagMatcher.parse(query);
 		SQLiteDatabase db;
 		try {
 			db = getWritableDatabase();

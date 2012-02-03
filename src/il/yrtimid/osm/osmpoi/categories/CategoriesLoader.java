@@ -34,8 +34,9 @@ import android.content.Context;
 public class CategoriesLoader {
 	public static Category load(Context context){
 		Category cat = null;
+		InputStream xmlStream = null;
 		try {
-			InputStream xmlStream =  context.getAssets().open("categories.xml");
+			xmlStream = context.getAssets().open("categories.xml");
 			
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -49,6 +50,13 @@ public class CategoriesLoader {
 			Log.wtf("can't create parser", e);
 		} catch (IOException e) {
 			Log.wtf("can't open categories.xml", e);
+		}finally{
+			try{
+				if (xmlStream != null) 
+					xmlStream.close();
+			}catch (IOException e) {
+				Log.wtf("Closing categories.xml stream", e);
+			}
 		}
 
 		return cat;

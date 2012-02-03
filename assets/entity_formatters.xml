@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formatters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="entity_formatters.xsd">
+	<formatter match="amenity=atm" select_pattern="ATM {operator}" ></formatter>
+	<formatter match="shop=*" select_pattern="{shop} shop" ></formatter>
+	<formatter match="operator*=* &amp; name*=*" select_pattern="{name} ({operator})"/>
+	<formatter match="amenity=*" select_pattern="{amenity}"/>
+	<formatter match="name*=*" select_pattern="{name}"/>
+</formatters>

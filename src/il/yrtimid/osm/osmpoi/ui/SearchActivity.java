@@ -5,6 +5,8 @@ import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
+import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
+import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -41,13 +43,13 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 		setupCategories();
+		setupFormatters();
 	}
 
 	private void setupCategories() {
-		if (OsmPoiApplication.mainCategory == null){
+		if (OsmPoiApplication.mainCategory == null) 		
 			OsmPoiApplication.mainCategory = CategoriesLoader.load(this);
-		}
-		
+				
 		ListView list = (ListView)findViewById(R.id.listCategories);
 		
 		Bundle extras = getIntent().getExtras();
@@ -63,6 +65,11 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		list.setOnItemClickListener(this);
 	}
 
+	private void setupFormatters(){
+		if (OsmPoiApplication.formatters == null) 		
+			OsmPoiApplication.formatters = EntityFormattersLoader.load(this);
+	}
+	
 	@Override
 	protected void onStart() {
 		super.onStart();

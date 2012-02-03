@@ -18,7 +18,7 @@ public abstract class TagMatcher {
 
 	public abstract Boolean isMatch(CharSequence key, CharSequence value);
 
-	public static TagMatcher Parse(CharSequence expression) throws InvalidParameterException {
+	public static TagMatcher parse(CharSequence expression) throws InvalidParameterException {
 		String e = expression.toString();
 		if (e.length() == 0)
 			return new KeyValueMatcher("*", "*");
@@ -45,16 +45,16 @@ public abstract class TagMatcher {
 		
 		if (parts.length == 1) { //no &,|,=
 			if (!e.contains("*")) e = "*"+e+"*";
-			return new KeyValueMatcher("*", e, false);
+			return new KeyValueMatcher("*", e);
 		}else if (parts.length == 2 && op == '='){
-			return new KeyValueMatcher(parts[0], parts[1], false);
+			return new KeyValueMatcher(parts[0], parts[1]);
 		} else if (parts.length == 2 && op == '!') {
-			return new NotMatcher(Parse(parts[1]));
+			return new NotMatcher(parse(parts[1]));
 		} else {
 			if ((op=='&') || (op=='|')) {
-				TagMatcher left = Parse(parts[0]);
+				TagMatcher left = parse(parts[0]);
 				for (int i = 1; i < parts.length; i++) { //operator index
-					TagMatcher right = Parse(parts[i]);
+					TagMatcher right = parse(parts[i]);
 										
 					if (op == '&'){
 						left = new AndMatcher(left, right);

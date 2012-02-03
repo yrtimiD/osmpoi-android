@@ -1,11 +1,10 @@
 package il.yrtimid.osm.osmpoi.ui;
 
-import il.yrtimid.osm.osmpoi.*;
-import il.yrtimid.osm.osmpoi.R.id;
+import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,12 +22,14 @@ public class ResultsAdapter extends BaseAdapter {
 	Location location;
 	List<Entity> items;
 	Comparator<Entity> comparator;
-
-	public ResultsAdapter(Context context, Location location) {
+	List<EntityFormatter> formatters;
+	
+	public ResultsAdapter(Context context, Location location, List<EntityFormatter> formatters) {
 		this.items = new ArrayList<Entity>();
 		this.location = location;
 		inflater = LayoutInflater.from(context);
 		this.comparator = new DistanceComparator(this.location);
+		this.formatters = formatters;
 	}
 
 	public void clear() {
@@ -76,14 +77,7 @@ public class ResultsAdapter extends BaseAdapter {
 
 		TwoLineListItem listItem = (TwoLineListItem) convertView;
 
-		String name = getEntityName(item);
-		if (name == null) {
-			name = getEntityType(item);
-		}
-		if (name == null) {
-			name = "ID:" + item.getId();
-		}
-
+		String name = getEntityText(item);
 		listItem.getText1().setText(name);
 
 		if (this.location != null){
@@ -111,46 +105,9 @@ public class ResultsAdapter extends BaseAdapter {
 		else
 			locale = null;
 	}
-
-	public String getEntityName(Entity entity) {
-		String enName = null;
-		String locName = null;
-		String name = null;
-
-		Collection<Tag> tags = entity.getTags();
-		for (Tag tag : tags) {
-			if (tag.getKey().equals("name")) {
-				name = tag.getValue();
-			} else if (tag.getKey().equals("name" + ((localPostfix != null) ? ":" + localPostfix : "")))
-			/* local name will have value of default name */{
-				locName = tag.getValue();
-			} else if (tag.getKey().equals("name" + ":" + engPostfix)) {
-				enName = tag.getValue();
-			}
-		}
-
-		if (locName != null)
-			return locName;
-		else if (enName != null)
-			return enName;
-		else if (name != null)
-			return name;
-		else
-			return null;
-	}
-
-	private String getEntityType(Entity entity) {
-		Collection<Tag> tags = entity.getTags();
-		for (Tag tag : tags) {
-			if (tag.getKey().equals("amenity")) {
-				return tag.getValue();
-			} else if (tag.getKey().equals("shop")) {
-				return String.format("%s shop", tag.getValue());
-			} else if (tag.getKey().equals("building") && tag.getValue().equals("yes")) {
-				return "Building";
-			}
-		}
-		return null;
+	
+	public String getEntityText(Entity entity) {
+		return EntityFormatter.format(this.formatters, entity, localPostfix);
 	}
 
 	private char[] directionChars = new char[]{'↑','↗','→','↘','↓','↙','←','↖'};

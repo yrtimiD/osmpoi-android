@@ -7,7 +7,6 @@ public class KeyValueMatcher extends TagMatcher {
 
 	private String k;
 	private String v;
-	private Boolean caseSensitive = true;
 
 	/**
 	 * Creates new matcher which will match tags with exact name of the key and
@@ -22,61 +21,78 @@ public class KeyValueMatcher extends TagMatcher {
 	 *            - '*' for any
 	 */
 	public KeyValueMatcher(String key, String value) {
-		this(key, value, false);
-	}
-
-	public KeyValueMatcher(String key, String value, Boolean caseSensitive) {
 		this.k = key.replace('%', '*');
 		this.v = value.replace('%', '*');
-		this.caseSensitive = caseSensitive;
 	}
 
 	@Override
 	public Boolean isMatch(CharSequence key, CharSequence value) {
-		return (isMatchPattern(key, k) && isMatchPattern(value,v));
+		return (isMatchPattern(key, k) && isMatchPattern(value, v));
 	}
-	
-	private Boolean isMatchPattern(CharSequence value, CharSequence pattern){
+
+	private Boolean isMatchPattern(CharSequence value, CharSequence pattern) {
 		String pat = pattern.toString();
+
+		if (pattern.equals("*"))
+			return true;
+
 		boolean isExactMatch = !pat.contains("*");
-		
-		if (pattern.equals("*")) return true;
-		else if (isExactMatch){
-			if (caseSensitive)
-				return value.equals(pattern);
-			else
-				return value.toString().equalsIgnoreCase(pat);
+		boolean isBegins = false, isEnds = false, isContains = false;
+		if (pat.startsWith("*")) {
+			isBegins = true;
+			pat = pat.substring(1);
+		}
+		if (pat.endsWith("*")) {
+			isEnds = true;
+			pat = pat.substring(0, pat.length() - 1);
+		}
+		if (isBegins && isEnds) {
+			isContains = true;
+			isBegins = false;
+			isEnds = false;
+		}
+
+		if (isExactMatch) {
+			return value.toString().equalsIgnoreCase(pat);
 		}
 		else {
-			if (caseSensitive)
-				return value.toString().contains(pattern);
-			else
+			if (isBegins)
+				return value.toString().toLowerCase().startsWith(pat.toLowerCase());
+			else if (isEnds)
+				return value.toString().toLowerCase().endsWith(pat.toLowerCase());
+			else if (isContains)
 				return value.toString().toLowerCase().contains(pat.toLowerCase());
 		}
+
+		return false;
 	}
-	
-	public String getKey(){
+
+	public String getKey() {
 		return k;
 	}
-	
-	public String getValue(){
+
+	public String getValue() {
 		return v;
 	}
-	
-	public boolean isKeyExactMatch(){
+
+	public boolean isKeyExactMatch() {
 		return !(k.contains("*"));
 	}
 
-	public boolean isValueExactMatch(){
+	public boolean isValueExactMatch() {
 		return !(v.contains("*"));
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher#isMatch(il.yrtimid.osm.osmpoi.domain.Entity)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher#isMatch(il.yrtimid.osm.osmpoi
+	 * .domain.Entity)
 	 */
 	@Override
 	public Boolean isMatch(Entity entity) {
-		for(Tag t : entity.getTags()){
+		for (Tag t : entity.getTags()) {
 			if (isMatch(t.getKey(), t.getValue()))
 				return true;
 		}

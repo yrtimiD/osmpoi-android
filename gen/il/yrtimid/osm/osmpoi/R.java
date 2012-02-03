@@ -130,6 +130,7 @@ public final class R {
         public static final int emergency=0x7f060000;
         public static final int emergency_bay=0x7f06001b;
         public static final int emergency_phone=0x7f06001a;
+        public static final int error=0x7f06005e;
         public static final int file_location=0x7f060036;
         public static final int finance=0x7f060002;
         public static final int follow=0x7f06003c;

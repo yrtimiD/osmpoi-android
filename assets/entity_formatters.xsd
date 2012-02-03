@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="formatters" type="formattersType" />
+
+    <xsd:complexType name="formattersType">
+    	<xsd:sequence>
+    		<xsd:element name="formatter" type="formatterType" maxOccurs="unbounded" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="formatterType">
+    	<xsd:attribute name="match" type="xsd:string" use="required" />
+    	<xsd:attribute name="select_pattern" type="xsd:string" use="required" />
+    </xsd:complexType>
+    
+</xsd:schema>

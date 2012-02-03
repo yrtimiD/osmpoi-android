@@ -48,7 +48,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.results_view);
 
-		adapter = new ResultsAdapter(this, OsmPoiApplication.getCurrentLocation());
+		adapter = new ResultsAdapter(this, OsmPoiApplication.getCurrentLocation(), OsmPoiApplication.formatters);
 		adapter.setLocale(OsmPoiApplication.Config.getResultLanguage());
 		resultsList = (ListView) findViewById(R.id.listResults);
 		View footer = getLayoutInflater().inflate(R.layout.results_view_footer, null);
@@ -181,7 +181,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	private void search() {
 		if (OsmPoiApplication.currentSearch.hasExpression()){
 			try{
-				TagMatcher.Parse(OsmPoiApplication.currentSearch.getExpression());
+				TagMatcher.parse(OsmPoiApplication.currentSearch.getExpression());
 			}catch(InvalidParameterException e){
 				Toast.makeText(this, getText(R.string.cant_parse)+" "+e.getMessage(), Toast.LENGTH_LONG).show();
 				return;

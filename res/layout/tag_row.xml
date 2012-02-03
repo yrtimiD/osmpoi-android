@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dip"
         android:text="long-long value for test"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" 
+        android:autoLink="all"/>
 
 </LinearLayout>

@@ -3,7 +3,10 @@
  */
 package il.yrtimid.osm.osmpoi;
 
+import java.util.List;
+
 import il.yrtimid.osm.osmpoi.categories.Category;
+import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
 import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
 import android.app.Application;
@@ -22,7 +25,7 @@ public class OsmPoiApplication extends Application {
 	public static SearchParameters currentSearch;
 	public static Category mainCategory;
 	private static Location location;
-	
+	public static List<EntityFormatter> formatters;
 
 	/* (non-Javadoc)
 	 * @see android.app.Application#onCreate()

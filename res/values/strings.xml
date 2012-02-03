@@ -46,5 +46,6 @@
 	<string name="how_to_start">Download PBF file of your area from one of the following sites, and then perform import operation from the Settings menu.</string>
 	<string name="loading">Loading…</string>
 	<string name="category">Category</string>
+	<string name="error">Error occurred</string>
 	
 </resources>
