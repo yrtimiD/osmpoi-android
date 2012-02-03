@@ -138,8 +138,5 @@ public abstract class TagMatcher {
 		return parts.toArray(new String[parts.size()]);
 	}
 
-	public Boolean isMatch(Entity entity){
-		//TODO implement
-		return false;
-	}
+	public abstract Boolean isMatch(Entity entity);
 }

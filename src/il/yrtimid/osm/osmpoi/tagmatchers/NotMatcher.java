@@ -1,5 +1,7 @@
 package il.yrtimid.osm.osmpoi.tagmatchers;
 
+import il.yrtimid.osm.osmpoi.domain.Entity;
+
 public class NotMatcher extends TagMatcher {
 
 	TagMatcher matcher;
@@ -18,5 +20,13 @@ public class NotMatcher extends TagMatcher {
 
 	public TagMatcher getMatcher(){
 		return matcher;
+	}
+
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher#isMatch(il.yrtimid.osm.osmpoi.domain.Entity)
+	 */
+	@Override
+	public Boolean isMatch(Entity entity) {
+		return !matcher.isMatch(entity);
 	}
 }

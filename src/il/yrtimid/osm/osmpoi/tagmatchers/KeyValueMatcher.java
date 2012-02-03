@@ -1,5 +1,8 @@
 package il.yrtimid.osm.osmpoi.tagmatchers;
 
+import il.yrtimid.osm.osmpoi.domain.Entity;
+import il.yrtimid.osm.osmpoi.domain.Tag;
+
 public class KeyValueMatcher extends TagMatcher {
 
 	private String k;
@@ -66,6 +69,18 @@ public class KeyValueMatcher extends TagMatcher {
 
 	public boolean isValueExactMatch(){
 		return !(v.contains("*"));
+	}
+
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher#isMatch(il.yrtimid.osm.osmpoi.domain.Entity)
+	 */
+	@Override
+	public Boolean isMatch(Entity entity) {
+		for(Tag t : entity.getTags()){
+			if (isMatch(t.getKey(), t.getValue()))
+				return true;
+		}
+		return false;
 	}
 
 }
