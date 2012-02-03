@@ -14,6 +14,9 @@ import java.util.Collection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,10 +35,11 @@ public class CategoriesLoader {
 	public static Category load(Context context){
 		Category cat = null;
 		try {
-			InputStream stream =  context.getAssets().open("categories.xml");
+			InputStream xmlStream =  context.getAssets().open("categories.xml");
+			
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(stream);
+			Document doc = builder.parse(xmlStream);
 			doc.getDocumentElement().normalize();
 			
 			cat = createSubCategories(context, doc.getDocumentElement()); 
@@ -72,6 +76,8 @@ public class CategoriesLoader {
 			cat = new Category(Type.STARRED);
 		}else if (elementName.equals("custom")){
 			cat = new Category(Type.CUSTOM);
+		}else if (elementName.equals("categories")){
+			cat = new Category(Type.NONE);
 		}else {
 			Log.d("Unknown category element: "+elementName);
 			return null;

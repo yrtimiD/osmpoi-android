@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<category name="All">
+<categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="categories.xsd">
 	<custom name="custom_search"/>
 	<starred name="starred"/>
 	<category name="emergency" >
@@ -44,5 +44,4 @@
 		<search name="fast_food" query="amenity=fast_food" />
 		<search name="pub" query="amenity=pub" />
 	</category>
-	
-</category>
+</categories>
