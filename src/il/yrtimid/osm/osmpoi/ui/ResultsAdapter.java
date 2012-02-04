@@ -1,5 +1,6 @@
 package il.yrtimid.osm.osmpoi.ui;
 
+import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
@@ -72,7 +73,7 @@ public class ResultsAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Entity item = items.get(position);
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.result_item, parent, false);
+			convertView = inflater.inflate(R.layout.results_view_row, parent, false);
 		}
 
 		TwoLineListItem listItem = (TwoLineListItem) convertView;
@@ -136,12 +137,10 @@ public class ResultsAdapter extends BaseAdapter {
 	
 	public int getMaximumDistance(){
 		Node n = null;
-		for(int i=items.size()-1; i>0; i--){
-			if (items.get(i).getType() == EntityType.Node){
-				n = (Node)items.get(i);
-				break;
-			}
+		if (items.size()>0){
+			n = il.yrtimid.osm.osmpoi.Util.getFirstNode(items.get(items.size()-1));
 		}
+		
 		if (n!=null){
 			Location nl = new Location(this.location);
 			nl.setLatitude(n.getLatitude());

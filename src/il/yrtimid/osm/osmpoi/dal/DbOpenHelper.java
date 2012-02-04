@@ -3,9 +3,12 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import il.yrtimid.osm.osmpoi.Log;
@@ -13,13 +16,11 @@ import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.preference.PreferenceManager;
 
 /**
  * @author yrtimiD
@@ -42,8 +43,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	protected static final String INLINE_QUERIES_TABLE = "inline_queries";
 	protected static final String INLINE_RESULTS_TABLE = "inline_results";
 	
+	protected static final String STARRED_TABLE = "starred";
+	
 	private static final String DATABASE_NAME = "osm.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	Context context;
 
@@ -79,6 +82,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		if (oldVersion == 1 && newVersion == 2){
+			db.execSQL(context.getString(R.string.sql_create_starred_table));
+		}
 	}
 
 	private void createAllTables(SQLiteDatabase db){
@@ -100,6 +106,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		
 		db.execSQL(context.getString(R.string.sql_create_inline_queries_table));
 		db.execSQL(context.getString(R.string.sql_create_inline_results_table));
+		db.execSQL(context.getString(R.string.sql_create_starred_table));
 	}
 
 	private void dropAllTables(SQLiteDatabase db){
@@ -128,7 +135,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		dropAllTables(db);
 		createAllTables(db);
 	}
-
+	
 	public void addEntity(Entity entity) {
 		if (entity instanceof Node)
 			addNode((Node) entity);
@@ -443,6 +450,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			if (cur!=null) cur.close();
 		}
 	}
+
 }
 
 	

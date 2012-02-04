@@ -15,6 +15,7 @@ import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.tagmatchers.IdMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import android.content.Context;
 import android.database.Cursor;
@@ -64,9 +65,85 @@ public class DbSearcher extends DbOpenHelper {
 	}
 	
 	public boolean findAroundPlaceByTag(Point point, TagMatcher tagMatcher, int maxResults, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		return find(FindType.BY_TAG, point, tagMatcher, maxResults, newItemNotifier, cancel);
+		if (tagMatcher instanceof IdMatcher){
+			return getById(point, (IdMatcher)tagMatcher, newItemNotifier, cancel);
+		}else{ 
+			return find(FindType.BY_TAG, point, tagMatcher, maxResults, newItemNotifier, cancel);
+		}
 	}
 
+
+	private boolean getById(Point point, IdMatcher idMatcher, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		if(cancel.isCancelled()) return true;
+		Entity result = null;
+		switch(idMatcher.getEntityType()){
+		case Node:
+			result = getNodeById(point, idMatcher);
+			break;
+		case Way:
+			result = getWayById(point, idMatcher);
+			break;
+		case Relation:
+			//TODO: implement relations
+			break;
+		}
+		
+		if (result != null)
+			newItemNotifier.pushItem(result);
+		
+		return true;
+	}
+
+	private Node getNodeById(Point point, IdMatcher idMatcher){
+		Cursor cur = null;
+		try{
+			
+			String sql = "SELECT * FROM nodes WHERE id=?";
+			SQLiteDatabase db = getReadableDatabase();
+			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString()});
+			if (cur.moveToFirst()){
+				Long id = cur.getLong(cur.getColumnIndex("id"));
+				Node node = constructNode(cur, id);
+				fillTags(node);
+				return node;
+			}
+			
+			return null;
+		} catch (Exception e) {
+			Log.wtf("getNodeById", e);
+			return null;
+		} finally {
+			if (cur!= null) cur.close();
+		}
+	}
+	
+	private Way getWayById(Point point, IdMatcher idMatcher){
+		Cursor cur = null;
+		try{
+			String sql = "select way_nodes.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon"
+								+" from way_nodes"
+								+" inner join nodes on way_nodes.node_id = nodes.id"
+								+ " WHERE way_nodes.id=?"
+								+ " order by (abs(lat-?)+abs(lon-?))"
+								+ " limit 1";
+			SQLiteDatabase db = getReadableDatabase();
+			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString(), point.getLatitude().toString(), point.getLongitude().toString()});
+			if (cur.moveToFirst()){
+				Long nodeId = cur.getLong(cur.getColumnIndex("node_id"));
+				Node node = constructNode(cur, nodeId);
+				Way way = constructWay(cur, node);
+				fillTags(way);
+				return way;
+			}			
+			return null;
+		} catch (Exception e) {
+			Log.wtf("getById", e);
+			return null;
+		} finally {
+			if (cur!= null) cur.close();
+		}
+	}
+	
 	private enum FindType{
 		AROUND_PLACE,
 		BY_TAG
@@ -79,7 +156,6 @@ public class DbSearcher extends DbOpenHelper {
 		int waysCount;
 		int gridSize = 2;
 		boolean lastRun = false;
-		SQLiteDatabase db = null;
 		try {
 			Cursor cur = null;
 			do {
@@ -98,20 +174,22 @@ public class DbSearcher extends DbOpenHelper {
 				case AROUND_PLACE:
 					cur = getNodesAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
 					nodesCount = readNodes(cur, maxResults, newItemNotifier, cancel);
+					cur.close();
 					cur = getWaysAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
 					waysCount = readWays(cur, maxResults, newItemNotifier, cancel);
+					cur.close();
 					break;
 				case BY_TAG:
 					cur = getNodesAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
 					nodesCount = readNodes(cur, maxResults, newItemNotifier, cancel);
+					cur.close();
 					cur = getWaysAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, waysOffset);
 					waysCount = readWays(cur, maxResults, newItemNotifier, cancel);
+					cur.close();
 					break;
 				}
-				if (cur == null) return false;
 				
 				Log.d((nodesCount+waysCount)+" results");
-				cur.close();
 				nodesOffset += nodesCount;
 				waysOffset += waysCount;
 				maxResults-=nodesCount;
@@ -121,14 +199,12 @@ public class DbSearcher extends DbOpenHelper {
 					gridSize++;
 				}
 			} while (maxResults>0 && cancel.isNotCancelled() && !lastRun);
+			return true;
 		} catch (Exception e) {
 			Log.wtf("findAroundPlace", e);
 			return false;
 		} finally {
-			//if (db != null)
-			//	db.close();
 		}
-		return true;
 	}
 	
 	private int readNodes(Cursor cur, int maxResults, ItemPipe<Entity> notifier, CancelFlag cancel) {
@@ -167,7 +243,7 @@ public class DbSearcher extends DbOpenHelper {
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					long wayId = cur.getLong(cur.getColumnIndex("_id"));
+					long wayId = cur.getLong(cur.getColumnIndex("id"));
 					long nodeId = cur.getLong(cur.getColumnIndex("node_id"));
 					
 					if (ways.containsKey(wayId)) continue;
@@ -199,7 +275,7 @@ public class DbSearcher extends DbOpenHelper {
 			db = getReadableDatabase();
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
 			
-			String query = "select nodes.id as _id, timestamp, lat, lon"
+			String query = "select id, timestamp, lat, lon"
 					+ " from nodes"
 					+ " where "+inClause
 					+ " order by (abs(lat-?)+abs(lon-?))"
@@ -221,7 +297,7 @@ public class DbSearcher extends DbOpenHelper {
 			db = getReadableDatabase();
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
 			
-			String query = "select ways.id as _id, nodes.id as node_id, ways.timestamp, lat, lon"
+			String query = "select ways.id as id, nodes.id as node_id, ways.timestamp, lat, lon"
 					+ " from ways"
 					+ " inner join way_nodes on ways.id=way_nodes.way_id"
 					+ " inner join nodes on way_nodes.node_id=nodes.id"
@@ -246,7 +322,7 @@ public class DbSearcher extends DbOpenHelper {
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher);
 
-			String baseQuery = "select distinct nodes.id as _id, timestamp, lat, lon from nodes";
+			String baseQuery = "select distinct nodes.id as id, timestamp, lat, lon from nodes";
 			StringBuilder sb = new StringBuilder(baseQuery);
 			for (int i = 1; i <= where.count; i++) {
 				sb.append(String.format(" inner join node_tags t%s on nodes.id=t%s.node_id", i, i));
@@ -276,7 +352,7 @@ public class DbSearcher extends DbOpenHelper {
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher);
 
-			String baseQuery = "select distinct ways.id as _id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways";
+			String baseQuery = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways";
 			StringBuilder sb = new StringBuilder(baseQuery);
 			for (int i = 1; i <= where.count; i++) {
 				sb.append(String.format(" inner join way_tags t%s on ways.id=t%s.way_id", i, i));
@@ -301,31 +377,6 @@ public class DbSearcher extends DbOpenHelper {
 		}
 	}
 
-	private Collection<Way> getWays(Node node){
-		SQLiteDatabase db = null;
-		Cursor cur = null;
-		Collection<Way> ways = new ArrayList<Way>();
-		try {
-			db = getReadableDatabase();
-			cur = db.rawQuery("select ways.id _id, ways.timestamp from ways inner join way_nodes on ways.id=way_nodes.way_id where node_id = ?", 
-					new String[] { Long.toString(node.getId()) });
-			if (cur.moveToFirst()) {
-				do {
-					Way w = constructWay(cur, node);
-					ways.add(w);
-				} while (cur.moveToNext());
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (cur != null)
-				cur.close();
-		}
-		
-		return ways;
-	}
-	
 	private void fillTags(Node node) {
 		Collection<Tag> tags = node.getTags();
 		SQLiteDatabase db = null;
@@ -388,7 +439,7 @@ public class DbSearcher extends DbOpenHelper {
 	}
 
 	private Way constructWay(Cursor cur, Node node) {
-		long id = cur.getLong(cur.getColumnIndex("_id"));
+		long id = cur.getLong(cur.getColumnIndex("id"));
 		CommonEntityData entityData = constructEntity(cur, id);
 		Way w = new Way(entityData);
 		if (node != null)

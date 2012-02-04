@@ -4,6 +4,7 @@
 package il.yrtimid.osm.osmpoi.tagmatchers;
 
 import il.yrtimid.osm.osmpoi.domain.Entity;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -47,7 +48,14 @@ public abstract class TagMatcher {
 			if (!e.contains("*")) e = "*"+e+"*";
 			return new KeyValueMatcher("*", e);
 		}else if (parts.length == 2 && op == '='){
-			return new KeyValueMatcher(parts[0], parts[1]);
+			if (parts[0].toLowerCase().equals("node_id"))
+				return new IdMatcher(EntityType.Node, Long.parseLong(parts[1]));
+			else if (parts[0].toLowerCase().equals("way_id"))
+				return new IdMatcher(EntityType.Way, Long.parseLong(parts[1]));
+			else if (parts[0].toLowerCase().equals("relation_id"))
+				return new IdMatcher(EntityType.Relation, Long.parseLong(parts[1]));
+			else 
+				return new KeyValueMatcher(parts[0], parts[1]);
 		} else if (parts.length == 2 && op == '!') {
 			return new NotMatcher(parse(parts[1]));
 		} else {

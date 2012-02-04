@@ -9,6 +9,5 @@ package il.yrtimid.osm.osmpoi;
  */
 public enum SearchSourceType {
 		NONE,
-		PBF_FILE,
 		DB
 }

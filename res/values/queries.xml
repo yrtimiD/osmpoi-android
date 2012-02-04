@@ -62,5 +62,5 @@
     );</string>
     <string name="sql_create_inline_queries_table">CREATE TABLE IF NOT EXISTS inline_queries (id INTEGER PRIMARY KEY AUTOINCREMENT, query TEXT NOT NULL, [select] TEXT NOT NULL)</string>
     <string name="sql_create_inline_results_table">CREATE TABLE IF NOT EXISTS inline_results (query_id INTEGER NOT NULL, value TEXT)</string>
-    
+    <string name="sql_create_starred_table">CREATE TABLE IF NOT EXISTS starred (type TEXT NOT NULL, id INTEGER NOT NULL, title TEXT NOT NULL)</string>
 </resources>
