@@ -180,8 +180,7 @@ public class FileProcessingService extends Service {
 			final ImportSettings settings = Preferences.getImportSettings(context);
 
 			if (settings.isClearBeforeImport()){
-			//	dbHelper.clearAll();
-				dbHelper.dropDB();
+				dbHelper.clearAll();
 			}
 			
 			notif.setLatestEventInfo(context, "PBF Import", "Importing in progress...", contentIntent);

@@ -91,21 +91,25 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(context.getString(R.string.sql_create_node_table));
 		db.execSQL(context.getString(R.string.sql_create_node_tags_table));
 		db.execSQL(context.getString(R.string.sql_node_tags_idx));
+		
 		db.execSQL(context.getString(R.string.sql_create_ways_table));
 		db.execSQL(context.getString(R.string.sql_create_way_nodes_table));
 		db.execSQL(context.getString(R.string.sql_way_nodes_way_idx));
 		db.execSQL(context.getString(R.string.sql_way_nodes_node_idx));
 		db.execSQL(context.getString(R.string.sql_create_way_tags_table));
 		db.execSQL(context.getString(R.string.sql_way_tags_idx));
+		
 		db.execSQL(context.getString(R.string.sql_create_relations_table));
 		db.execSQL(context.getString(R.string.sql_create_relation_tags_table));
 		db.execSQL(context.getString(R.string.sql_relation_tags_idx));
 		db.execSQL(context.getString(R.string.sql_create_members_table));
 		db.execSQL(context.getString(R.string.sql_relation_members_idx));
+		
 		db.execSQL(context.getString(R.string.sql_create_grid_table));
 		
 		db.execSQL(context.getString(R.string.sql_create_inline_queries_table));
 		db.execSQL(context.getString(R.string.sql_create_inline_results_table));
+		
 		db.execSQL(context.getString(R.string.sql_create_starred_table));
 	}
 
@@ -123,12 +127,15 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		
 		db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
 		
+		db.execSQL("DROP TABLE IF EXISTS "+INLINE_RESULTS_TABLE);
+		db.execSQL("DROP TABLE IF EXISTS "+INLINE_QUERIES_TABLE);
+		
 		db.execSQL("VACUUM");
 	}
 
-	public void dropDB(){
-		context.deleteDatabase(DATABASE_NAME);
-	}
+	//public void dropDB(){
+	//	context.deleteDatabase(DATABASE_NAME);
+	//}
 	
 	public void clearAll() {
 		SQLiteDatabase db = getWritableDatabase();

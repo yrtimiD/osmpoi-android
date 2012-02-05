@@ -63,7 +63,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 		OsmPoiApplication.locationManager.setLocationChangeListener(this);
 
-		updateCountView();
+
 		
 		OsmPoiApplication.currentSearch.setMaxResults(START_RESULTS);
 
@@ -92,7 +92,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		updateCountView();
 		if (followingGPS)
 			OsmPoiApplication.locationManager.setLocationChangeListener(this);
 	}
@@ -169,7 +169,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		int count = adapter.getCount();
 		int dist = adapter.getMaximumDistance();
 		
-		txt.setText(String.format("%d result, within %dm", count, dist));
+		txt.setText(getResources().getQuantityString(R.plurals.results_within, count, count, dist));
 	}
 
 	private void updateAccuracyView() {

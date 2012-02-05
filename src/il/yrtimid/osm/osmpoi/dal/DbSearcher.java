@@ -213,7 +213,7 @@ public class DbSearcher extends DbOpenHelper {
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					long id = cur.getLong(cur.getColumnIndex("_id"));
+					long id = cur.getLong(cur.getColumnIndex("id"));
 					if (nodes.containsKey(id)) {
 						continue;
 					}

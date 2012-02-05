@@ -44,4 +44,5 @@
 		<search name="fast_food" query="amenity=fast_food" />
 		<search name="pub" query="amenity=pub" />
 	</category>
+	<inline name="place" query="place=*" select="place" />
 </categories>
