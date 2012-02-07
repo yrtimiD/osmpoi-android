@@ -35,18 +35,18 @@ public final class R {
         public static final int ic_way=0x7f02000d;
     }
     public static final class id {
-        public static final int btnMoreResults=0x7f09001b;
-        public static final int editText1=0x7f09000a;
-        public static final int file_picker_image=0x7f09000b;
-        public static final int file_picker_text=0x7f09000c;
-        public static final int imageType=0x7f090013;
-        public static final int itemViewID=0x7f090014;
-        public static final int layoutMain=0x7f09000f;
-        public static final int linearLayout1=0x7f09001c;
+        public static final int btnMoreResults=0x7f09001c;
+        public static final int editText1=0x7f09000b;
+        public static final int file_picker_image=0x7f09000c;
+        public static final int file_picker_text=0x7f09000d;
+        public static final int imageType=0x7f090014;
+        public static final int itemViewID=0x7f090015;
+        public static final int layoutMain=0x7f090010;
+        public static final int linearLayout1=0x7f09000a;
         public static final int linearLayoutAccuracy=0x7f090007;
-        public static final int linearLayoutAccuracy_ref=0x7f09000e;
-        public static final int listCategories=0x7f090010;
-        public static final int listResults=0x7f09001a;
+        public static final int linearLayoutAccuracy_ref=0x7f09000f;
+        public static final int listCategories=0x7f090011;
+        public static final int listResults=0x7f09001b;
         public static final int mnu_cancel=0x7f090023;
         public static final int mnu_follow=0x7f090021;
         public static final int mnu_open=0x7f09001f;
@@ -56,22 +56,22 @@ public final class R {
         public static final int progressNodesCount=0x7f090001;
         public static final int progressRelationsCount=0x7f090005;
         public static final int progressWaysCount=0x7f090003;
-        public static final int resultHeader=0x7f090012;
-        public static final int rootLayout=0x7f090011;
-        public static final int star=0x7f090015;
-        public static final int tagsLayout=0x7f090018;
+        public static final int resultHeader=0x7f090013;
+        public static final int rootLayout=0x7f090012;
+        public static final int star=0x7f090016;
+        public static final int tagsLayout=0x7f090019;
         public static final int textAccuracy=0x7f090009;
         public static final int textKey=0x7f09001d;
-        public static final int textLat=0x7f090016;
-        public static final int textLon=0x7f090017;
-        public static final int textNoSearchSource=0x7f09000d;
+        public static final int textLat=0x7f090017;
+        public static final int textLon=0x7f090018;
+        public static final int textNoSearchSource=0x7f09000e;
         public static final int textNodesCount=0x7f090002;
         public static final int textRelationsCount=0x7f090006;
         public static final int textValue=0x7f09001e;
         public static final int textView1=0x7f090008;
         public static final int textWaysCount=0x7f090004;
         public static final int text_about_app_name=0x7f090000;
-        public static final int txtCount=0x7f090019;
+        public static final int txtCount=0x7f09001a;
     }
     public static final class layout {
         public static final int about=0x7f030000;

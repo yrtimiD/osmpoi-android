@@ -1,48 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="categories.xsd">
-	<custom name="custom_search"/>
-	<starred name="starred"/>
-	<category name="emergency" >
-		<search name="hospital" query="amenity=hospital"/>
-		<search name="clinic" query="amenity=clinic"/>
-		<search name="doctors" query="amenity=doctors"/>
+<categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="categories.xsd">
+	<custom name="custom_search" />
+	<starred name="starred" icon="star_big_on" />
+	<category name="emergency">
+		<search name="hospital" query="amenity=hospital" />
+		<search name="clinic" query="amenity=clinic" />
+		<search name="doctors" query="amenity=doctors" />
 		<search name="ambulance_station" query="emergency=ambulance_station" />
-		<search name="emergency_phone" query="emergency=phone"/>
+		<search name="emergency_phone" query="emergency=phone" />
 		<search name="emergency_bay" query="highway=emergency_bay" />
 		<search name="police" query="amenity=police" />
 	</category>
 	<category name="transport">
-		<search name="bus_stop" query="highway=bus_stop"/>
-		<search name="bus_station" query="amenity=bus_station"/>
-		<search name="railway_station" query="railway=station | building=train_station"/>
+		<search name="bus_stop" query="highway=bus_stop" />
+		<search name="bus_station" query="amenity=bus_station | public_transport=station" />
+		<search name="railway_station" query="railway=station | building=train_station" />
 		<search name="airport" query="aeroway=aerodrome" />
-		<search name="parking" query="amenity=parking" />
+		<search name="parking" query="amenity=parking | amenity=parking_entrance" />
 		<search name="fuel" query="amenity=fuel" />
 		<inline name="fuel_operator" query="amenity=fuel" select="operator*" />
 		<search name="car_wash" query="amenity=car_wash" />
+		<search name="car_rental" query="amenity=car_rental" />
+		<inline name="car_rental_operator" query="amenity=car_rental &amp; operator=*" select="operator*" />
+		<search name="compressed_air" query="amenity=compressed_air" />
+		<search name="taxi" query="amenity=taxi" />
+		<search name="bicycle_rental" query="amenity=bicycle_rental" />
+		<search name="bicycle_parking" query="amenity=bicycle_parking" />
 	</category>
 	<category name="finance">
-		<search name="bank" query="amenity=bank"/>
-		<search name="atm" query="amenity=atm | atm=yes"/>
+		<search name="bank" query="amenity=bank" />
+		<search name="atm" query="amenity=atm | atm=yes" />
+		<search name="change" query="amenity=bureau_de_change" />
 	</category>
 	<category name="shopping">
 		<search name="all_in_this_category" query="shop=*" />
-		<inline name="supermarket" query="shop=supermarket" select="operator*"/>
-		<search name="mall" query="shop=mall"/>
-		<search name="convenience" query="shop=convenience" />
+		<inline name="supermarket" query="shop=supermarket" select="operator*" />
+		<search name="mall" query="shop=mall" />
+		<search name="pharmacy" query="amenity=pharmacy" />
+
+		<search name="alcohol" query="amenity=alcohol" />
+		<search name="animel" query="amenity=animel" />
+		<search name="appliance" query="amenity=appliance" />
+		<search name="art" query="amenity=art" />
+		<search name="baby_goods" query="amenity=baby_goods" />
+		<search name="bakery" query="amenity=bakery" />
+		<search name="bathroom_furnishing" query="amenity=bathroom_furnishing" />
+		<search name="beauty" query="amenity=beauty" />
+		<search name="bed" query="amenity=bed" />
+		<search name="beverage" query="amenity=beverage" />
+		<search name="bycicle" query="amenity=bycicle" />
+		<search name="books" query="amenity=books" />
+		<search name="boutique" query="amenity=boutique" />
+		<search name="butcher" query="amenity=butcher" />
+		<search name="car" query="amenity=car" />
+		<search name="car_repair" query="amenity=car_repair" />
+		<search name="carpet" query="amenity=carpet" />
+		<search name="charity" query="amenity=charity" />
+		<search name="chemist" query="amenity=chemist" />
+		<search name="clothes" query="amenity=clothes" />
+		<search name="computer" query="amenity=computer" />
+		<search name="confectionery" query="amenity=confectionery" />
+		<search name="convenience" query="amenity=convenience" />
+		<search name="copyshop" query="amenity=copyshop" />
+		<search name="curtain" query="amenity=curtain" />
+		<search name="deli" query="amenity=deli" />
+		<search name="department_store" query="amenity=department_store" />
+		<search name="dive" query="amenity=dive" />
+		<search name="doityourself" query="amenity=doityourself" />
+		<search name="drugstore" query="amenity=drugstore" />
+		<search name="dry_cleaning" query="amenity=dry_cleaning" />
+		<search name="electronics" query="amenity=electronics" />
+		<search name="erotic" query="amenity=erotic" />
+		<search name="fabric" query="amenity=fabric" />
+		<search name="farm" query="amenity=farm" />
+		<search name="florist" query="amenity=florist" />
+		<search name="frame" query="amenity=frame" />
+		<search name="funeral_directors" query="amenity=funeral_directors" />
+		<search name="furnace" query="amenity=furnace" />
+		<search name="furniture" query="amenity=furniture" />
+		<search name="garden_centre" query="amenity=garden_centre" />
+		<search name="gas" query="amenity=gas" />
+		<search name="general" query="amenity=general" />
+		<search name="gift" query="amenity=gift" />
+		<search name="glaziery" query="amenity=glaziery" />
+		<search name="greengrocer" query="amenity=greengrocer" />
+		<search name="hairdresser" query="amenity=hairdresser" />
+		<search name="hardware" query="amenity=hardware" />
+		<search name="hearing_aids" query="amenity=hearing_aids" />
+		<search name="herbalist" query="amenity=herbalist" />
+		<search name="hifi" query="amenity=hifi" />
+		<search name="hunting" query="amenity=hunting" />
+		<search name="interior_decoration" query="amenity=interior_decoration" />
+		<search name="jewelry" query="amenity=jewelry" />
+		<search name="kiosk" query="amenity=kiosk" />
+		<search name="kitchen" query="amenity=kitchen" />
+		<search name="laundry" query="amenity=laundry" />
+		<search name="massage" query="amenity=massage" />
+		<search name="mobile_phone" query="amenity=mobile_phone" />
+		<search name="money_lender" query="amenity=money_lender" />
+		<search name="motorcycle" query="amenity=motorcycle" />
+		<search name="musical_instrument" query="amenity=musical_instrument" />
+		<search name="newsagent" query="amenity=newsagent" />
+		<search name="optician" query="amenity=optician" />
+		<search name="organic" query="amenity=organic" />
+		<search name="outdoor" query="amenity=outdoor" />
+		<search name="paint" query="amenity=paint" />
+		<search name="pawnbroker" query="amenity=pawnbroker" />
+		<search name="pet" query="amenity=pet" />
+		<search name="radiotechnics" query="amenity=radiotechnics" />
+		<search name="seafood" query="amenity=seafood" />
+		<search name="second_hand" query="amenity=second_hand" />
+		<search name="shoes" query="amenity=shoes" />
+		<search name="sports" query="amenity=sports" />
+		<search name="stationery" query="amenity=stationery" />
+		<search name="tattoo" query="amenity=tattoo" />
+		<search name="tobacco" query="amenity=tobacco" />
+		<search name="toys" query="amenity=toys" />
+		<search name="trade" query="amenity=trade" />
+		<search name="vacuum_cleaner" query="amenity=vacuum_cleaner" />
+		<search name="variety_store" query="amenity=variety_store" />
+		<search name="video" query="amenity=video" />
+
 		<inline name="shop_operator" query="shop=*" select="operator*" />
+		<inline name="shop_type" query="shop=*" select="shop" />
 	</category>
 	<category name="services">
 		<search name="toilet" query="amenity=toilets" />
+		<search name="drinking_water" query="amenity=drinking_water" />
 		<search name="telephone" query="amenity=telephone" />
 		<search name="post_box" query="amenity=post_box" />
 		<search name="post_office" query="amenity=post_office" />
+		<search name="recycling" query="amenity=recycling" />
+		<search name="waste_basket" query="amenity=waste_basket" />
 	</category>
 	<category name="food">
 		<search name="cafe" query="amenity=cafe" />
 		<search name="restaurant" query="amenity=restaurant" />
 		<search name="fast_food" query="amenity=fast_food" />
 		<search name="pub" query="amenity=pub" />
+		<search name="bar" query="amenity=bar" />
+		<search name="ice_cream" query="amenity=ice_cream"/>
+		<search name="biergarten" query="amenity=biergarten"/>
+		<search name="food_court" query="amenity=food_court"/>
+	</category>
+	<category name="leisure">
+		<search name="all_in_this_category" query="leisure=*" />
+		<search name="cinema" query="amenity=cinema" />
+		
+		<search name="common" query="leisure=common"/>
+		<search name="dance" query="leisure=dance"/>
+		<search name="dog_park" query="leisure=dog_park"/>
+		<search name="fishing" query="leisure=fishing"/>
+		<search name="garden" query="leisure=garden"/>
+		<search name="golf_course" query="leisure=golf_course"/>
+		<search name="ice_rink" query="leisure=ice_rink"/>
+		<search name="marina" query="leisure=marina"/>
+		<search name="miniature_golf" query="leisure=miniature_golf"/>
+		<search name="nature_reserve" query="leisure=nature_reserve"/>
+		<search name="park" query="leisure=park"/>
+		<search name="pitch" query="leisure=pitch"/>
+		<search name="playground" query="leisure=playground"/>
+		<search name="slipway" query="leisure=slipway"/>
+		<search name="sports_centre" query="leisure=sports_centre"/>
+		<search name="stadium" query="leisure=stadium"/>
+		<search name="swimming_pool" query="leisure=swimming_pool"/>
+		<search name="track" query="leisure=track"/>
+		<search name="water_par" query="leisure=water_par"/>
+	</category>
+	<category name="tourism">
+		<search name="alpine_hut" query="amenity=alpine_hut"/> 
+		<search name="artwork" query="amenity=artwork"/> 
+		<search name="attraction" query="amenity=attraction"/> 
+		<search name="bed_and_breakfast" query="amenity=bed_and_breakfast"/> 
+		<search name="camp_site" query="amenity=camp_site"/> 
+		<search name="caravan_site" query="amenity=caravan_site"/> 
+		<search name="chalet" query="amenity=chalet"/> 
+		<search name="guest_house" query="amenity=guest_house"/> 
+		<search name="hostel" query="amenity=hostel"/> 
+		<search name="hotel" query="amenity=hotel"/> 
+		<search name="information" query="amenity=information"/> 
+		<search name="motel" query="amenity=motel"/> 
+		<search name="museum" query="amenity=museum"/> 
+		<search name="picnic_site" query="amenity=picnic_site"/> 
+		<search name="theme_park" query="amenity=theme_park"/> 
+		<search name="viewpoint" query="amenity=viewpoint"/> 
+		<search name="zoo" query="amenity=zoo"/> 
 	</category>
 	<inline name="place" query="place=*" select="place" />
+	<categories name="(debug)">
+		<inline name="operators" query="operator*=*" select="operator*" />
+		<inline name="brands" query="brand*=*" select="brand*" />
+		<inline name="amenities" query="amenity=*" select="amenity" />
+		<inline name="leisures" query="leisure=*" select="leisure" />
+	</categories>
 </categories>

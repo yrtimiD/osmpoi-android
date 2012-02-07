@@ -71,6 +71,7 @@ public class CategoriesLoader {
 		
 		String elementName = root.getNodeName();
 		String name = root.getAttribute("name");
+		String icon = root.getAttribute("icon");
 		String query = root.getAttribute("query");
 		String select = root.getAttribute("select");
 
@@ -93,6 +94,7 @@ public class CategoriesLoader {
 		
 		cat.setLocalizable(true);
 		cat.setName(name);
+		cat.setIcon(icon);
 		cat.setQuery(query);
 		cat.setSelect(select);
 		

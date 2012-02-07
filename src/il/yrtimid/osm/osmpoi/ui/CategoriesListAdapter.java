@@ -10,6 +10,7 @@ import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.AndroidCharacter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -72,13 +74,21 @@ public class CategoriesListAdapter extends BaseAdapter {
 			convertView = inflater.inflate(R.layout.category_item, parent, false);
 		}
 		
-		TextView text = (TextView)convertView.findViewById(android.R.id.text1);
+		ImageView iconView = (ImageView)convertView.findViewById(android.R.id.icon);
+		TextView textView = (TextView)convertView.findViewById(android.R.id.text1);
 		
 		
 		Category cat = category.getSubCategories().get(position);
 		
 		String name = (cat.isLocalizable())?getLocalName(cat.getName()):cat.getName();
-		text.setText(name);
+		textView.setText(name);
+		
+		Drawable icon = getIcon(cat.getIcon());
+		if (icon != null){
+			iconView.setImageDrawable(icon);
+		}else {
+			iconView.setImageDrawable(null);
+		}
 		
 		return convertView;
 	}
@@ -89,5 +99,17 @@ public class CategoriesListAdapter extends BaseAdapter {
 			return key;
 		else 
 			return context.getResources().getString(resId);
+	}
+	
+	private Drawable getIcon(String key){
+		if (key == null || key.length()==0) return null;
+		int resId = context.getResources().getIdentifier(key, "drawable", context.getPackageName());
+		if (resId == 0){
+			resId = context.getResources().getIdentifier(key, "drawable", "android");
+			if (resId == 0)
+				return null;
+		}
+		
+		return context.getResources().getDrawable(resId);
 	}
 }

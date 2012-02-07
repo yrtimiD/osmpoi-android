@@ -28,6 +28,7 @@ public class Category implements Parcelable {
 	private String query;
 	private String select;
 	private Boolean localizable = false;
+	private String icon;
 	
 	public Category(Type type) {
 		this.type = type;
@@ -40,6 +41,7 @@ public class Category implements Parcelable {
 		this.type = Enum.valueOf(Type.class, source.readString());
 		source.readTypedList(subCategories, Category.CREATOR);
 		this.name = source.readString();
+		this.icon = source.readString();
 		this.query = source.readString();
 		this.select = source.readString();
 		this.localizable = (Boolean)source.readValue(Boolean.class.getClassLoader());
@@ -67,6 +69,14 @@ public class Category implements Parcelable {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+	
+	public String getIcon() {
+		return icon;
 	}
 	
 	public void setQuery(String query) {
@@ -110,6 +120,7 @@ public class Category implements Parcelable {
 		dest.writeString(type.name());
 		dest.writeTypedList(subCategories);
 		dest.writeString(name);
+		dest.writeString(icon);
 		dest.writeString(query);
 		dest.writeString(select);
 		dest.writeValue(localizable);
