@@ -4,14 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-     <TextView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
         android:autoLink="all"
         android:singleLine="false"
-        android:text="Osmosis\nhttp://wiki.openstreetmap.org/wiki/Osmosis" />
+        android:text="Osmosis\nhttp://wiki.openstreetmap.org/wiki/Osmosis"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,15 +21,26 @@
         android:layout_marginLeft="5dip"
         android:autoLink="all"
         android:singleLine="false"
-        android:text="OSM-binary by S. Crosby\nhttps://github.com/scrosby/OSM-binary" />
+        android:text="OSM-binary by S. Crosby\nhttps://github.com/scrosby/OSM-binary"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-       <TextView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
         android:autoLink="all"
         android:singleLine="false"
-        android:text="File Picker\nCopyright 2011 Anders Kalør\nhttp://www.kaloer.com/android-file-picker-activity" />
-    
+        android:text="File Picker\nCopyright 2011 Anders Kalør\nhttp://www.kaloer.com/android-file-picker-activity"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/about_map_icons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginLeft="5dip"
+        android:singleLine="false"
+        android:text="map icons"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 </LinearLayout>

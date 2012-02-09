@@ -171,6 +171,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		case STARRED:
 			DbStarred dbStarredHelper = new DbStarred(this);
 			Collection<Category> starred = dbStarredHelper.getAllStarred();
+			dbStarredHelper.close();
 			cat.getSubCategories().clear();
 			cat.getSubCategories().addAll(starred);
 			showCategory(cat);

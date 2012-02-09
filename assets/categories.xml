@@ -11,6 +11,7 @@
 		<search name="emergency_phone" query="emergency=phone" />
 		<search name="emergency_bay" query="highway=emergency_bay" />
 		<search name="police" query="amenity=police" />
+		<search name="shelter" query="amenity=shelter" />
 	</category>
 	<category name="transport">
 		<search name="bus_stop" query="highway=bus_stop" />
@@ -31,7 +32,7 @@
 	<category name="finance">
 		<search name="bank" query="amenity=bank" />
 		<search name="atm" query="amenity=atm | atm=yes" />
-		<search name="change" query="amenity=bureau_de_change" />
+		<search name="bureau_de_change" query="amenity=bureau_de_change" />
 	</category>
 	<category name="shopping">
 		<search name="all_in_this_category" query="shop=*" />
@@ -40,7 +41,7 @@
 		<search name="pharmacy" query="amenity=pharmacy" />
 
 		<search name="alcohol" query="amenity=alcohol" />
-		<search name="animel" query="amenity=animel" />
+		<search name="anime" query="amenity=anime" />
 		<search name="appliance" query="amenity=appliance" />
 		<search name="art" query="amenity=art" />
 		<search name="baby_goods" query="amenity=baby_goods" />
@@ -108,6 +109,7 @@
 		<search name="paint" query="amenity=paint" />
 		<search name="pawnbroker" query="amenity=pawnbroker" />
 		<search name="pet" query="amenity=pet" />
+		<search name="photo" query="shop=photo" />
 		<search name="radiotechnics" query="amenity=radiotechnics" />
 		<search name="seafood" query="amenity=seafood" />
 		<search name="second_hand" query="amenity=second_hand" />
@@ -119,36 +121,38 @@
 		<search name="toys" query="amenity=toys" />
 		<search name="trade" query="amenity=trade" />
 		<search name="vacuum_cleaner" query="amenity=vacuum_cleaner" />
-		<search name="variety_store" query="amenity=variety_store" />
 		<search name="video" query="amenity=video" />
-
+		
 		<inline name="shop_operator" query="shop=*" select="operator*" />
-		<inline name="shop_type" query="shop=*" select="shop" />
+		<inline name="other_shop_type" query="shop=*" select="shop" />
 	</category>
 	<category name="services">
-		<search name="toilet" query="amenity=toilets" />
 		<search name="drinking_water" query="amenity=drinking_water" />
-		<search name="telephone" query="amenity=telephone" />
 		<search name="post_box" query="amenity=post_box" />
 		<search name="post_office" query="amenity=post_office" />
 		<search name="recycling" query="amenity=recycling" />
+		<search name="telephone" query="amenity=telephone" />
+		<search name="toilet" query="amenity=toilets" />
 		<search name="waste_basket" query="amenity=waste_basket" />
 	</category>
 	<category name="food">
 		<search name="cafe" query="amenity=cafe" />
 		<search name="restaurant" query="amenity=restaurant" />
+		<inline name="cuisine" query="cuisine=*" select="cuisine" />
 		<search name="fast_food" query="amenity=fast_food" />
 		<search name="pub" query="amenity=pub" />
 		<search name="bar" query="amenity=bar" />
 		<search name="ice_cream" query="amenity=ice_cream"/>
 		<search name="biergarten" query="amenity=biergarten"/>
 		<search name="food_court" query="amenity=food_court"/>
+		<search name="vending_machine" query="amenity=vending_machine" />
 	</category>
 	<category name="leisure">
 		<search name="all_in_this_category" query="leisure=*" />
+		<search name="arts_centre" query="amenity=arts_centre" />
+		<search name="brothel" query="amenity=brothel" />
 		<search name="cinema" query="amenity=cinema" />
 		
-		<search name="common" query="leisure=common"/>
 		<search name="dance" query="leisure=dance"/>
 		<search name="dog_park" query="leisure=dog_park"/>
 		<search name="fishing" query="leisure=fishing"/>
@@ -158,15 +162,19 @@
 		<search name="marina" query="leisure=marina"/>
 		<search name="miniature_golf" query="leisure=miniature_golf"/>
 		<search name="nature_reserve" query="leisure=nature_reserve"/>
+		<search name="nightclub" query="amenity=nightclub" />
 		<search name="park" query="leisure=park"/>
 		<search name="pitch" query="leisure=pitch"/>
 		<search name="playground" query="leisure=playground"/>
 		<search name="slipway" query="leisure=slipway"/>
+		<search name="social_centre" query="amenity=social_centre" />
 		<search name="sports_centre" query="leisure=sports_centre"/>
 		<search name="stadium" query="leisure=stadium"/>
+		<search name="stripclub" query="amenity=stripclub" />
 		<search name="swimming_pool" query="leisure=swimming_pool"/>
+		<search name="theatre" query="amenity=theatre" />
 		<search name="track" query="leisure=track"/>
-		<search name="water_par" query="leisure=water_par"/>
+		<search name="water_park" query="leisure=water_park"/>
 	</category>
 	<category name="tourism">
 		<search name="alpine_hut" query="amenity=alpine_hut"/> 
@@ -186,6 +194,9 @@
 		<search name="theme_park" query="amenity=theme_park"/> 
 		<search name="viewpoint" query="amenity=viewpoint"/> 
 		<search name="zoo" query="amenity=zoo"/> 
+	</category>
+	<category name="other">
+			<search name="embassy" query="amenity=embassy" />
 	</category>
 	<inline name="place" query="place=*" select="place" />
 	<categories name="(debug)">

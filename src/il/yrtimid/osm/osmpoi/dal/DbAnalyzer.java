@@ -114,7 +114,7 @@ public class DbAnalyzer extends DbOpenHelper {
 	}
 	
 	public Collection<String> getInlineResults(Long id){
-		SQLiteDatabase db;
+		SQLiteDatabase db = null;
 		Cursor cur = null;
 		Collection<String> result = new ArrayList<String>();
 		try {

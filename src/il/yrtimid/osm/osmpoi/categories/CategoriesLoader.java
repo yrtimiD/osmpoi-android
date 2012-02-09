@@ -113,21 +113,26 @@ public class CategoriesLoader {
 	public static void loadInlineCategories(Context context, Category cat){
 		if (cat.getSubCategoriesCount()>0) return;
 		if (cat.getType() != Category.Type.INLINE_SEARCH) return;
-		
-		DbAnalyzer dbHelper = new DbAnalyzer(context);
-		Long id = dbHelper.getInlineResultsId(cat.getQuery(), cat.getSelect());
-		if (id == 0L){
-			id = dbHelper.createInlineResults(cat.getQuery(), cat.getSelect());
+		DbAnalyzer dbHelper = null;
+		try{
+			dbHelper = new DbAnalyzer(context);
+			Long id = dbHelper.getInlineResultsId(cat.getQuery(), cat.getSelect());
+			if (id == 0L){
+				id = dbHelper.createInlineResults(cat.getQuery(), cat.getSelect());
+			}
+			Collection<String> subs = dbHelper.getInlineResults(id);
+			for (String inlineCat:subs){
+				Category subCat = new Category(Type.SEARCH);
+				subCat.setName(inlineCat);
+				subCat.setIcon(inlineCat);
+				subCat.setQuery(String.format("%s=%s", cat.getSelect(), inlineCat));
+				cat.getSubCategories().add(subCat);
+			}
+		}catch(Exception e){
+			Log.wtf("loadInlineCategories", e);
+		}finally{
+			if (dbHelper != null) dbHelper.close();
 		}
-		Collection<String> subs = dbHelper.getInlineResults(id);
-		for (String inlineCat:subs){
-			Category subCat = new Category(Type.SEARCH);
-			subCat.setName(inlineCat);
-			subCat.setQuery(String.format("%s=%s", cat.getSelect(), inlineCat));
-			cat.getSubCategories().add(subCat);
-		}
-		
 		return;
-		
 	}
 }
