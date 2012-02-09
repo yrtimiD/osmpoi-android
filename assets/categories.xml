@@ -39,7 +39,7 @@
 		<inline name="supermarket" query="shop=supermarket" select="operator*" />
 		<search name="mall" query="shop=mall" />
 		<search name="pharmacy" query="amenity=pharmacy" />
-     <search name="marketplace" query="amenity=marketplace" />
+		<search name="marketplace" query="amenity=marketplace" />
      
 		<search name="alcohol" query="amenity=alcohol" />
 		<search name="anime" query="amenity=anime" />

@@ -209,11 +209,11 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 					@Override
 					protected void onPostExecute(Category result) {
 						super.onPostExecute(result);
-						SearchActivity.this.dismissWaiting();
+						Util.dismissWaiting();
 						SearchActivity.this.showCategory(result);
 					}
 				};
-				showWaiting(getString(R.string.category), null);
+				Util.showWaiting(this, getString(R.string.category), null);
 				asyncLoad.execute(cat);
 			}
 			break;
@@ -237,17 +237,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		}
 	}
 	
-	private ProgressDialog progressDialog = null;
-	public void showWaiting(String title, String message){
-		if (message == null) message = getString(R.string.loading);
-		progressDialog = ProgressDialog.show(this, title, message, true, true);
-	}
-	
-	public void dismissWaiting(){
-		if (progressDialog != null){
-			progressDialog.dismiss();
-			progressDialog = null;
-		}
-	}
+
 
 }

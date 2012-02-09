@@ -31,7 +31,6 @@ public class LocationChangeManager implements LocationListener {
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 	}
 	
-	
 	public void setLocationChangeListener(LocationChangeListener listener){
 		this.listener = listener;
 		if (this.listener == null){

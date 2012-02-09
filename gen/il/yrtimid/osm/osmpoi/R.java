@@ -349,6 +349,7 @@ public final class R {
         public static final int vending_machine=0x7f06009d;
         public static final int video=0x7f060070;
         public static final int viewpoint=0x7f0600b4;
+        public static final int waiting_for_location=0x7f0600fa;
         public static final int waste_basket=0x7f06007e;
         public static final int water_park=0x7f06009a;
         public static final int zoo=0x7f0600b5;

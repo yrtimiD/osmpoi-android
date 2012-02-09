@@ -9,7 +9,6 @@ import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
-
 import android.app.Activity;
 //import android.content.DialogInterface;
 //import android.content.DialogInterface.OnClickListener;
@@ -31,16 +30,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OnClickListener {
-	private static final int START_RESULTS=20;
-	private static final int RESULTS_INCREMENT=20;
-	
+	private static final int START_RESULTS = 20;
+	private static final int RESULTS_INCREMENT = 20;
+
 	private ResultsAdapter adapter;
 	private ListView resultsList;
 	private Boolean followingGPS = true;
 	private SearchAsyncTask searchTask;
-	
+
 	private Button btnMoreResults;
-	
+
+	private Boolean waitingForLocation = false;
+	private final Object waitingForLocationLocker = new Object();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,26 +54,29 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		adapter.setLocale(OsmPoiApplication.Config.getResultLanguage());
 		resultsList = (ListView) findViewById(R.id.listResults);
 		View footer = getLayoutInflater().inflate(R.layout.results_view_footer, null);
-		
-		btnMoreResults = ((Button)footer.findViewById(R.id.btnMoreResults));
+
+		btnMoreResults = ((Button) footer.findViewById(R.id.btnMoreResults));
 		btnMoreResults.setOnClickListener(this);
-		
+
 		resultsList.addFooterView(footer);
 		resultsList.setAdapter(adapter);
 
 		resultsList.setOnItemClickListener(this);
 
 		OsmPoiApplication.locationManager.setLocationChangeListener(this);
-
-
-		
 		OsmPoiApplication.currentSearch.setMaxResults(START_RESULTS);
 
 		Entity[] savedData = (Entity[]) getLastNonConfigurationInstance();
 		if (savedData != null)
 			adapter.addItems(savedData);
-		else
-			search();
+		else{
+			if (false == OsmPoiApplication.hasLocation()) {
+				waitingForLocation = true;
+				Util.showWaiting(this, null, getString(R.string.waiting_for_location));
+			}else {
+				search();
+			}
+		}
 	}
 
 	/*
@@ -168,7 +173,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		TextView txt = (TextView) findViewById(R.id.txtCount);
 		int count = adapter.getCount();
 		int dist = adapter.getMaximumDistance();
-		
+
 		txt.setText(getResources().getQuantityString(R.plurals.results_within, count, count, dist));
 	}
 
@@ -179,18 +184,18 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	}
 
 	private void search() {
-		if (OsmPoiApplication.currentSearch.hasExpression()){
-			try{
+		if (OsmPoiApplication.currentSearch.hasExpression()) {
+			try {
 				TagMatcher.parse(OsmPoiApplication.currentSearch.getExpression());
-			}catch(InvalidParameterException e){
-				Toast.makeText(this, getText(R.string.cant_parse)+" "+e.getMessage(), Toast.LENGTH_LONG).show();
+			} catch (InvalidParameterException e) {
+				Toast.makeText(this, getText(R.string.cant_parse) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
 				return;
 			}
 		}
-		
+
 		cancelCurrentTask();
 		updateCountView();
-		
+
 		searchTask = new SearchAsyncTask(this, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
@@ -238,40 +243,50 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 		Intent intent = new Intent(this, ResultItemActivity.class);
 		if (entity instanceof Node)
-			intent.putExtra(ResultItemActivity.ENTITY, (Node)entity);
+			intent.putExtra(ResultItemActivity.ENTITY, (Node) entity);
 		else if (entity instanceof Way)
-			intent.putExtra(ResultItemActivity.ENTITY, (Way)entity);
+			intent.putExtra(ResultItemActivity.ENTITY, (Way) entity);
 		else if (entity instanceof Relation)
-			intent.putExtra(ResultItemActivity.ENTITY, (Relation)entity);
-		
+			intent.putExtra(ResultItemActivity.ENTITY, (Relation) entity);
+
 		startActivity(intent);
 
 		// ResultItemDialog dialog = new ResultItemDialog(this, entity);
 		// dialog.show();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.btnMoreResults){
+		if (v.getId() == R.id.btnMoreResults) {
 			int max = OsmPoiApplication.currentSearch.getMaxResults();
-			OsmPoiApplication.currentSearch.setMaxResults(max+RESULTS_INCREMENT);
+			OsmPoiApplication.currentSearch.setMaxResults(max + RESULTS_INCREMENT);
 			search();
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener#OnLocationChanged(android.location.Location)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener#
+	 * OnLocationChanged(android.location.Location)
 	 */
 	@Override
 	public void OnLocationChanged(Location loc) {
 		adapter.setLocation(loc);
 		updateAccuracyView();
+		synchronized (waitingForLocationLocker) {
+			if (waitingForLocation && OsmPoiApplication.hasLocation()) {
+				waitingForLocation = false;
+				Util.dismissWaiting();
+				search();
+			}
+		}
 	}
-
-
 
 }

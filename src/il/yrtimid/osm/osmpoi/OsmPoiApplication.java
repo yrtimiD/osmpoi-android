@@ -36,6 +36,10 @@ public class OsmPoiApplication extends Application {
 		OsmPoiApplication.locationManager = new LocationChangeManager(getApplicationContext());
 	}
 	
+	public static Boolean hasLocation(){
+		return location!=null;
+	}
+	
 	public static Location getCurrentLocation() {
 		return location;
 	}

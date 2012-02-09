@@ -2,6 +2,7 @@ package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.R;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
 import android.widget.TextView;
@@ -31,5 +32,18 @@ public class Util {
 			txtAccuracy.setText(String.format("%,dm", (int) location.getAccuracy()));
 		}else
 			txtAccuracy.setText(R.string.NA);
+	}
+	
+	private static ProgressDialog progressDialog = null;
+	public static void showWaiting(Context context, String title, String message){
+		if (message == null) message = context.getString(R.string.loading);
+		progressDialog = ProgressDialog.show(context, title, message, true, true);
+	}
+	
+	public static void dismissWaiting(){
+		if (progressDialog != null){
+			progressDialog.dismiss();
+			progressDialog = null;
+		}
 	}
 }
