@@ -320,16 +320,10 @@ public class DbSearcher extends DbOpenHelper {
 		try {
 
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
-			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher);
+			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM node_tags WHERE (%s) AND node_tags.node_id=nodes.id)");
 
-			String baseQuery = "select distinct nodes.id as id, timestamp, lat, lon from nodes";
-			StringBuilder sb = new StringBuilder(baseQuery);
-			for (int i = 1; i <= where.count; i++) {
-				sb.append(String.format(" inner join node_tags t%s on nodes.id=t%s.node_id", i, i));
-			}
-
-			String query = sb.toString()
-					+ " where "+inClause+" AND "+ where.where
+			String query = "select distinct nodes.id as id, timestamp, lat, lon from nodes"
+					+ " where "+inClause+" AND ( "+ where.where + " )"
 					+ " order by (abs(lat-?) + abs(lon-?))"
 					+ " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
@@ -350,18 +344,12 @@ public class DbSearcher extends DbOpenHelper {
 		try {
 			db = getReadableDatabase(); 
 			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
-			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher);
+			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM way_tags WHERE (%s) AND way_tags.way_id=ways.id)");
 
-			String baseQuery = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways";
-			StringBuilder sb = new StringBuilder(baseQuery);
-			for (int i = 1; i <= where.count; i++) {
-				sb.append(String.format(" inner join way_tags t%s on ways.id=t%s.way_id", i, i));
-			}
-			sb.append(" inner join way_nodes on ways.id = way_nodes.way_id");
-			sb.append(" inner join nodes on way_nodes.node_id = nodes.id");
-			
-			String query = sb.toString()
-					+ " where "+inClause+" AND "+ where.where
+			String query = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways"
+					+" inner join way_nodes on ways.id = way_nodes.way_id"
+					+" inner join nodes on way_nodes.node_id = nodes.id"
+					+ " where "+inClause+" AND ("+ where.where +")"
 					+ " group by ways.id"
 					+ " order by (abs(lat-?) + abs(lon-?))"
 					+ " limit ? offset ?";

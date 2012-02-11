@@ -18,22 +18,14 @@ import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 public class TagMatcherFormatter {
 	public static class WhereClause{
 		public String where;
-		public int count;
 		
-		public WhereClause(String where, int count){
+		public WhereClause(String where){
 			this.where = where;
-			this.count = count;
 		}
 	}
 	
-	public static WhereClause format(TagMatcher matcher) {
-		return format(matcher, 0);
-	}
-	
-	private  static WhereClause format(TagMatcher matcher, int index) {
+	public static WhereClause format(TagMatcher matcher, String baseQuery) {
 		if (matcher instanceof KeyValueMatcher) {
-			index++;
-			String tbl = "t"+index;
 			
 			KeyValueMatcher kv = (KeyValueMatcher) matcher;
 			String kf;
@@ -48,27 +40,23 @@ public class TagMatcherFormatter {
 			else
 				vf = String.format("v like '%s'", kv.getValue().replace('*', '%'));
 				
-			return new WhereClause(String.format("(%s.%s) AND (%s.%s)", tbl, kf, tbl, vf), index);
+			String where = String.format("(%s) AND (%s)", kf, vf);
+			return new WhereClause(String.format(baseQuery, where));
 			
 		} else if (matcher instanceof AndMatcher) {
 			AndMatcher am = (AndMatcher) matcher;
-			WhereClause wcLeft = format(am.getLeft(), index);
-			index = wcLeft.count;
-			WhereClause wcRight = format(am.getRight(), index);
-			index = wcRight.count;
-			return new WhereClause(String.format("(%s) AND (%s)", wcLeft.where, wcRight.where), index);
+			WhereClause wcLeft = format(am.getLeft(), baseQuery);
+			WhereClause wcRight = format(am.getRight(), baseQuery);
+			return new WhereClause(String.format("(%s AND %s)", wcLeft.where, wcRight.where));
 		} else if (matcher instanceof OrMatcher) {
 			OrMatcher om = (OrMatcher) matcher;
-			WhereClause wcLeft = format(om.getLeft(), index);
-			index = wcLeft.count;
-			WhereClause wcRight = format(om.getRight(), index);
-			index = wcRight.count;
-			return new WhereClause(String.format("(%s) OR (%s)", wcLeft.where, wcRight.where), index);
+			WhereClause wcLeft = format(om.getLeft(), baseQuery);
+			WhereClause wcRight = format(om.getRight(), baseQuery);
+			return new WhereClause(String.format("(%s OR %s)", wcLeft.where, wcRight.where));
 		} else if (matcher instanceof NotMatcher) {
 			NotMatcher nm = (NotMatcher) matcher;
-			WhereClause wc = format(nm.getMatcher(), index);
-			index = wc.count;
-			return new WhereClause(String.format("NOT (%s)", wc.where), index);
+			WhereClause wc = format(nm.getMatcher(), baseQuery);
+			return new WhereClause(String.format("(NOT %s)", wc.where));
 		} else {
 			throw new IllegalArgumentException("Unknown matcher type "+ Matcher.class.getName());
 		}

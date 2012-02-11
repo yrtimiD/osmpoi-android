@@ -94,6 +94,9 @@ public class CategoriesListAdapter extends BaseAdapter {
 	}
 
 	private String getLocalName(String key){
+		if (key == null || key.length()==0) return key;
+		if (false == Character.isLetter(key.charAt(0))) return key; //getIdentifier internally tries to convert name to integer, so if key=="10" we'll not get it resolved to real ID
+		
 		int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
 		if (resId == 0)
 			return key;
@@ -103,6 +106,8 @@ public class CategoriesListAdapter extends BaseAdapter {
 	
 	private Drawable getIcon(String key){
 		if (key == null || key.length()==0) return null;
+		if (false == Character.isLetter(key.charAt(0))) return null; //getIdentifier internally tries to convert name to integer, so if key=="10" we'll not get it resolved to real ID
+		
 		int resId = context.getResources().getIdentifier(key, "drawable", context.getPackageName());
 		if (resId == 0){
 			resId = context.getResources().getIdentifier(key, "drawable", "android");

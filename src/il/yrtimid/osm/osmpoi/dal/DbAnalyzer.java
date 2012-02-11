@@ -91,17 +91,14 @@ public class DbAnalyzer extends DbOpenHelper {
 			cv.put("[select]", select);
 			Long id = db.insert(INLINE_QUERIES_TABLE, null, cv);
 			
-			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher);
+			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM node_tags WHERE (%s) AND node_tags.node_id=nt.node_id)");
 //TODO: add ways and relations
-			String baseQuery = "INSERT INTO inline_results (query_id, value) SELECT DISTINCT ?, node_tags.v FROM node_tags";
+			String baseQuery = "INSERT INTO inline_results (query_id, value) SELECT DISTINCT ?, nt.v FROM node_tags nt";
 			StringBuilder sb = new StringBuilder(baseQuery);
-			for (int i = 1; i <= where.count; i++) {
-				sb.append(String.format(" INNER JOIN node_tags t%s ON node_tags.node_id=t%s.node_id", i, i));
-			}
 
 			String sql = sb.toString()
-					+ " WHERE "+ where.where +" AND node_tags.k like '"+select.replace('*', '%')+"'"
-					+ " ORDER BY node_tags.v"
+					+ " WHERE ("+ where.where +") AND nt.k like '"+select.replace('*', '%')+"'"
+					+ " ORDER BY nt.v"
 					+ " LIMIT 1000";
 			Log.d(sql);
 			db.execSQL(sql, new Object[]{id});
