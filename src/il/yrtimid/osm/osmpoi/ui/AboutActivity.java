@@ -5,6 +5,7 @@ package il.yrtimid.osm.osmpoi.ui;
 
 import org.w3c.dom.Text;
 
+import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
 import android.app.TabActivity;
@@ -66,12 +67,18 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		spec.setContent(this);
 		host.addTab(spec);
 
-		
-		
-
-		db = new DbAnalyzer(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.ActivityGroup#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (db == null)
+			db = new DbAnalyzer(this, OsmPoiApplication.Config.getDbLocation());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -178,6 +178,7 @@ public final class R {
         public static final int custom_search=0x7f0600ef;
         public static final int dance=0x7f06008a;
         public static final int data_source=0x7f0600da;
+        public static final int db_on_sdcard=0x7f0600fb;
         public static final int deli=0x7f060039;
         public static final int department_store=0x7f06003a;
         public static final int dive=0x7f06003b;

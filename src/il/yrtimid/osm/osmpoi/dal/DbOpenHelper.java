@@ -3,15 +3,12 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
-import java.security.InvalidParameterException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-
 import il.yrtimid.osm.osmpoi.Log;
+import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import android.content.ContentValues;
@@ -45,7 +42,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	
 	protected static final String STARRED_TABLE = "starred";
 	
-	private static final String DATABASE_NAME = "osm.db";
+	
 	private static final int DATABASE_VERSION = 2;
 
 	Context context;
@@ -56,8 +53,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	 * @param factory
 	 * @param version
 	 */
-	public DbOpenHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	public DbOpenHelper(Context context, File dbLocation) {
+		super(context, dbLocation.getPath(), null, DATABASE_VERSION);
 		this.context = context;
 	}
 

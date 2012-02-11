@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi;
 
+import java.io.File;
 import java.util.List;
 
 import il.yrtimid.osm.osmpoi.categories.Category;
@@ -26,7 +27,8 @@ public class OsmPoiApplication extends Application {
 	public static Category mainCategory;
 	private static Location location;
 	public static List<EntityFormatter> formatters;
-
+	private static final String DATABASE_NAME = "osm.db";
+	
 	/* (non-Javadoc)
 	 * @see android.app.Application#onCreate()
 	 */
@@ -62,17 +64,38 @@ public class OsmPoiApplication extends Application {
 			searchSourceType = (SearchSourceType) Enum.valueOf(SearchSourceType.class, prefs.getString(Preferences.SEARCH_SOURCE, "NONE"));
 			resultLanguage = prefs.getString(Preferences.RESULT_LANGUAGE, "");
 
+			Boolean isDbOnSdcard = prefs.getBoolean(Preferences.IS_DB_ON_SDCARD, false);
+			setupDbLocation(context, isDbOnSdcard);
+			
 			if (currentSearch == null){
 				currentSearch = new SearchParameters();
 			}
 			
-			if (searchSource == null)
-				tryCreateSearchSource(context);
+			tryCreateSearchSource(context);
+		}
+
+		private static Boolean setupDbLocation(Context context, Boolean isDbOnSdcard) {
+			dbLocation = null;
+			if (isDbOnSdcard){
+				try{
+					File folder = Preferences.getHomeFolder(context);
+					if (folder.canWrite()){
+						dbLocation = new File(folder, DATABASE_NAME);
+					}
+				}catch(Exception e){
+					Log.wtf("Checking external storage DB", e);
+				}
+			}else{
+				dbLocation = new File(DATABASE_NAME);
+			}
+			
+			return (dbLocation!=null);
 		}
 
 		private static SearchSourceType searchSourceType;
 		private static String resultLanguage;
-
+		private static File dbLocation;
+		
 		public static SearchSourceType getSearchSourceType() {
 			return searchSourceType;
 		}
@@ -81,6 +104,10 @@ public class OsmPoiApplication extends Application {
 			return resultLanguage;
 		}
 
+		public static File getDbLocation() {
+			return dbLocation;
+		}
+		
 		public static Boolean tryCreateSearchSource(Context context) {
 			return tryCreateSearchSource(context, searchSourceType);
 		}
@@ -92,7 +119,7 @@ public class OsmPoiApplication extends Application {
 
 				switch (type) {
 				case DB:
-					OsmPoiApplication.searchSource = new DBSearchSource(context);
+					OsmPoiApplication.searchSource = DBSearchSource.create(context);
 					break;
 				default:
 					OsmPoiApplication.searchSource = null;

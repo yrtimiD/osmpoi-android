@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -24,8 +25,8 @@ public class DbAnalyzer extends DbOpenHelper {
 	/**
 	 * @param context
 	 */
-	public DbAnalyzer(Context context) {
-		super(context);
+	public DbAnalyzer(Context context, File dbLocation) {
+		super(context, dbLocation);
 	}
 
 	public long getNodesCount() {

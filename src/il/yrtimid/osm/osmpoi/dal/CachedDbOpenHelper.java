@@ -8,6 +8,7 @@ import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,8 +30,8 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 	/**
 	 * @param context
 	 */
-	public CachedDbOpenHelper(Context context) {
-		super(context);
+	public CachedDbOpenHelper(Context context, File dbLocation) {
+		super(context, dbLocation);
 	}
 
 	private boolean flushing = false;

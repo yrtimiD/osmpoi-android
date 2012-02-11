@@ -1,6 +1,7 @@
 package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.ImportSettings;
+import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.SearchSourceType;
@@ -37,12 +38,13 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	public static final String LAST_SEARCH = "last_search";
 
 	public static final String RESULT_LANGUAGE = "result_language";
+	public static final String IS_DB_ON_SDCARD = "is_db_on_sdcard";
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
 	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
 	private static final String PREFERENCE_ABOUT = "preference_about";
-
+	
+	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
-	CachedDbOpenHelper dbHelper;
 	SharedPreferences prefs;
 
 	@Override
@@ -52,12 +54,11 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		addPreferencesFromResource(R.xml.preferences);
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		dbHelper = new CachedDbOpenHelper(this);
-
 		findPreference(PREFERENCE_IMPORT_PBF).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_CLEAR_DB).setOnPreferenceClickListener(this);
 		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_ABOUT).setOnPreferenceClickListener(this);
+		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 	}
 
 	/*
@@ -69,6 +70,16 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	protected void onResume() {
 		super.onResume();
 	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		OsmPoiApplication.Config.reloadConfig(this);
+	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -141,7 +152,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	 */
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		if (SEARCH_SOURCE.equals(preference.getKey())) {
+/*		if (SEARCH_SOURCE.equals(preference.getKey())) {
 			SearchSourceType type = (SearchSourceType) Enum.valueOf(SearchSourceType.class, (String) newValue);
 
 			Boolean success = OsmPoiApplication.Config.tryCreateSearchSource(this, type);
@@ -150,9 +161,14 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 			} else {
 				Toast.makeText(this, R.string.cant_create_search_source, Toast.LENGTH_LONG).show();
 			}
+		}else if (IS_DB_ON_SDCARD.equals(preference.getKey())){
+			OsmPoiApplication.Config.reloadConfig(this);
+			return true;
 		}
-
 		return false;
+		*/
+
+		return true;
 	}
 
 	/**
@@ -189,25 +205,27 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	 * FileInputStream(new File(homeFolder, name)); } }
 	 */
 
-	public static FileOutputStream getOutputFile(Context context, String name) throws FileNotFoundException {
+/*	public static FileOutputStream getOutputFile(Context context, String name) throws FileNotFoundException {
 		String homeFolder = getHomeFolder(context);
 		if (homeFolder == null) {
 			return context.openFileOutput(name, MODE_PRIVATE);
 		} else {
 			return new FileOutputStream(new File(homeFolder, name));
 		}
-	}
+	}*/
 
-	public static String getHomeFolder(Context context) {
+	public static File getHomeFolder(Context context) {
 		//File appDir = context.getExternalFilesDir(null); //api 8+
 		File extStorageDir = Environment.getExternalStorageDirectory();
-		File appDir = new File(extStorageDir, "/Android/data/"+context.getPackageName()+"/files");
-		try {
-			return appDir.getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "/sdcard";
+		File appDir = new File(extStorageDir, "/Android/data/"+context.getPackageName()+"/files/");
+		if (appDir.exists() == false){
+			try{
+				appDir.mkdirs();
+			}catch(Exception e){
+				Log.wtf("Creating home folder: "+appDir.getPath(), e);
+			}
 		}
+		return appDir;
 	}
 
 	public static void resetSearchSourceType(Context context) {

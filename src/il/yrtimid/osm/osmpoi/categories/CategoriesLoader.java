@@ -4,6 +4,7 @@
 package il.yrtimid.osm.osmpoi.categories;
 
 import il.yrtimid.osm.osmpoi.Log;
+import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.categories.Category.Type;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
 
@@ -115,7 +116,7 @@ public class CategoriesLoader {
 		if (cat.getType() != Category.Type.INLINE_SEARCH) return;
 		DbAnalyzer dbHelper = null;
 		try{
-			dbHelper = new DbAnalyzer(context);
+			dbHelper = new DbAnalyzer(context, OsmPoiApplication.Config.getDbLocation());
 			Long id = dbHelper.getInlineResultsId(cat.getQuery(), cat.getSelect());
 			if (id == 0L){
 				id = dbHelper.createInlineResults(cat.getQuery(), cat.getSelect());

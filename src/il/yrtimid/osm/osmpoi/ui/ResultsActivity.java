@@ -280,6 +280,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	public void OnLocationChanged(Location loc) {
 		adapter.setLocation(loc);
 		updateAccuracyView();
+		updateCountView();
 		synchronized (waitingForLocationLocker) {
 			if (waitingForLocation && OsmPoiApplication.hasLocation()) {
 				waitingForLocation = false;

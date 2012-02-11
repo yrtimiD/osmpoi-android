@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,8 +22,8 @@ import il.yrtimid.osm.osmpoi.domain.EntityType;
  */
 public class DbStarred extends DbOpenHelper {
 	
-	public DbStarred(Context context) {
-		super(context);
+	public DbStarred(Context context, File dbLocation) {
+		super(context, dbLocation);
 	}
 
 	public void addStarred(Entity entity, String title){

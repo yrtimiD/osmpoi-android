@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi;
 
+import il.yrtimid.osm.osmpoi.OsmPoiApplication.Config;
 import il.yrtimid.osm.osmpoi.dal.DbSearcher;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
@@ -18,9 +19,16 @@ public class DBSearchSource implements ISearchSource {
 	//private Context context;
 	private DbSearcher db;
 	
-	public DBSearchSource(Context context) throws Exception {
+	public static ISearchSource create(Context context){
+		if (Config.getDbLocation() != null)
+			return new DBSearchSource(context);
+		else
+			return null;
+	}
+	
+	protected DBSearchSource(Context context){
 		//this.context = context;
-		db = new DbSearcher(context);
+		db = new DbSearcher(context, OsmPoiApplication.Config.getDbLocation());
 	}
 
 	@Override

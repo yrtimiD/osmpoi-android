@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,8 +34,8 @@ public class DbSearcher extends DbOpenHelper {
 	/**
 	 * @param context
 	 */
-	public DbSearcher(Context context) {
-		super(context);
+	public DbSearcher(Context context, File dbLocation) {
+		super(context, dbLocation);
 	}
 
 	private Integer[] getGrid(Point p, int count){

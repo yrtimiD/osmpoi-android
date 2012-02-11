@@ -96,6 +96,7 @@
                 android:key="preference_clear_db"
                 android:persistent="false"
                 android:title="Clear DB (debug)" />
+            <CheckBoxPreference android:key="is_db_on_sdcard" android:title="@string/db_on_sdcard" android:defaultValue="true"/>
         </PreferenceScreen>
         <PreferenceScreen
             android:enabled="false"

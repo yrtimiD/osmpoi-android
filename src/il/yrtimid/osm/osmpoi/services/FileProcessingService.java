@@ -6,6 +6,7 @@ package il.yrtimid.osm.osmpoi.services;
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.ItemPipe;
+import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
 import il.yrtimid.osm.osmpoi.domain.Entity;
@@ -70,7 +71,7 @@ public class FileProcessingService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		context = getApplicationContext();
-		dbHelper = new CachedDbOpenHelper(this);
+		dbHelper = new CachedDbOpenHelper(this, OsmPoiApplication.Config.getDbLocation());
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		Intent notificationIntent = new Intent(this, SearchActivity.class);
