@@ -179,6 +179,8 @@ public final class R {
         public static final int dance=0x7f06008a;
         public static final int data_source=0x7f0600da;
         public static final int db_on_sdcard=0x7f0600fb;
+        public static final int db_on_sdcard_false=0x7f0600fd;
+        public static final int db_on_sdcard_true=0x7f0600fc;
         public static final int deli=0x7f060039;
         public static final int department_store=0x7f06003a;
         public static final int dive=0x7f06003b;
@@ -234,6 +236,7 @@ public final class R {
         public static final int ice_cream=0x7f060084;
         public static final int ice_rink=0x7f06008e;
         public static final int import_confirm=0x7f0600d8;
+        public static final int import_settings=0x7f0600fe;
         public static final int imported_db=0x7f0600e8;
         public static final int imported_db_summary=0x7f0600e9;
         public static final int information=0x7f0600af;

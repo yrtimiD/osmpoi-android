@@ -23,16 +23,14 @@
 	<string name="no_file_picker">No compatible file picker installed</string>
 	<string name="ui">Interface</string>
 	<string name="result_language">Preferred result language</string>
-	<string name="preference_import_pbf_summary">Imports current PBF file into local database</string>
 	<string name="search_source_summary">Change source for searching</string>
 	<string name="stop_follow">Stop follow GPS</string>
 	<string name="clear">Clear</string>
 	<string name="search_again">Search again</string>
 	<string name="search_finished">Search finished</string>
 	<string name="search_cancelled">Search has been cancelled</string>
-	<string name="pbf_file">PBF file</string>
 	<string name="imported_db">Imported DB</string>
-	<string name="imported_db_summary">Database created by importing OSM extract file</string>
+	<string name="imported_db_summary">Search in local database created by importing OSM-extract file</string>
 	<string name="pbf_file_summary">Local OSM extract file in PBF format</string>
 	<string name="compact">Compact</string>
 	<string name="service_name">OsmPoi file import service</string>
@@ -55,4 +53,10 @@
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
 	<string name="db_on_sdcard">Store DB on sdcard</string>
+	<string name="db_on_sdcard_true">Database file will be stored on external storage</string>
+	<string name="db_on_sdcard_false">Database file will be stored on internal storage</string>
+	<string name="import_settings">Import Settings…</string>
+	<string name="import_settings_summary">Customization of import process</string>
+	<string name="import_pbf">Import PBF…</string>
+	<string name="import_pbf_summary">Imports selected PBF file into local database</string>
 </resources>
