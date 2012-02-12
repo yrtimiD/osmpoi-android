@@ -44,9 +44,10 @@ public final class R {
         public static final int imageView1=0x7f090000;
         public static final int itemViewID=0x7f090017;
         public static final int layoutMain=0x7f090012;
+        public static final int layoutNoSearchSource_ref=0x7f090011;
         public static final int linearLayout1=0x7f09000c;
         public static final int linearLayoutAccuracy=0x7f09000a;
-        public static final int linearLayoutAccuracy_ref=0x7f090011;
+        public static final int linearLayoutAccuracy_ref=0x7f090010;
         public static final int listCategories=0x7f090013;
         public static final int listResults=0x7f09001d;
         public static final int mnu_cancel=0x7f090025;
@@ -66,7 +67,6 @@ public final class R {
         public static final int textKey=0x7f09001f;
         public static final int textLat=0x7f090019;
         public static final int textLon=0x7f09001a;
-        public static final int textNoSearchSource=0x7f090010;
         public static final int textNodesCount=0x7f090004;
         public static final int textRelationsCount=0x7f090008;
         public static final int textValue=0x7f090020;
@@ -86,12 +86,13 @@ public final class R {
         public static final int file_picker_empty_view=0x7f030007;
         public static final int file_picker_list_item=0x7f030008;
         public static final int main=0x7f030009;
-        public static final int result_item_full_view=0x7f03000a;
-        public static final int results_view=0x7f03000b;
-        public static final int results_view_footer=0x7f03000c;
-        public static final int results_view_row=0x7f03000d;
-        public static final int starred_title=0x7f03000e;
-        public static final int tag_row=0x7f03000f;
+        public static final int no_search_source=0x7f03000a;
+        public static final int result_item_full_view=0x7f03000b;
+        public static final int results_view=0x7f03000c;
+        public static final int results_view_footer=0x7f03000d;
+        public static final int results_view_row=0x7f03000e;
+        public static final int starred_title=0x7f03000f;
+        public static final int tag_row=0x7f030010;
     }
     public static final class menu {
         public static final int item_menu=0x7f080000;

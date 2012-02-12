@@ -140,7 +140,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 
 	private void checkSearchSource() {
 		View mainLayout = findViewById(R.id.layoutMain);
-		View warning = findViewById(R.id.textNoSearchSource);
+		View warning = findViewById(R.id.layoutNoSearchSource_ref);
 
 		if (OsmPoiApplication.searchSource == null) {
 			mainLayout.setVisibility(View.GONE);
