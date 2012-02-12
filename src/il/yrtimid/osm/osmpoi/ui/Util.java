@@ -4,6 +4,7 @@ import il.yrtimid.osm.osmpoi.R;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface.OnCancelListener;
 import android.location.Location;
 import android.widget.TextView;
 
@@ -36,8 +37,11 @@ public class Util {
 	
 	private static ProgressDialog progressDialog = null;
 	public static void showWaiting(Context context, String title, String message){
+		showWaiting(context, title, message, null);
+	}
+	public static void showWaiting(Context context, String title, String message, OnCancelListener cancelListener){
 		if (message == null) message = context.getString(R.string.loading);
-		progressDialog = ProgressDialog.show(context, title, message, true, true);
+		progressDialog = ProgressDialog.show(context, title, message, true, true, cancelListener);
 	}
 	
 	public static void dismissWaiting(){

@@ -10,8 +10,9 @@ import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import android.app.Activity;
-//import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 //import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask.Status;
@@ -70,12 +71,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		if (savedData != null)
 			adapter.addItems(savedData);
 		else{
-			if (false == OsmPoiApplication.hasLocation()) {
-				waitingForLocation = true;
-				Util.showWaiting(this, null, getString(R.string.waiting_for_location));
-			}else {
-				search();
-			}
+			search();
 		}
 	}
 
@@ -192,7 +188,19 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 				return;
 			}
 		}
-
+		
+		if (waitingForLocation) return;
+		if (false == OsmPoiApplication.hasLocation()) {
+			waitingForLocation = true;
+			Util.showWaiting(this, null, getString(R.string.waiting_for_location), new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					ResultsActivity.this.waitingForLocation = false;
+				}
+			});
+			return;
+		}
+		
 		cancelCurrentTask();
 		updateCountView();
 
