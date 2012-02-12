@@ -49,6 +49,8 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		inflater = LayoutInflater.from(this);
 		setContentView(R.layout.about);
 
+		db = new DbAnalyzer(this, OsmPoiApplication.Config.getDbLocation());
+		
 		TabHost host = getTabHost();
 		TabSpec spec;
 
@@ -69,16 +71,6 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.ActivityGroup#onResume()
-	 */
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (db == null)
-			db = new DbAnalyzer(this, OsmPoiApplication.Config.getDbLocation());
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
