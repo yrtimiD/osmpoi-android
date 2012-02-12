@@ -11,7 +11,7 @@
             android:entryValues="@array/search_sources_values"
             android:key="search_source"
             android:summary="@string/search_source_summary"
-            android:title="@string/search_source" android:defaultValue="DB"/>
+            android:title="@string/search_source" android:defaultValue="NONE"/>
 
         <PreferenceScreen
             android:summary="@string/imported_db_summary"
