@@ -41,8 +41,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	public static final String IS_DB_ON_SDCARD = "is_db_on_sdcard";
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
 	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
-	private static final String PREFERENCE_ABOUT = "preference_about";
-	
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -57,7 +55,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(PREFERENCE_IMPORT_PBF).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_CLEAR_DB).setOnPreferenceClickListener(this);
 		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
-		findPreference(PREFERENCE_ABOUT).setOnPreferenceClickListener(this);
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 	}
 
@@ -104,9 +101,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 					runClearDbService();
 				}
 			});
-		} else if (PREFERENCE_ABOUT.equals(key)) {
-			startActivity(new Intent(this, AboutActivity.class));
-			return true;
 		}
 
 		return false;

@@ -133,6 +133,11 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			Intent pref = new Intent(this, Preferences.class);
 			startActivity(pref);
 			return true;
+			
+		case R.id.mnu_about:
+			startActivity(new Intent(this, AboutActivity.class));
+			return true;
+			
 		default:
 			return super.onOptionsItemSelected(item);
 		}

@@ -54,7 +54,7 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 			//Log.v(TAG, "Adding entity to queue. Count="+entitiesQueue.size());
 		}
 		
-		if (flushing || addEntitiesQueue.size() >= 5000) {
+		if (flushing || addEntitiesQueue.size() >= 1000) {
 			try {
 				Log.v("Flushing queue to DB. Count="+addEntitiesQueue.size());
 				SQLiteDatabase db = getWritableDatabase();
@@ -80,7 +80,7 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 			addNodeQueue.add(node);
 		}
 		
-		if (flushing || addNodeQueue.size() >= 5000) {
+		if (flushing || addNodeQueue.size() >= 1000) {
 			try {
 				Log.v("Flushing nodes queue to DB. Count="+addNodeQueue.size());
 				super.addNodes(addNodeQueue);

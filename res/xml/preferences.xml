@@ -113,13 +113,5 @@
             android:key="result_language"
             android:title="@string/result_language" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:orderingFromXml="true"
-        android:title="@string/about" >
-        <Preference
-            android:key="preference_about"
-            android:persistent="false"
-            android:title="@string/about" />
-    </PreferenceCategory>
 
 </PreferenceScreen>

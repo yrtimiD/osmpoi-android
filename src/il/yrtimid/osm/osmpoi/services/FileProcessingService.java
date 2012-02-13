@@ -133,6 +133,7 @@ public class FileProcessingService extends Service {
 
 		if (task != null){
 			Thread t = new Thread(task, "Service");
+			t.setPriority(Thread.NORM_PRIORITY-1);
 			t.start();
 		}else {
 			stopSelf();

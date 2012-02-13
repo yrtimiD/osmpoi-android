@@ -26,13 +26,14 @@ public final class R {
         public static final int ic_launcher=0x7f020004;
         public static final int ic_menu_close_clear_cancel=0x7f020005;
         public static final int ic_menu_goto=0x7f020006;
-        public static final int ic_menu_mylocation=0x7f020007;
-        public static final int ic_menu_preferences=0x7f020008;
-        public static final int ic_menu_refresh=0x7f020009;
-        public static final int ic_menu_stop=0x7f02000a;
-        public static final int ic_node=0x7f02000b;
-        public static final int ic_relation=0x7f02000c;
-        public static final int ic_way=0x7f02000d;
+        public static final int ic_menu_help=0x7f020007;
+        public static final int ic_menu_mylocation=0x7f020008;
+        public static final int ic_menu_preferences=0x7f020009;
+        public static final int ic_menu_refresh=0x7f02000a;
+        public static final int ic_menu_stop=0x7f02000b;
+        public static final int ic_node=0x7f02000c;
+        public static final int ic_relation=0x7f02000d;
+        public static final int ic_way=0x7f02000e;
     }
     public static final class id {
         public static final int about_map_icons=0x7f090009;
@@ -50,12 +51,13 @@ public final class R {
         public static final int linearLayoutAccuracy_ref=0x7f090010;
         public static final int listCategories=0x7f090013;
         public static final int listResults=0x7f09001d;
-        public static final int mnu_cancel=0x7f090025;
-        public static final int mnu_follow=0x7f090023;
+        public static final int mnu_about=0x7f090023;
+        public static final int mnu_cancel=0x7f090026;
+        public static final int mnu_follow=0x7f090024;
         public static final int mnu_open=0x7f090021;
-        public static final int mnu_refresh=0x7f090026;
+        public static final int mnu_refresh=0x7f090027;
         public static final int mnu_settings=0x7f090022;
-        public static final int mnu_stop_follow=0x7f090024;
+        public static final int mnu_stop_follow=0x7f090025;
         public static final int progressNodesCount=0x7f090003;
         public static final int progressRelationsCount=0x7f090007;
         public static final int progressWaysCount=0x7f090005;
