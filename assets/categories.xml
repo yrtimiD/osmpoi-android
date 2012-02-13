@@ -46,7 +46,7 @@
 		<search name="appliance" query="amenity=appliance" />
 		<search name="art" query="amenity=art" />
 		<search name="baby_goods" query="amenity=baby_goods" />
-		<search name="bakery" query="amenity=bakery" />
+		<search name="bakery" query="shop=bakery" />
 		<search name="bathroom_furnishing" query="amenity=bathroom_furnishing" />
 		<search name="beauty" query="amenity=beauty" />
 		<search name="bed" query="amenity=bed" />
