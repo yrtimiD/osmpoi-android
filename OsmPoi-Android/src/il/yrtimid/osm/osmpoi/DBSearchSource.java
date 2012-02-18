@@ -17,10 +17,11 @@ import android.content.Context;
  */
 public class DBSearchSource implements ISearchSource {
 	//private Context context;
-	private DbSearcher db;
+	private DbSearcher poiDb;
+	private DbSearcher addressDb;
 	
 	public static ISearchSource create(Context context){
-		if (Config.getDbLocation() != null)
+		if (Config.getPoiDbLocation() != null && Config.getAddressDbLocation() != null)
 			return new DBSearchSource(context);
 		else
 			return null;
@@ -28,13 +29,17 @@ public class DBSearchSource implements ISearchSource {
 	
 	protected DBSearchSource(Context context){
 		//this.context = context;
-		db = new DbSearcher(context, OsmPoiApplication.Config.getDbLocation());
+		poiDb = new DbSearcher(context, Config.getPoiDbLocation());
+		addressDb = new DbSearcher(context, Config.getAddressDbLocation());
 	}
 
 	@Override
 	public void close(){
-		if (db != null)
-			db.close();
+		if (poiDb != null)
+			poiDb.close();
+
+		if (addressDb != null)
+			addressDb.close();
 	}
 	
 	/*
@@ -46,7 +51,7 @@ public class DBSearchSource implements ISearchSource {
 	 */
 	@Override
 	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		db.findAroundPlaceByTag(search.getCenter(), matcher, search.getMaxResults(), newItemNotifier, cancel);		
+		poiDb.findAroundPlaceByTag(search.getCenter(), matcher, search.getMaxResults(), newItemNotifier, cancel);		
 	}
 
 	/*
@@ -58,7 +63,7 @@ public class DBSearchSource implements ISearchSource {
 	 */
 	@Override
 	public void getByDistance(SearchParameters search, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		db.findAroundPlace(search.getCenter(), search.getMaxResults(), newItemNotifier, cancel);
+		poiDb.findAroundPlace(search.getCenter(), search.getMaxResults(), newItemNotifier, cancel);
 	}
 
 	/* (non-Javadoc)

@@ -59,4 +59,5 @@
 	<string name="import_settings_summary">Customization of import process</string>
 	<string name="import_pbf">Import PBF…</string>
 	<string name="import_pbf_summary">Imports selected PBF file into local database</string>
+	<string name="large_file_confirm">Selected file is too large. Do you want to continue?</string>
 </resources>

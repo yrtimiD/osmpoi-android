@@ -17,9 +17,20 @@ import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
 import il.yrtimid.osm.osmpoi.ui.SearchActivity;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandlerFactory;
+
+import org.apache.http.util.ByteArrayBuffer;
+
+import dalvik.system.PotentialDeadlockError;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,6 +38,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.webkit.URLUtil;
 
 /**
  * @author yrtimid
@@ -47,7 +59,8 @@ public class FileProcessingService extends Service {
 
 	private boolean hasRunningJobs = false;
 
-	CachedDbOpenHelper dbHelper;
+	CachedDbOpenHelper poiDbHelper;
+	CachedDbOpenHelper addressDbHelper;
 	NotificationManager notificationManager;
 	PendingIntent contentIntent;
 	Context context;
@@ -71,12 +84,12 @@ public class FileProcessingService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		context = getApplicationContext();
-		dbHelper = new CachedDbOpenHelper(this, OsmPoiApplication.Config.getDbLocation());
+		poiDbHelper = new CachedDbOpenHelper(this, OsmPoiApplication.Config.getPoiDbLocation());
+		addressDbHelper = new CachedDbOpenHelper(this, OsmPoiApplication.Config.getAddressDbLocation());
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		Intent notificationIntent = new Intent(this, SearchActivity.class);
 		contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
 	}
 
 	/*
@@ -87,7 +100,9 @@ public class FileProcessingService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		dbHelper.close();
+		poiDbHelper.close();
+		addressDbHelper.close();
+		
 		if (hasRunningJobs) {
 
 			final Notification notif = new Notification(R.drawable.ic_launcher, "OsmPoi Service", System.currentTimeMillis());
@@ -133,6 +148,7 @@ public class FileProcessingService extends Service {
 
 		if (task != null){
 			Thread t = new Thread(task, "Service");
+			t.setPriority(Thread.NORM_PRIORITY-1);
 			t.start();
 		}else {
 			stopSelf();
@@ -152,7 +168,8 @@ public class FileProcessingService extends Service {
 	
 			startForeground(CLEAR_DB, notif);
 			
-			dbHelper.clearAll();
+			poiDbHelper.clearAll();
+			addressDbHelper.clearAll();
 
 			stopForeground(true);
 			
@@ -168,7 +185,12 @@ public class FileProcessingService extends Service {
 
 	private void importToDB(String sourceFilePath) {
 		try {
-			
+			Log.d("Importing file: "+sourceFilePath);
+			if (sourceFilePath.startsWith("/")){
+				//local file, can use directly
+			}else {
+				sourceFilePath = downloadFile(sourceFilePath);
+			}
 
 			final Notification notif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
 			notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
@@ -181,7 +203,8 @@ public class FileProcessingService extends Service {
 			final ImportSettings settings = Preferences.getImportSettings(context);
 
 			if (settings.isClearBeforeImport()){
-				dbHelper.clearAll();
+				poiDbHelper.clearAll();
+				addressDbHelper.clearAll();
 			}
 			
 			notif.setLatestEventInfo(context, "PBF Import", "Importing in progress...", contentIntent);
@@ -199,14 +222,12 @@ public class FileProcessingService extends Service {
 			if (settings.isImportWays()){
 				input = new BufferedInputStream(new FileInputStream(sourceFile));
 				importWays(input, notif, settings);
-				dbHelper.flush();
 				Log.d("Finished importing ways");
 			}
 			
 			if (settings.isImportNodes()){
 				input = new BufferedInputStream(new FileInputStream(sourceFile));
 				importNodes(input, notif, settings);
-				dbHelper.flush();
 				Log.d("Finished importing nodes");
 			}
 			
@@ -214,8 +235,9 @@ public class FileProcessingService extends Service {
 			notificationManager.notify(IMPORT_TO_DB_ID, notif);
 			
 			if(settings.isBuildGrid()){
-				dbHelper.updateNodesGrid();
-				dbHelper.optimizeGrid(1000);
+				poiDbHelper.updateNodesGrid();
+				poiDbHelper.optimizeGrid(1000);
+				//TODO: is addr db needs grid too? 
 			}
 
 			stopForeground(true);
@@ -231,13 +253,17 @@ public class FileProcessingService extends Service {
 	}
 
 	public Long importWays(final InputStream input, final Notification notif, final ImportSettings settings) {
+		poiDbHelper.beginAdd();
+		addressDbHelper.beginAdd();
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
 				if (item.getType() == EntityType.Way){
 					settings.cleanTags(item);
-					if (settings.isEntityValid(item))
-						dbHelper.addEntity(item);
+					if (settings.isPoi(item))
+						poiDbHelper.addEntity(item);
+					else if (settings.isAddress(item))
+						addressDbHelper.addEntity(item);
 					else if (settings.isImportRelations()){
 						//TODO: dbHelper.addWayIfBelongsToRelation((Way)item);
 					}
@@ -255,20 +281,28 @@ public class FileProcessingService extends Service {
 			notif.setLatestEventInfo(context, "PBF Import", "Nodes import failed", contentIntent);
 		}
 		
+		poiDbHelper.endAdd();
+		addressDbHelper.endAdd();
+		
 		return count;
 	}
 	
 	public Long importNodes(final InputStream input, final Notification notif, final ImportSettings settings) {
+		poiDbHelper.beginAdd();
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
 				if (item.getType() == EntityType.Node){
-					Node n = (Node)item;
+					
 					settings.cleanTags(item);
-					if (settings.isEntityValid(item))
-						dbHelper.addNode(n);
+					if (settings.isPoi(item))
+						poiDbHelper.addEntity(item);
+					else if (settings.isAddress(item))
+						addressDbHelper.addEntity(item);
 					else if (settings.isImportWays() || settings.isImportRelations()){
-						dbHelper.addNodeIfBelongsToWay(n);
+						Node n = (Node)item;
+						poiDbHelper.addNodeIfBelongsToWay(n);
+						addressDbHelper.addNodeIfBelongsToWay(n);
 					}
 				}
 			}
@@ -284,6 +318,39 @@ public class FileProcessingService extends Service {
 			notif.setLatestEventInfo(context, "PBF Import", "Nodes import failed", contentIntent);
 		}
 		
+		poiDbHelper.endAdd();
 		return count;
+	}
+
+	private String downloadFile(String path){
+		String localPath = path;
+		File homeFolder = Preferences.getHomeFolder(context);
+		byte[] buffer = new byte[1024];
+		int downloadedSize = 0;
+		int totalSize = 0;
+		try{
+			URL u = new URL(path);
+
+			String outputFileName = URLUtil.guessFileName(path, null, null);
+			File outputPath = new File(homeFolder,outputFileName);
+			OutputStream output = new BufferedOutputStream(new FileOutputStream(outputPath), buffer.length);
+			
+			URLConnection conn = u.openConnection();
+			totalSize = conn.getContentLength();
+			InputStream input = new BufferedInputStream(conn.getInputStream(), buffer.length);
+			
+	        int bufferLength = 0;
+	        while ( (bufferLength = input.read(buffer)) > 0 ) {
+	        	output.write(buffer, 0, bufferLength);
+	        	downloadedSize += bufferLength;
+		        Log.d(String.format("Downloaded %d/%d", downloadedSize, totalSize));
+	        }
+	        output.close();
+	        input.close();
+	        localPath = outputPath.getPath();
+		}catch(Exception e){
+			Log.wtf("downloadFile", e);
+		}
+		return localPath;
 	}
 }

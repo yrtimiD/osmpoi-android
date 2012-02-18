@@ -54,88 +54,25 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="DB stats"
+        android:layout_marginTop="5dip"
+        android:text="POI DB stats"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_nodes"/>
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_ways"/>
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_relations"/>
+    
+ 	<TextView
+ 	    android:layout_width="fill_parent"
+ 	    android:layout_height="wrap_content"
+ 	    android:layout_gravity="center_horizontal"
+ 	    android:layout_marginTop="5dip"
+ 	    android:text="Addresses DB stats"
+ 	    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dip"
-            android:text="Nodes: "
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <ProgressBar
-            android:id="@+id/progressNodesCount"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textNodesCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dip"
-            android:text="Ways: "
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <ProgressBar
-            android:id="@+id/progressWaysCount"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textWaysCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dip"
-            android:text="Relations: "
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <ProgressBar
-            android:id="@+id/progressRelationsCount"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textRelationsCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone" />
-    </LinearLayout>
-
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/addr_nodes"/>
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/addr_ways"/>
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/addr_relations"/>
+    
+    
 </LinearLayout>

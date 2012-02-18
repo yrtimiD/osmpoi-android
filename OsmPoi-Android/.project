@@ -34,11 +34,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>libs/android-support-v4.jar</name>
-			<type>1</type>
-			<location>/home/yrtimid/Projects/Android/android-sdk-linux/extras/android/support/v4/android-support-v4.jar</location>
-		</link>
-	</linkedResources>
 </projectDescription>

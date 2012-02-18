@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 public class ResultItemActivity extends Activity implements OnCheckedChangeListener {
 	public static final String ENTITY = "ENTITY";
-	private DbStarred dbHelper = new DbStarred(this, OsmPoiApplication.Config.getDbLocation());
+	private DbStarred dbHelper = new DbStarred(this, OsmPoiApplication.Config.getPoiDbLocation());
 	private Entity entity;
 
 	@Override

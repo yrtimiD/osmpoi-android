@@ -133,6 +133,11 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			Intent pref = new Intent(this, Preferences.class);
 			startActivity(pref);
 			return true;
+			
+		case R.id.mnu_about:
+			startActivity(new Intent(this, AboutActivity.class));
+			return true;
+			
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -169,7 +174,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			showCategory(cat);
 			break;
 		case STARRED:
-			DbStarred dbStarredHelper = new DbStarred(this, OsmPoiApplication.Config.getDbLocation());
+			DbStarred dbStarredHelper = new DbStarred(this, OsmPoiApplication.Config.getPoiDbLocation());
 			Collection<Category> starred = dbStarredHelper.getAllStarred();
 			dbStarredHelper.close();
 			cat.getSubCategories().clear();

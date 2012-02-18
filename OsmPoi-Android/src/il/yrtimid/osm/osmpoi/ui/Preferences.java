@@ -4,20 +4,17 @@ import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
-import il.yrtimid.osm.osmpoi.SearchSourceType;
-import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
-import java.util.Map;
-
 import com.kaloer.filepicker.FilePickerActivity;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +26,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.widget.Toast;
 
 //TODO: prevent executing more than one service task at a time
 public class Preferences extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener {
@@ -41,8 +37,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	public static final String IS_DB_ON_SDCARD = "is_db_on_sdcard";
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
 	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
-	private static final String PREFERENCE_ABOUT = "preference_about";
-	
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -57,7 +51,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(PREFERENCE_IMPORT_PBF).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_CLEAR_DB).setOnPreferenceClickListener(this);
 		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
-		findPreference(PREFERENCE_ABOUT).setOnPreferenceClickListener(this);
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 	}
 
@@ -104,9 +97,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 					runClearDbService();
 				}
 			});
-		} else if (PREFERENCE_ABOUT.equals(key)) {
-			startActivity(new Intent(this, AboutActivity.class));
-			return true;
 		}
 
 		return false;
@@ -269,7 +259,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setNodeKey("*", prefs.getBoolean("include_nodes_other", true));
 		
 		settings.setWayKey("building",prefs.getBoolean("include_way_building", true));
-		settings.setWayKey("highway",prefs.getBoolean("include_way_highway", true));
+		settings.setWayKey("highway",prefs.getBoolean("include_way_highway", false));
 		settings.setWayKey("*", prefs.getBoolean("include_ways_other", false));
 		
 		
@@ -281,6 +271,28 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setRelationKey("waterway",prefs.getBoolean("include_relation_waterway", false)); 
  		settings.setRelationKey("*",prefs.getBoolean("include_relations_other", true)); 
 		
+ 		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
+ 		
 		return settings;
 	}
+	
+	/*private void checkFileSize(String url){
+		try {
+			URL u = new URL(url);
+			URLConnection conn;
+			conn = u.openConnection();
+			int totalSize = conn.getContentLength();
+			if (totalSize>200*1024*1024) {
+				ConfirmDialog.Confirm((Context) Preferences.this, getString(R.string.large_file_confirm), new ConfirmDialog.Action() {
+					@Override
+					public void PositiveAction() {
+						
+					}
+				});
+			}
+		} catch (IOException e) {
+			Log.wtf("checkFileSize", e);
+		}
+	}
+	*/
 }

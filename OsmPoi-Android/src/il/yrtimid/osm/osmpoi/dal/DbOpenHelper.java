@@ -111,22 +111,31 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	}
 
 	private void dropAllTables(SQLiteDatabase db){
-		db.execSQL("DROP TABLE IF EXISTS "+MEMBERS_TABLE);
-		db.execSQL("DROP TABLE IF EXISTS "+RELATION_TAGS_TABLE);
-		db.execSQL("DROP TABLE IF EXISTS "+RELATIONS_TABLE);
+		db.beginTransaction();
+		try{
+			db.execSQL("DROP TABLE IF EXISTS "+MEMBERS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+RELATION_TAGS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+RELATIONS_TABLE);
+	
+			db.execSQL("DROP TABLE IF EXISTS "+WAY_NODS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+WAY_TAGS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+WAYS_TABLE);
+	
+			db.execSQL("DROP TABLE IF EXISTS "+NODES_TAGS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+NODES_TABLE);
+			
+			db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
+			
+			db.execSQL("DROP TABLE IF EXISTS "+INLINE_RESULTS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+INLINE_QUERIES_TABLE);
+			
+			db.setTransactionSuccessful();
+		}catch(Exception e){
+			Log.wtf("dropAllTables", e);
+		}finally{
+			db.endTransaction();
+		}
 
-		db.execSQL("DROP TABLE IF EXISTS "+WAY_NODS_TABLE);
-		db.execSQL("DROP TABLE IF EXISTS "+WAY_TAGS_TABLE);
-		db.execSQL("DROP TABLE IF EXISTS "+WAYS_TABLE);
-
-		db.execSQL("DROP TABLE IF EXISTS "+NODES_TAGS_TABLE);
-		db.execSQL("DROP TABLE IF EXISTS "+NODES_TABLE);
-		
-		db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
-		
-		db.execSQL("DROP TABLE IF EXISTS "+INLINE_RESULTS_TABLE);
-		db.execSQL("DROP TABLE IF EXISTS "+INLINE_QUERIES_TABLE);
-		
 		db.execSQL("VACUUM");
 	}
 
@@ -136,8 +145,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	
 	public void clearAll() {
 		SQLiteDatabase db = getWritableDatabase();
+		db.setLockingEnabled(false);
 		dropAllTables(db);
 		createAllTables(db);
+		db.setLockingEnabled(true);
 	}
 	
 	public void addEntity(Entity entity) {

@@ -3,8 +3,9 @@
     <item
         android:id="@+id/mnu_settings"
         android:title="@string/Settings"
-        android:icon="@drawable/ic_menu_preferences" android:menuCategory="system">
+        android:icon="@drawable/ic_menu_preferences" android:menuCategory="container" android:orderInCategory="1">
         
     </item>
+    <item android:id="@+id/mnu_about" android:title="@string/about" android:icon="@drawable/ic_menu_help" android:menuCategory="container" android:orderInCategory="2"></item>
 
 </menu>

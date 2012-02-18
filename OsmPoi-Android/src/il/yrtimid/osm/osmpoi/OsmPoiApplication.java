@@ -27,7 +27,8 @@ public class OsmPoiApplication extends Application {
 	public static Category mainCategory;
 	private static Location location;
 	public static List<EntityFormatter> formatters;
-	private static final String DATABASE_NAME = "osm.db";
+	private static final String POI_DATABASE_NAME = "poi.db";
+	private static final String ADDRESS_DATABASE_NAME = "address.db";
 	
 	/* (non-Javadoc)
 	 * @see android.app.Application#onCreate()
@@ -75,26 +76,31 @@ public class OsmPoiApplication extends Application {
 		}
 
 		private static Boolean setupDbLocation(Context context, Boolean isDbOnSdcard) {
-			dbLocation = null;
+			poiDbLocation = null;
+			addressDbLocation = null;
+			
 			if (isDbOnSdcard){
 				try{
 					File folder = Preferences.getHomeFolder(context);
 					if (folder.canWrite()){
-						dbLocation = new File(folder, DATABASE_NAME);
+						poiDbLocation = new File(folder, POI_DATABASE_NAME);
+						addressDbLocation = new File(folder, ADDRESS_DATABASE_NAME);
 					}
 				}catch(Exception e){
 					Log.wtf("Checking external storage DB", e);
 				}
 			}else{
-				dbLocation = new File(DATABASE_NAME);
+				poiDbLocation = new File(POI_DATABASE_NAME);
+				addressDbLocation = new File(ADDRESS_DATABASE_NAME);
 			}
 			
-			return (dbLocation!=null);
+			return (poiDbLocation!=null) && (addressDbLocation!=null);
 		}
 
 		private static SearchSourceType searchSourceType;
 		private static String resultLanguage;
-		private static File dbLocation;
+		private static File poiDbLocation;
+		private static File addressDbLocation;
 		
 		public static SearchSourceType getSearchSourceType() {
 			return searchSourceType;
@@ -104,9 +110,13 @@ public class OsmPoiApplication extends Application {
 			return resultLanguage;
 		}
 
-		public static File getDbLocation() {
-			return dbLocation;
+		public static File getPoiDbLocation() {
+			return poiDbLocation;
 		}
+		public static File getAddressDbLocation() {
+			return addressDbLocation;
+		}
+
 		
 		public static Boolean tryCreateSearchSource(Context context) {
 			return tryCreateSearchSource(context, searchSourceType);
