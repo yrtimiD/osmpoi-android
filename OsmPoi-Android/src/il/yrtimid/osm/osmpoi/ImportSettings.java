@@ -24,6 +24,7 @@ public class ImportSettings {
 	boolean isBuildGrid = true;
 	boolean isClearBeforeImport = true;
 	boolean importAddresses = false;
+	int gridSize = 1;
 	
 	public ImportSettings() {
 		excludedKeys.add("created_by");
@@ -90,6 +91,15 @@ public class ImportSettings {
 	public void setImportAddresses(boolean importAddresses) {
 		this.importAddresses = importAddresses;
 	}
+	
+	public int getGridSize() {
+		return gridSize;
+	}
+	
+	public void setGridSize(int gridSize) {
+		this.gridSize = gridSize;
+	}
+	
 	
 	public void cleanTags(Entity entity){
 		Collection<Tag> tagsToRemove = new ArrayList<Tag>();

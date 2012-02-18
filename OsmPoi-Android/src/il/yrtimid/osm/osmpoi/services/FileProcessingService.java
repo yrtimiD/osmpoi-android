@@ -25,12 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLStreamHandlerFactory;
-
-import org.apache.http.util.ByteArrayBuffer;
-
-import dalvik.system.PotentialDeadlockError;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -47,8 +41,8 @@ import android.webkit.URLUtil;
 public class FileProcessingService extends Service {
 	public enum Operation {
 		IMPORT_TO_DB,
-		COMPACT_PBF,
-		CLEAR_DB
+		CLEAR_DB,
+		BUILD_GRID
 	}
 
 	public static final String EXTRA_FILE_PATH = "file_path";
@@ -56,6 +50,7 @@ public class FileProcessingService extends Service {
 	public static final int IMPORT_TO_DB_ID = 1;
 	public static final int CLEAR_DB = 3;
 	public static final int ABORTED = 4;
+	public static final int BUILD_GRID = 5;
 
 	private boolean hasRunningJobs = false;
 
@@ -144,11 +139,21 @@ public class FileProcessingService extends Service {
 				}
 			};
 			break;
+		case BUILD_GRID:
+			task = new Runnable(){
+				public void run(){
+					hasRunningJobs = true;
+					rebuildGrid();
+					hasRunningJobs = false;
+					stopSelf(startId);
+				}
+			};
+			break;
 		}
 
 		if (task != null){
 			Thread t = new Thread(task, "Service");
-			t.setPriority(Thread.NORM_PRIORITY-1);
+			t.setPriority(Thread.MIN_PRIORITY);
 			t.start();
 		}else {
 			stopSelf();
@@ -183,8 +188,46 @@ public class FileProcessingService extends Service {
 		}
 	}
 
+	private void rebuildGrid(){
+		try {
+			long startTime = System.currentTimeMillis();
+			
+			final Notification notif = new Notification(R.drawable.ic_launcher, "Rebuilding grid", System.currentTimeMillis());
+			notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+			
+			notif.setLatestEventInfo(context, "Rebuilding grid", "Clearing old grid...", contentIntent);
+			notificationManager.notify(BUILD_GRID, notif);
+
+			startForeground(BUILD_GRID, notif);
+
+			poiDbHelper.clearGrid();
+			//addressDbHelper.clearGrid();
+			
+			notif.setLatestEventInfo(context, "Rebuilding grid", "Creating grid...", contentIntent);
+			notificationManager.notify(BUILD_GRID, notif);
+			poiDbHelper.updateNodesGrid();
+
+			notif.setLatestEventInfo(context, "Rebuilding grid", "Optimizing grid...", contentIntent);
+			notificationManager.notify(BUILD_GRID, notif);
+			poiDbHelper.optimizeGrid(1000);
+
+			stopForeground(true);
+			
+			long endTime = System.currentTimeMillis();
+			int workTime = Math.round((endTime-startTime)/1000/60);
+			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Rebuilding grid", System.currentTimeMillis());
+			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+			finalNotif.setLatestEventInfo(context, "Rebuilding grid", "Done successfully. ("+workTime+"min)", contentIntent);
+			notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+
+		} catch (Exception ex) {
+			Log.wtf("Exception while importing PBF into DB", ex);
+		}
+	}
+	
 	private void importToDB(String sourceFilePath) {
 		try {
+			
 			Log.d("Importing file: "+sourceFilePath);
 			if (sourceFilePath.startsWith("/")){
 				//local file, can use directly
@@ -192,6 +235,8 @@ public class FileProcessingService extends Service {
 				sourceFilePath = downloadFile(sourceFilePath);
 			}
 
+			long startTime = System.currentTimeMillis();
+			
 			final Notification notif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
 			notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
 			
@@ -235,16 +280,24 @@ public class FileProcessingService extends Service {
 			notificationManager.notify(IMPORT_TO_DB_ID, notif);
 			
 			if(settings.isBuildGrid()){
+				notif.setLatestEventInfo(context, "PBF Import", "Creating grid...", contentIntent);
+				notificationManager.notify(IMPORT_TO_DB_ID, notif);
 				poiDbHelper.updateNodesGrid();
-				poiDbHelper.optimizeGrid(1000);
+
+				notif.setLatestEventInfo(context, "PBF Import", "Optimizing grid...", contentIntent);
+				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				poiDbHelper.optimizeGrid(settings.getGridSize());
 				//TODO: is addr db needs grid too? 
 			}
 
 			stopForeground(true);
 			
+			long endTime = System.currentTimeMillis();
+			int workTime = Math.round((endTime-startTime)/1000/60);
+
 			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
 			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-			finalNotif.setLatestEventInfo(context, "PBF Import", "Import done successfully", contentIntent);
+			finalNotif.setLatestEventInfo(context, "PBF Import", "Import done successfully. ("+workTime+"min.)", contentIntent);
 			notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
 
 		} catch (Exception ex) {

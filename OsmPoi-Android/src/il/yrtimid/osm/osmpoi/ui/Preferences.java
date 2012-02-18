@@ -37,6 +37,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	public static final String IS_DB_ON_SDCARD = "is_db_on_sdcard";
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
 	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
+	private static final String PREFERENCE_BUILD_GRID = "preference_build_grid";
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -52,6 +53,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(PREFERENCE_CLEAR_DB).setOnPreferenceClickListener(this);
 		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
+		findPreference(PREFERENCE_BUILD_GRID).setOnPreferenceClickListener(this);
 	}
 
 	/*
@@ -97,6 +99,10 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 					runClearDbService();
 				}
 			});
+			return true;
+		} else if (PREFERENCE_BUILD_GRID.equals(key)){
+			runBuildGridService();
+			return true;
 		}
 
 		return false;
@@ -131,6 +137,12 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
 		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.CLEAR_DB.name());
 		startService(serviceIntent);
+	}
+	public void runBuildGridService(){
+		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
+		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.BUILD_GRID.name());
+		startService(serviceIntent);
+	
 	}
 
 	/*
@@ -272,6 +284,8 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
  		settings.setRelationKey("*",prefs.getBoolean("include_relations_other", true)); 
 		
  		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
+ 		
+ 		settings.setGridSize(Integer.parseInt(prefs.getString("grid_size", "1000")));
  		
 		return settings;
 	}

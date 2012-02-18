@@ -202,6 +202,14 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 				return poiDb.getRelationsCount();
 			}
 		});
+
+		populateCount(v, R.id.poi_cells, "Cells", new ItemsCounter() {
+			@Override
+			public Long getCount() {
+				return poiDb.getCellsCount();
+			}
+		});
+
 		
 		populateCount(v, R.id.addr_nodes, "Nodes", new ItemsCounter() {
 			@Override

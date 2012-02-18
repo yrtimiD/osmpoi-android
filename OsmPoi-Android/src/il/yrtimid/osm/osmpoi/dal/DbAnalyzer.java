@@ -41,6 +41,10 @@ public class DbAnalyzer extends DbOpenHelper {
 		return getRowsCount(RELATIONS_TABLE);
 	}
 
+	public long getCellsCount() {
+		return getRowsCount(GRID_TABLE);
+	}
+
 	
 	private long getRowsCount(String tableName) {
 		SQLiteDatabase db = null;

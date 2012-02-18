@@ -61,6 +61,7 @@
     <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_nodes"/>
     <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_ways"/>
     <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_relations"/>
+    <include layout="@layout/db_stats_element"  android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/poi_cells"/>
     
  	<TextView
  	    android:layout_width="fill_parent"

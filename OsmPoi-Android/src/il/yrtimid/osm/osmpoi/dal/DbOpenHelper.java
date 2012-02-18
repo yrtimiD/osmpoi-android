@@ -151,6 +151,13 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.setLockingEnabled(true);
 	}
 	
+	public void clearGrid(){
+		SQLiteDatabase db = getWritableDatabase();
+		db.execSQL("UPDATE "+NODES_TABLE+" SET grid_id=0");
+		db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
+		db.execSQL(context.getString(R.string.sql_create_grid_table));
+	}
+	
 	public void addEntity(Entity entity) {
 		if (entity instanceof Node)
 			addNode((Node) entity);
@@ -390,14 +397,20 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 								+" SELECT minLat, minLon, minLat+? maxLat, minLon+? maxLon FROM ("
 								+" SELECT DISTINCT CAST(lat/? as INT)*? minLat, CAST(lon/? as INT)*? minLon FROM nodes"
 								+" )";	
+		Log.d(sql_generate_grid);
+		Log.d("gridStep="+gridStep);
 		db.execSQL(sql_generate_grid, new Object[]{gridStep, gridStep, gridStep, gridStep, gridStep, gridStep});
-		db.execSQL("UPDATE nodes SET grid_id = (SELECT g.id FROM grid g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon)");
+		
+		String updateNodesGrid = "UPDATE nodes SET grid_id = (SELECT g.id FROM grid g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon)";
+		Log.d(updateNodesGrid);
+		db.execSQL(updateNodesGrid);
 	}
 	
 	public void optimizeGrid(Integer maxItems){
 		Collection<Integer> cells = null;
 		do{
 			cells = getBigCells(maxItems);
+			Log.d("OptimizeGrid: "+cells.size()+" need optimization for "+maxItems+" items");
 			if (cells.size() == 0) break;
 			for(Integer cellId : cells){
 				splitGridCell(cellId);
@@ -423,6 +436,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		//db.beginTransaction();
 		try{
+			Log.d("splitGridCell "+id);
 			//calc new cell size to be 1/2 of the old one
 			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7)  from "+GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
 			cur.moveToFirst();
@@ -433,19 +447,23 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 					+" SELECT minLat, minLon, minLat+? maxLat, minLon+? maxLon FROM ("
 					+" SELECT DISTINCT CAST(lat/? as INT)*? minLat, CAST(lon/? as INT)*? minLon FROM nodes WHERE grid_id=?"
 					+" );";	
+			Log.d(sql_generate_grid);
+			Log.d("newCellSize="+newCellSize);
 			db.execSQL(sql_generate_grid, new Object[] {newCellSize,newCellSize,newCellSize,newCellSize,newCellSize,newCellSize, id});
 			
 			//delete old cell
 			db.delete(GRID_TABLE, "id=?", new String[]{id.toString()});
 			
 			//update nodes to use new cells
-			db.execSQL("UPDATE nodes SET grid_id = (SELECT g.id FROM grid g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id=?", new Object[]{id});
+			String update_nodes = "UPDATE nodes SET grid_id = (SELECT g.id FROM grid g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id=?";
+			Log.d(update_nodes);
+			db.execSQL(update_nodes, new Object[]{id});
 			
 			//db.setTransactionSuccessful();
 		}catch (Exception e) {
 			Log.wtf("splitGridCell", e);
 		}finally{
-			//db.endTransaction();
+			//db.endTransaction();q
 		}
 	}
 	
