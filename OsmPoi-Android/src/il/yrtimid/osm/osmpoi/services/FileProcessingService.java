@@ -51,6 +51,8 @@ public class FileProcessingService extends Service {
 	public static final int CLEAR_DB = 3;
 	public static final int ABORTED = 4;
 	public static final int BUILD_GRID = 5;
+	public static final int DOWNLOAD_FILE = 6;
+	
 
 	private boolean hasRunningJobs = false;
 
@@ -235,70 +237,79 @@ public class FileProcessingService extends Service {
 				sourceFilePath = downloadFile(sourceFilePath);
 			}
 
-			long startTime = System.currentTimeMillis();
-			
-			final Notification notif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
-			notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-			
-			notif.setLatestEventInfo(context, "PBF Import", "Clearing DB...", contentIntent);
-			notificationManager.notify(IMPORT_TO_DB_ID, notif);
-
-			startForeground(IMPORT_TO_DB_ID, notif);
-
-			final ImportSettings settings = Preferences.getImportSettings(context);
-
-			if (settings.isClearBeforeImport()){
-				poiDbHelper.clearAll();
-				addressDbHelper.clearAll();
-			}
-			
-			notif.setLatestEventInfo(context, "PBF Import", "Importing in progress...", contentIntent);
-			notificationManager.notify(IMPORT_TO_DB_ID, notif);
-
 			File sourceFile = new File(sourceFilePath);
-			InputStream input;
+			if ((sourceFile.exists() && sourceFile.canRead())){
 
-			if (settings.isImportRelations()){
-				//input = new BufferedInputStream(new FileInputStream(sourceFile));
-				//importNodes(input, notif, settings);
-				//TODO import relations
-			}
+				long startTime = System.currentTimeMillis();
+				final Notification notif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
+				notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+
 			
-			if (settings.isImportWays()){
-				input = new BufferedInputStream(new FileInputStream(sourceFile));
-				importWays(input, notif, settings);
-				Log.d("Finished importing ways");
-			}
-			
-			if (settings.isImportNodes()){
-				input = new BufferedInputStream(new FileInputStream(sourceFile));
-				importNodes(input, notif, settings);
-				Log.d("Finished importing nodes");
-			}
-			
-			notif.setLatestEventInfo(context, "PBF Import", "Post-import calculations...", contentIntent);
-			notificationManager.notify(IMPORT_TO_DB_ID, notif);
-			
-			if(settings.isBuildGrid()){
-				notif.setLatestEventInfo(context, "PBF Import", "Creating grid...", contentIntent);
+				notif.setLatestEventInfo(context, "PBF Import", "Clearing DB...", contentIntent);
 				notificationManager.notify(IMPORT_TO_DB_ID, notif);
-				poiDbHelper.updateNodesGrid();
-
-				notif.setLatestEventInfo(context, "PBF Import", "Optimizing grid...", contentIntent);
+	
+				startForeground(IMPORT_TO_DB_ID, notif);
+	
+				final ImportSettings settings = Preferences.getImportSettings(context);
+	
+				if (settings.isClearBeforeImport()){
+					poiDbHelper.clearAll();
+					addressDbHelper.clearAll();
+				}
+				
+				notif.setLatestEventInfo(context, "PBF Import", "Importing in progress...", contentIntent);
 				notificationManager.notify(IMPORT_TO_DB_ID, notif);
-				poiDbHelper.optimizeGrid(settings.getGridSize());
-				//TODO: is addr db needs grid too? 
-			}
-
-			stopForeground(true);
+	
+				
+				InputStream input;
+	
+				if (settings.isImportRelations()){
+					//input = new BufferedInputStream(new FileInputStream(sourceFile));
+					//importNodes(input, notif, settings);
+					//TODO import relations
+				}
+				
+				if (settings.isImportWays()){
+					input = new BufferedInputStream(new FileInputStream(sourceFile));
+					importWays(input, notif, settings);
+					Log.d("Finished importing ways");
+				}
+				
+				if (settings.isImportNodes()){
+					input = new BufferedInputStream(new FileInputStream(sourceFile));
+					importNodes(input, notif, settings);
+					Log.d("Finished importing nodes");
+				}
+				
+				notif.setLatestEventInfo(context, "PBF Import", "Post-import calculations...", contentIntent);
+				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				
+				if(settings.isBuildGrid()){
+					notif.setLatestEventInfo(context, "PBF Import", "Creating grid...", contentIntent);
+					notificationManager.notify(IMPORT_TO_DB_ID, notif);
+					poiDbHelper.updateNodesGrid();
+	
+					notif.setLatestEventInfo(context, "PBF Import", "Optimizing grid...", contentIntent);
+					notificationManager.notify(IMPORT_TO_DB_ID, notif);
+					poiDbHelper.optimizeGrid(settings.getGridSize());
+					//TODO: is addr db needs grid too? 
+				}
+	
+				stopForeground(true);
 			
-			long endTime = System.currentTimeMillis();
-			int workTime = Math.round((endTime-startTime)/1000/60);
+				long endTime = System.currentTimeMillis();
+				int workTime = Math.round((endTime-startTime)/1000/60);
 
-			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
-			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-			finalNotif.setLatestEventInfo(context, "PBF Import", "Import done successfully. ("+workTime+"min.)", contentIntent);
-			notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
+				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+				finalNotif.setLatestEventInfo(context, "PBF Import", "Import done successfully. ("+workTime+"min.)", contentIntent);
+				notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+			}else {
+				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
+				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+				finalNotif.setLatestEventInfo(context, "PBF Import", "Import failed. File not found.", contentIntent);
+				notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+			}
 
 		} catch (Exception ex) {
 			Log.wtf("Exception while importing PBF into DB", ex);
@@ -376,6 +387,15 @@ public class FileProcessingService extends Service {
 	}
 
 	private String downloadFile(String path){
+		
+		final Notification notif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
+		notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+
+		notif.setLatestEventInfo(context, "PBF Import", "Downloading file...", contentIntent);
+		notificationManager.notify(DOWNLOAD_FILE, notif);
+
+		startForeground(DOWNLOAD_FILE, notif);
+		
 		String localPath = path;
 		File homeFolder = Preferences.getHomeFolder(context);
 		byte[] buffer = new byte[1024];
@@ -393,16 +413,38 @@ public class FileProcessingService extends Service {
 			InputStream input = new BufferedInputStream(conn.getInputStream(), buffer.length);
 			
 	        int bufferLength = 0;
+	        int counter = 0;
 	        while ( (bufferLength = input.read(buffer)) > 0 ) {
 	        	output.write(buffer, 0, bufferLength);
 	        	downloadedSize += bufferLength;
-		        Log.d(String.format("Downloaded %d/%d", downloadedSize, totalSize));
+
+		        counter++;
+		        if (counter == 1024){
+			        Log.d(String.format("Downloaded %d/%d", downloadedSize, totalSize));
+		        	notif.setLatestEventInfo(context, "PBF Import", String.format("Downloading file %d/%d", downloadedSize, totalSize), contentIntent);
+		    		notificationManager.notify(DOWNLOAD_FILE, notif);
+		        	counter = 0;
+		        }
 	        }
 	        output.close();
 	        input.close();
 	        localPath = outputPath.getPath();
+	        
+	        stopForeground(true);
+	        
+			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
+			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+			finalNotif.setLatestEventInfo(context, "PBF Import", "Downloading finished.", contentIntent);
+			notificationManager.notify(DOWNLOAD_FILE, finalNotif);
+        
 		}catch(Exception e){
 			Log.wtf("downloadFile", e);
+			
+			stopForeground(true);
+			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
+			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+			finalNotif.setLatestEventInfo(context, "PBF Import", "Downloading failed.", contentIntent);
+			notificationManager.notify(DOWNLOAD_FILE, finalNotif);
 		}
 		return localPath;
 	}

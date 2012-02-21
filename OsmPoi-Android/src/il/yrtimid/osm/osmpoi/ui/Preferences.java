@@ -38,6 +38,8 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
 	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
 	private static final String PREFERENCE_BUILD_GRID = "preference_build_grid";
+
+	
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -126,19 +128,20 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		});
 	}
 
-	public void runPbfImportService(final File f) {
+	private void runPbfImportService(final File f) {
 		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
 		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.IMPORT_TO_DB.name());
 		serviceIntent.putExtra(FileProcessingService.EXTRA_FILE_PATH, f.getPath());
 		startService(serviceIntent);
 	}
 
-	public void runClearDbService() {
+	private void runClearDbService() {
 		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
 		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.CLEAR_DB.name());
 		startService(serviceIntent);
 	}
-	public void runBuildGridService(){
+
+	private void runBuildGridService(){
 		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
 		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.BUILD_GRID.name());
 		startService(serviceIntent);

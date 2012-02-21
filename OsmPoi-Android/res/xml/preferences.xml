@@ -18,6 +18,10 @@
         <PreferenceScreen
             android:summary="@string/imported_db_summary"
             android:title="@string/imported_db" >
+         	<il.yrtimid.osm.osmpoi.ui.SelectDownloadDialogPreference 
+         	    android:title="Download and Import..." 
+         	    android:key="preference_download" 
+         	    />
             <Preference
                 android:key="preference_import_pbf"
                 android:summary="@string/import_pbf_summary"
@@ -121,6 +125,7 @@
                 android:title="@string/db_on_sdcard" />
             <EditTextPreference android:key="grid_size" android:persistent="true" android:title="Size of grid cell (debug)" android:defaultValue="1000" android:summary="Maximum count of nodes in one cell" android:dependency="show_debug_preferences" android:numeric="integer" />
             <CheckBoxPreference android:persistent="false" android:title="Enable debug options" android:defaultValue="false" android:key="show_debug_preferences"/>
+   
         </PreferenceScreen>
         <PreferenceScreen
             android:enabled="false"
