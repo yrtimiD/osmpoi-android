@@ -36,6 +36,11 @@
                         android:key="include_nodes_highway"
                         android:title="Highway" />
                     <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_nodes_barrier"
+                        android:title="Barrier" />
+                    
+                    <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="include_nodes_other"
                         android:title="All other" />

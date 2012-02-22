@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/mnu_open" android:title="@string/locate" android:icon="@drawable/ic_menu_goto" android:menuCategory="container"></item>
 
-    
+    <item
+        android:id="@+id/mnu_open"
+        android:icon="@android:drawable/ic_menu_view"
+        android:menuCategory="container"
+        android:title="@string/locate">
+    </item>
 
 </menu>

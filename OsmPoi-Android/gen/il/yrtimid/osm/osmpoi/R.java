@@ -22,18 +22,10 @@ public final class R {
         public static final int file=0x7f020000;
         public static final int folder=0x7f020001;
         public static final int ic_area=0x7f020002;
-        public static final int ic_btn_search_go=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int ic_menu_close_clear_cancel=0x7f020005;
-        public static final int ic_menu_goto=0x7f020006;
-        public static final int ic_menu_help=0x7f020007;
-        public static final int ic_menu_mylocation=0x7f020008;
-        public static final int ic_menu_preferences=0x7f020009;
-        public static final int ic_menu_refresh=0x7f02000a;
-        public static final int ic_menu_stop=0x7f02000b;
-        public static final int ic_node=0x7f02000c;
-        public static final int ic_relation=0x7f02000d;
-        public static final int ic_way=0x7f02000e;
+        public static final int ic_launcher=0x7f020003;
+        public static final int ic_node=0x7f020004;
+        public static final int ic_relation=0x7f020005;
+        public static final int ic_way=0x7f020006;
     }
     public static final class id {
         public static final int about_map_icons=0x7f09000a;
@@ -100,8 +92,9 @@ public final class R {
         public static final int results_view_footer=0x7f03000e;
         public static final int results_view_row=0x7f03000f;
         public static final int select_download=0x7f030010;
-        public static final int starred_title=0x7f030011;
-        public static final int tag_row=0x7f030012;
+        public static final int select_download_row=0x7f030011;
+        public static final int starred_title=0x7f030012;
+        public static final int tag_row=0x7f030013;
     }
     public static final class menu {
         public static final int item_menu=0x7f080000;

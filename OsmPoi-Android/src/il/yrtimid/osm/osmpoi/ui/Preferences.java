@@ -271,6 +271,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setClearBeforeImport(prefs.getBoolean("preference_clear_db_before_import", true));
 		
 		settings.setNodeKey("highway", prefs.getBoolean("include_nodes_highway", false));
+		settings.setNodeKey("barrier", prefs.getBoolean("include_nodes_barrier", false));
 		settings.setNodeKey("*", prefs.getBoolean("include_nodes_other", true));
 		
 		settings.setWayKey("building",prefs.getBoolean("include_way_building", true));

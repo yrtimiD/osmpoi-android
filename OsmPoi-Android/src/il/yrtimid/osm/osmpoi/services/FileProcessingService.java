@@ -419,9 +419,9 @@ public class FileProcessingService extends Service {
 	        	downloadedSize += bufferLength;
 
 		        counter++;
-		        if (counter == 1024){
+		        if (counter == 100){
 			        Log.d(String.format("Downloaded %d/%d", downloadedSize, totalSize));
-		        	notif.setLatestEventInfo(context, "PBF Import", String.format("Downloading file %d/%d", downloadedSize, totalSize), contentIntent);
+		        	notif.setLatestEventInfo(context, "PBF Import", formatDownloadProgress(downloadedSize, totalSize), contentIntent);
 		    		notificationManager.notify(DOWNLOAD_FILE, notif);
 		        	counter = 0;
 		        }
@@ -447,5 +447,23 @@ public class FileProcessingService extends Service {
 			notificationManager.notify(DOWNLOAD_FILE, finalNotif);
 		}
 		return localPath;
+	}
+
+	private String formatDownloadProgress(int downloadedSize, int totalSize) {
+		String ready = "";
+		String from = "";
+		if (downloadedSize<1024*1024)
+			ready = String.format("%dk", downloadedSize/1024);
+		else 
+			ready = String.format("%dM", downloadedSize/1024/1024);
+		
+		if (totalSize > 0){
+			if (totalSize<1024*1024)
+				from = String.format("/%dk", totalSize/1024);
+			else 
+				from = String.format("/%dM", totalSize/1024/1024);
+		}
+		
+		return String.format("Downloading file %s%s", ready, from);
 	}
 }

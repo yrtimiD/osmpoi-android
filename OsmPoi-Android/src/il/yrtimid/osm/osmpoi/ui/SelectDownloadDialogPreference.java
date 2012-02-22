@@ -63,7 +63,7 @@ public class SelectDownloadDialogPreference extends DialogPreference implements 
 	@Override
 	protected void onPrepareDialogBuilder(Builder builder) {
 		super.onPrepareDialogBuilder(builder);
-		builder.setTitle(null);
+		builder.setTitle("Select file to download");
 		builder.setPositiveButton(null, null);
 		builder.setNegativeButton(null, null);
 	}
@@ -79,7 +79,7 @@ public class SelectDownloadDialogPreference extends DialogPreference implements 
 		super.onBindDialogView(view);
 		loadList();
 		ListView lv = (ListView)view.findViewById(R.id.list);
-		adapter = new SelectDownloadListAdapter(getContext(), android.R.layout.simple_list_item_1, this.list);
+		adapter = new SelectDownloadListAdapter(getContext(), R.layout.select_download_row, this.list);
 		lv.setAdapter(adapter);
 		lv.setOnItemClickListener(this);
 	}
