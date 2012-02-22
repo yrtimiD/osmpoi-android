@@ -5,4 +5,16 @@
 	<formatter match="operator*=* &amp; name*=*" select_pattern="{name} ({operator})"/>
 	<formatter match="name*=*" select_pattern="{name}"/>
 	<formatter match="amenity=*" select_pattern="{amenity}"/>
+	<formatter match="highway=*" select_pattern="{highway}"/>
+	<formatter match="building=* &amp; addr:street=* &amp; addr:housenumber=*" select_pattern="{addr:street} {addr:housenumber}" />
+	<formatter match="building=* &amp; addr:street=* &amp; addr:housename=*" select_pattern="{addr:street} {addr:housename}" />
+	<formatter match="building=* &amp; addr:housenumber=*" select_pattern="{addr:housenumber}" />
+	<formatter match="building=* &amp; addr:housename=*" select_pattern="{addr:housename}" />
+	<formatter match="building=* &amp; !(building=yes)" select_pattern="{building}" />
+	<formatter match="building=yes" select_pattern="building" />
+	<formatter match="addr:street=* &amp; addr:housenumber=*" select_pattern="{addr:street} {addr:housenumber}" />
+	<formatter match="addr:street=* &amp; addr:housename=*" select_pattern="{addr:street} {addr:housename}" />
+	<formatter match="addr:housenumber=*" select_pattern="{addr:housenumber}" />
+	<formatter match="addr:housename=*" select_pattern="{addr:housename}" />
+
 </formatters>

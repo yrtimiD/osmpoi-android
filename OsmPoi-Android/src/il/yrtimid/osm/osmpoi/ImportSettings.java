@@ -117,6 +117,9 @@ public class ImportSettings {
 	
 	public Boolean isPoi(Entity entity){
 		for (Tag t : entity.getTags()) {
+			if (t.getKey().startsWith("name"))
+				return true;
+			
 			Boolean include = tags.get(entity.getType()).get(t.getKey());
 			if (include != null){
 				return include;
