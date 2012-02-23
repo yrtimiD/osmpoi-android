@@ -33,8 +33,14 @@
                 <PreferenceScreen android:title="Import nodes…" >
                     <CheckBoxPreference
                         android:defaultValue="false"
-                        android:key="include_nodes_highway"
+                        android:key="include_node_highway"
                         android:title="Highway" />
+                  <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_node_building"
+                        android:persistent="true"
+                        android:title="Buildings" />
+                    
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="include_nodes_barrier"
@@ -42,12 +48,12 @@
                     
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="include_nodes_other"
+                        android:key="include_node_other"
                         android:title="All other" />
                 </PreferenceScreen>
                 <PreferenceScreen android:title="Import ways…" >
                     <CheckBoxPreference
-                        android:defaultValue="true"
+                        android:defaultValue="false"
                         android:key="include_way_building"
                         android:persistent="true"
                         android:title="Buildings" />
@@ -60,7 +66,7 @@
                         android:title="Roads" />
                     <CheckBoxPreference
                         android:defaultValue="false"
-                        android:key="include_ways_other"
+                        android:key="include_way_other"
                         android:persistent="false"
                         android:title="All other" />
                 </PreferenceScreen>
@@ -91,7 +97,7 @@
                         android:title="Waterways" />
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="include_relations_other"
+                        android:key="include_relation_other"
                         android:title="All other" />
                 </PreferenceScreen>
 

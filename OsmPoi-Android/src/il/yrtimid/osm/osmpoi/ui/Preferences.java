@@ -270,13 +270,14 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setBuildGrid(prefs.getBoolean("preference_import_build_grid", true));
 		settings.setClearBeforeImport(prefs.getBoolean("preference_clear_db_before_import", true));
 		
-		settings.setNodeKey("highway", prefs.getBoolean("include_nodes_highway", false));
-		settings.setNodeKey("barrier", prefs.getBoolean("include_nodes_barrier", false));
-		settings.setNodeKey("*", prefs.getBoolean("include_nodes_other", true));
+		settings.setNodeKey("highway", prefs.getBoolean("include_node_highway", false));
+		settings.setNodeKey("building",prefs.getBoolean("include_node_building", false));
+		settings.setNodeKey("barrier", prefs.getBoolean("include_node_barrier", false));
+		settings.setNodeKey("*", prefs.getBoolean("include_node_other", true));
 		
-		settings.setWayKey("building",prefs.getBoolean("include_way_building", true));
+		settings.setWayKey("building",prefs.getBoolean("include_way_building", false));
 		settings.setWayKey("highway",prefs.getBoolean("include_way_highway", false));
-		settings.setWayKey("*", prefs.getBoolean("include_ways_other", false));
+		settings.setWayKey("*", prefs.getBoolean("include_way_other", false));
 		
 		
 		settings.setRelationKey("landuse",prefs.getBoolean("include_relation_landuse", false)); 
@@ -285,7 +286,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setRelationKey("boundary",prefs.getBoolean("include_relation_boundary", false)); 
 		settings.setRelationKey("area",prefs.getBoolean("include_relation_area", false)); 
 		settings.setRelationKey("waterway",prefs.getBoolean("include_relation_waterway", false)); 
- 		settings.setRelationKey("*",prefs.getBoolean("include_relations_other", true)); 
+ 		settings.setRelationKey("*",prefs.getBoolean("include_relation_other", true)); 
 		
  		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
  		
