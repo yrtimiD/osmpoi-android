@@ -184,5 +184,6 @@
 <string name="viewpoint">Viewpoint</string>
 <string name="zoo">Zoo</string>
 <string name="other">Other</string>
-
+  <string name="marketplace">Marketplace</string>
+  <string name="locksmith">Locksmith</string>
 </resources>
