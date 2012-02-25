@@ -81,8 +81,8 @@ public class FileProcessingService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		context = getApplicationContext();
-		poiDbHelper = new CachedDbOpenHelper(this, OsmPoiApplication.Config.getPoiDbLocation());
-		addressDbHelper = new CachedDbOpenHelper(this, OsmPoiApplication.Config.getAddressDbLocation());
+		poiDbHelper = OsmPoiApplication.databases.getPoiDb();
+		addressDbHelper = OsmPoiApplication.databases.getAddressDb();
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		Intent notificationIntent = new Intent(this, SearchActivity.class);

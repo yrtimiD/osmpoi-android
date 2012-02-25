@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 public class ResultItemActivity extends Activity implements OnCheckedChangeListener {
 	public static final String ENTITY = "ENTITY";
-	private DbStarred dbHelper = new DbStarred(this, OsmPoiApplication.Config.getPoiDbLocation());
+	private DbStarred dbHelper;
 	private Entity entity;
 
 	@Override
@@ -42,6 +42,8 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		
 		setIcon();
 
+		dbHelper = OsmPoiApplication.databases.getStarredDb();
+		
 		((TextView)findViewById(R.id.itemViewID)).setText(getString(R.string.ID)+": "+entity.getId());
 		CheckBox star = ((CheckBox)findViewById(R.id.star));
 		star.setChecked(dbHelper.isStarred(entity));
@@ -113,7 +115,7 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 	 * @see android.widget.CompoundButton.OnCheckedChangeListener#onCheckedChanged(android.widget.CompoundButton, boolean)
 	 */
 	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
 		
 		setProgressBarIndeterminateVisibility(true);
 		if (buttonView.isChecked()){
@@ -129,7 +131,12 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 					dbHelper.addStarred(entity, textEntryView.getText().toString());	     			
 			     }
 			 })
-			 .setNegativeButton(android.R.string.cancel, null)
+			 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					buttonView.setChecked(false);
+				}
+			 })
 	         .create()
 	         .show();
 		}else {

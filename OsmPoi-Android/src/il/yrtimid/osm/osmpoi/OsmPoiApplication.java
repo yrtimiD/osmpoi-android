@@ -7,12 +7,21 @@ import java.io.File;
 import java.util.List;
 
 import il.yrtimid.osm.osmpoi.categories.Category;
+import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
+import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
+import il.yrtimid.osm.osmpoi.dal.DbOpenHelper;
+import il.yrtimid.osm.osmpoi.dal.DbSearcher;
+import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
 import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 
 import android.preference.PreferenceManager;
@@ -26,9 +35,14 @@ public class OsmPoiApplication extends Application {
 	public static SearchParameters currentSearch;
 	public static Category mainCategory;
 	private static Location location;
+	public static LocationChangeManager locationManager;
+	public static OrientationChangeManager orientationManager;
+	public static Databases databases;
 	public static List<EntityFormatter> formatters;
 	private static final String POI_DATABASE_NAME = "poi.db";
 	private static final String ADDRESS_DATABASE_NAME = "address.db";
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see android.app.Application#onCreate()
@@ -37,8 +51,10 @@ public class OsmPoiApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		OsmPoiApplication.locationManager = new LocationChangeManager(getApplicationContext());
+		OsmPoiApplication.orientationManager = new OrientationChangeManager(getApplicationContext());
+		OsmPoiApplication.databases = new Databases(getApplicationContext());
 	}
-	
+
 	public static Boolean hasLocation(){
 		return location!=null;
 	}
@@ -57,7 +73,7 @@ public class OsmPoiApplication extends Application {
 			return false;
 		}
 	}
-
+	
 	public static class Config {
 		public static void reloadConfig(Context context) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -67,6 +83,8 @@ public class OsmPoiApplication extends Application {
 
 			Boolean isDbOnSdcard = prefs.getBoolean(Preferences.IS_DB_ON_SDCARD, false);
 			setupDbLocation(context, isDbOnSdcard);
+			
+			OsmPoiApplication.databases.reset();
 			
 			if (currentSearch == null){
 				currentSearch = new SearchParameters();
@@ -146,6 +164,61 @@ public class OsmPoiApplication extends Application {
 
 	}
 
-	public static LocationChangeManager locationManager;
-	
+	public class Databases {
+		private Context context;
+		private DbStarred starred;
+		private DbSearcher poiSearcher;
+		private DbSearcher addrSearcher;
+		private DbAnalyzer poiAnalyzer;
+		private DbAnalyzer addrAnalyzer;
+		private CachedDbOpenHelper cachedPoiBasic;
+		private CachedDbOpenHelper cachedAddrBasic;
+		
+		public Databases(Context context) {
+			this.context = context;
+		}
+		
+		public void reset(){
+			this.starred = null;
+		}
+		
+		public DbStarred getStarredDb(){
+			if (starred == null) starred = new DbStarred(context,  OsmPoiApplication.Config.getPoiDbLocation());
+			return starred;
+		}
+		
+		public DbSearcher getPoiSearcherDb(){
+			if (poiSearcher == null) poiSearcher = new DbSearcher(context,  OsmPoiApplication.Config.getPoiDbLocation());
+			return poiSearcher;
+		}
+		
+		public DbSearcher getAddressSearcherDb(){
+			if (addrSearcher == null) addrSearcher = new DbSearcher(context,  OsmPoiApplication.Config.getAddressDbLocation());
+			return addrSearcher;
+		}
+
+		
+		public CachedDbOpenHelper getPoiDb(){
+			if (cachedPoiBasic == null) cachedPoiBasic = new CachedDbOpenHelper(context,  OsmPoiApplication.Config.getPoiDbLocation());
+			return cachedPoiBasic;
+		}
+		
+		public CachedDbOpenHelper getAddressDb(){
+			if (cachedAddrBasic == null) cachedAddrBasic = new CachedDbOpenHelper(context,  OsmPoiApplication.Config.getAddressDbLocation());
+			return cachedAddrBasic;
+		}
+		
+		public DbAnalyzer getPoiAnalizerDb(){
+			if (poiAnalyzer == null) poiAnalyzer = new DbAnalyzer(context,  OsmPoiApplication.Config.getPoiDbLocation());
+			return poiAnalyzer;
+		}
+
+		public DbAnalyzer getAddressAnalizerDb(){
+			if (addrAnalyzer == null) addrAnalyzer = new DbAnalyzer(context,  OsmPoiApplication.Config.getAddressDbLocation());
+			return addrAnalyzer;
+		}
+
+		
+	}
 }
+

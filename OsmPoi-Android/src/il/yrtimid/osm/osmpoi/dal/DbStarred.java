@@ -38,7 +38,7 @@ public class DbStarred extends DbOpenHelper {
 		}catch (Exception e) {
 			Log.wtf("addStarred",e);
 		}finally{
-			//if (db != null) db.close();
+			if (db != null) db.close();
 		}
 	}
 	
@@ -50,7 +50,7 @@ public class DbStarred extends DbOpenHelper {
 		}catch(Exception e){
 			Log.wtf("removeStarred",e);
 		}finally{
-			//if (db != null) db.close();
+			if (db != null) db.close();
 		}
 	}
 	
@@ -60,13 +60,14 @@ public class DbStarred extends DbOpenHelper {
 		try{
 			db = getReadableDatabase();
 			cur = db.rawQuery("SELECT 1 FROM "+STARRED_TABLE+" WHERE type=? AND id=?", new String[] {entity.getType().name(), Long.toString(entity.getId())});
-			return (cur.moveToFirst());
+			boolean hasResults = (cur.moveToFirst());
+			return hasResults;
 		}catch(Exception e){
 			Log.wtf("isStarred",e);
 			return false;
 		}finally{
 			if (cur != null) cur.close();
-			//if (db != null) db.close();
+			if (db != null) db.close();
 		}
 	}
 	
@@ -96,7 +97,7 @@ public class DbStarred extends DbOpenHelper {
 			Log.wtf("getAllStarred",e);
 		}finally{
 			if (cur != null) cur.close();
-			//if (db != null) db.close();
+			if (db != null) db.close();
 		}
 		
 		return results;

@@ -116,7 +116,7 @@ public class CategoriesLoader {
 		if (cat.getType() != Category.Type.INLINE_SEARCH) return;
 		DbAnalyzer dbHelper = null;
 		try{
-			dbHelper = new DbAnalyzer(context, OsmPoiApplication.Config.getPoiDbLocation());
+			dbHelper = OsmPoiApplication.databases.getPoiAnalizerDb();
 			Long id = dbHelper.getInlineResultsId(cat.getQuery(), cat.getSelect());
 			if (id == 0L){
 				id = dbHelper.createInlineResults(cat.getQuery(), cat.getSelect());

@@ -29,8 +29,8 @@ public class DBSearchSource implements ISearchSource {
 	
 	protected DBSearchSource(Context context){
 		//this.context = context;
-		poiDb = new DbSearcher(context, Config.getPoiDbLocation());
-		addressDb = new DbSearcher(context, Config.getAddressDbLocation());
+		poiDb = OsmPoiApplication.databases.getPoiSearcherDb();
+		addressDb = OsmPoiApplication.databases.getAddressSearcherDb();
 	}
 
 	@Override

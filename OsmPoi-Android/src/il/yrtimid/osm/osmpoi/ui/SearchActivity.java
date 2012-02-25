@@ -108,8 +108,8 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (OsmPoiApplication.searchSource != null)
-			OsmPoiApplication.searchSource.close();
+		//if (OsmPoiApplication.searchSource != null)
+			//OsmPoiApplication.searchSource.close();
 		// The activity is no longer visible (it is now "stopped")
 	}
 
@@ -174,9 +174,8 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			showCategory(cat);
 			break;
 		case STARRED:
-			DbStarred dbStarredHelper = new DbStarred(this, OsmPoiApplication.Config.getPoiDbLocation());
+			DbStarred dbStarredHelper = OsmPoiApplication.databases.getStarredDb();
 			Collection<Category> starred = dbStarredHelper.getAllStarred();
-			//dbStarredHelper.close();
 			cat.getSubCategories().clear();
 			cat.getSubCategories().addAll(starred);
 			showCategory(cat);

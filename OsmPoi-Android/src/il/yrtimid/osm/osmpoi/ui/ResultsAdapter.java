@@ -1,6 +1,5 @@
 package il.yrtimid.osm.osmpoi.ui;
 
-import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
@@ -21,6 +20,7 @@ import android.widget.TwoLineListItem;
 public class ResultsAdapter extends BaseAdapter {
 	LayoutInflater inflater;
 	Location location;
+	float azimuth = 0.0f;
 	List<Entity> items;
 	Comparator<Entity> comparator;
 	List<EntityFormatter> formatters;
@@ -41,7 +41,7 @@ public class ResultsAdapter extends BaseAdapter {
 	public void addItem(Entity entity) {
 		if (!items.contains(entity)) {
 			items.add(entity);
-			update();
+			updateAndSort();
 		}
 	}
 
@@ -51,7 +51,7 @@ public class ResultsAdapter extends BaseAdapter {
 				items.add(e);
 			}
 		}
-		update();
+		updateAndSort();
 	}
 
 	public Entity[] getAllItems(){
@@ -61,10 +61,15 @@ public class ResultsAdapter extends BaseAdapter {
 	public void setLocation(Location newLoc) {
 		this.location = newLoc;
 		this.comparator = new DistanceComparator(this.location);
-		update();
+		updateAndSort();
 	}
 
-	public void update() {
+	public void setAzimuth(float azimuth){
+		this.azimuth = azimuth;
+		notifyDataSetChanged();
+	}
+	
+	public void updateAndSort() {
 		Collections.sort(items, this.comparator);
 		notifyDataSetChanged();
 	}
@@ -88,7 +93,7 @@ public class ResultsAdapter extends BaseAdapter {
 				Location nl = new Location(this.location);
 				nl.setLatitude(node.getLatitude());
 				nl.setLongitude(node.getLongitude());
-				int bearing = (int) location.bearingTo(nl);
+				int bearing = ((int) location.bearingTo(nl)-(int)azimuth) % 360;
 				listItem.getText2().setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), getDirectionChar(bearing), bearing));
 			}
 		}
@@ -97,9 +102,7 @@ public class ResultsAdapter extends BaseAdapter {
 	}
 
 
-	private final String engPostfix = "en";
 	private CharSequence localPostfix = null;
-
 	public void setLocale(CharSequence locale) {
 		if (locale != null)
 			localPostfix = locale;
@@ -114,6 +117,7 @@ public class ResultsAdapter extends BaseAdapter {
 	private char[] directionChars = new char[]{'↑','↗','→','↘','↓','↙','←','↖'};
 	private char getDirectionChar(int degree){
 		if (degree<0) degree+=360;
+		if (degree>=360) degree = degree % 360;
 		degree+=45/2;
 		int section = (int)(degree/45);
 		if (section == 8) section = 0;

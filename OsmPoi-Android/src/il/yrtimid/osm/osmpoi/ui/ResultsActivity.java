@@ -3,6 +3,7 @@ package il.yrtimid.osm.osmpoi.ui;
 import java.security.InvalidParameterException;
 
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
+import il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener;
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
@@ -30,7 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OnClickListener {
+public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OrientationChangeListener, OnClickListener {
 	private static final int START_RESULTS = 20;
 	private static final int RESULTS_INCREMENT = 20;
 
@@ -64,7 +65,6 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 		resultsList.setOnItemClickListener(this);
 
-		OsmPoiApplication.locationManager.setLocationChangeListener(this);
 		OsmPoiApplication.currentSearch.setMaxResults(START_RESULTS);
 
 		Entity[] savedData = (Entity[]) getLastNonConfigurationInstance();
@@ -96,6 +96,8 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		updateCountView();
 		if (followingGPS)
 			OsmPoiApplication.locationManager.setLocationChangeListener(this);
+		
+		OsmPoiApplication.orientationManager.setOrientationChangeListener(this);
 	}
 
 	/*
@@ -108,6 +110,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		super.onPause();
 		cancelCurrentTask();
 		OsmPoiApplication.locationManager.setLocationChangeListener(null);
+		OsmPoiApplication.orientationManager.setOrientationChangeListener(null);
 	}
 
 	/*
@@ -296,6 +299,14 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 				search();
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener#OnOrientationChanged(float)
+	 */
+	@Override
+	public void OnOrientationChanged(float azimuth) {
+		adapter.setAzimuth(azimuth);
 	}
 
 }

@@ -50,8 +50,8 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		inflater = LayoutInflater.from(this);
 		setContentView(R.layout.about);
 
-		poiDb = new DbAnalyzer(this, OsmPoiApplication.Config.getPoiDbLocation());
-		addrDb = new DbAnalyzer(this, OsmPoiApplication.Config.getAddressDbLocation());
+		poiDb = OsmPoiApplication.databases.getPoiAnalizerDb();
+		addrDb = OsmPoiApplication.databases.getAddressAnalizerDb();
 		
 		TabHost host = getTabHost();
 		TabSpec spec;
