@@ -93,8 +93,8 @@ public class ResultsAdapter extends BaseAdapter {
 				Location nl = new Location(this.location);
 				nl.setLatitude(node.getLatitude());
 				nl.setLongitude(node.getLongitude());
-				int bearing = ((int) location.bearingTo(nl)-(int)azimuth) % 360;
-				listItem.getText2().setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), getDirectionChar(bearing), bearing));
+				int bearing = Util.normalizeBearing ((int) location.bearingTo(nl)-(int)azimuth);
+				listItem.getText2().setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), Util.getDirectionChar(bearing), bearing));
 			}
 		}
 
@@ -114,16 +114,7 @@ public class ResultsAdapter extends BaseAdapter {
 		return EntityFormatter.format(this.formatters, entity, localPostfix);
 	}
 
-	private char[] directionChars = new char[]{'↑','↗','→','↘','↓','↙','←','↖'};
-	private char getDirectionChar(int degree){
-		if (degree<0) degree+=360;
-		if (degree>=360) degree = degree % 360;
-		degree+=45/2;
-		int section = (int)(degree/45);
-		if (section == 8) section = 0;
-		return directionChars[section];
-	}
-	
+
 	@Override
 	public int getCount() {
 		return items.size();

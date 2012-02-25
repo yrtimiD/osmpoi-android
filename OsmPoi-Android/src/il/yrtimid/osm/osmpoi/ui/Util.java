@@ -50,4 +50,22 @@ public class Util {
 			progressDialog = null;
 		}
 	}
+	
+	private static char[] directionChars = new char[]{'↑','↗','→','↘','↓','↙','←','↖'};
+	public static char getDirectionChar(int degree){
+		if (degree>=360) degree = degree % 360;
+		if (degree<0) degree+=360;
+		degree+=45/2;
+		int section = (int)(degree/45);
+		if (section == 8) section = 0;
+		return directionChars[section];
+	}
+	
+	public static int normalizeBearing(int bearing){
+		bearing = bearing % 360;
+		if (bearing < -180) bearing = bearing + 360;
+		if (bearing > 180) bearing = bearing - 360;
+		return bearing;
+	}
+	
 }
