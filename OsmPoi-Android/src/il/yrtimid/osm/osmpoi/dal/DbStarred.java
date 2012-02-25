@@ -38,7 +38,7 @@ public class DbStarred extends DbOpenHelper {
 		}catch (Exception e) {
 			Log.wtf("addStarred",e);
 		}finally{
-			if (db != null) db.close();
+			//if (db != null) db.close();
 		}
 	}
 	
@@ -50,7 +50,7 @@ public class DbStarred extends DbOpenHelper {
 		}catch(Exception e){
 			Log.wtf("removeStarred",e);
 		}finally{
-			if (db != null) db.close();
+			//if (db != null) db.close();
 		}
 	}
 	
@@ -66,7 +66,7 @@ public class DbStarred extends DbOpenHelper {
 			return false;
 		}finally{
 			if (cur != null) cur.close();
-			if (db != null) db.close();
+			//if (db != null) db.close();
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class DbStarred extends DbOpenHelper {
 			Log.wtf("getAllStarred",e);
 		}finally{
 			if (cur != null) cur.close();
-			if (db != null) db.close();
+			//if (db != null) db.close();
 		}
 		
 		return results;

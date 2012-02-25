@@ -132,7 +132,7 @@ public class CategoriesLoader {
 		}catch(Exception e){
 			Log.wtf("loadInlineCategories", e);
 		}finally{
-			if (dbHelper != null) dbHelper.close();
+			//if (dbHelper != null) dbHelper.close();
 		}
 		return;
 	}

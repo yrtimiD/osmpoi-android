@@ -83,7 +83,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			db.execSQL(context.getString(R.string.sql_create_starred_table));
 		}
 	}
-
+	
 	private void createAllTables(SQLiteDatabase db){
 		db.execSQL(context.getString(R.string.sql_create_node_table));
 		db.execSQL(context.getString(R.string.sql_create_node_tags_table));
@@ -421,14 +421,21 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	
 	private Collection<Integer> getBigCells(Integer minItems){
 		SQLiteDatabase db = getReadableDatabase();
+		Cursor cur = null;
 		Collection<Integer> gridIds = new ArrayList<Integer>();
-		Cursor cur = db.rawQuery("SELECT grid_id FROM "+NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString(), null);
-		if (cur.moveToFirst()){
-			do{
-				gridIds.add(cur.getInt(0));
-			}while(cur.moveToNext());
+		try{
+			
+			cur = db.rawQuery("SELECT grid_id FROM "+NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString(), null);
+			if (cur.moveToFirst()){
+				do{
+					gridIds.add(cur.getInt(0));
+				}while(cur.moveToNext());
+			}
+		}catch (Exception e) {
+			Log.wtf("getBigCells", e);
+		}finally{
+			if (cur != null) cur.close(); 
 		}
-		
 		return gridIds;
 	}
 	

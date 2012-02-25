@@ -380,7 +380,7 @@ public class DbSearcher extends DbOpenHelper {
 				} while (cur.moveToNext());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.wtf("fillTags node", e);
 		} finally {
 			if (cur != null)
 				cur.close();
@@ -401,7 +401,7 @@ public class DbSearcher extends DbOpenHelper {
 				} while (cur.moveToNext());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.wtf("fillTags way", e);
 		} finally {
 			if (cur != null)
 				cur.close();

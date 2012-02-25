@@ -105,11 +105,12 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 	@Override
 	protected void onStop() {
 		super.onStop();
-
+		/*
 		if (poiDb != null)
 			poiDb.close();
 		if (addrDb != null)
 			addrDb.close();
+		 */
 	}
 
 	/*

@@ -35,11 +35,13 @@ public class DBSearchSource implements ISearchSource {
 
 	@Override
 	public void close(){
+		/*
 		if (poiDb != null)
 			poiDb.close();
 
 		if (addressDb != null)
 			addressDb.close();
+			*/
 	}
 	
 	/*

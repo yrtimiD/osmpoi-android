@@ -97,8 +97,8 @@ public class FileProcessingService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		poiDbHelper.close();
-		addressDbHelper.close();
+		//poiDbHelper.close();
+		//addressDbHelper.close();
 		
 		if (hasRunningJobs) {
 

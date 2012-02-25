@@ -176,7 +176,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		case STARRED:
 			DbStarred dbStarredHelper = new DbStarred(this, OsmPoiApplication.Config.getPoiDbLocation());
 			Collection<Category> starred = dbStarredHelper.getAllStarred();
-			dbStarredHelper.close();
+			//dbStarredHelper.close();
 			cat.getSubCategories().clear();
 			cat.getSubCategories().addAll(starred);
 			showCategory(cat);
