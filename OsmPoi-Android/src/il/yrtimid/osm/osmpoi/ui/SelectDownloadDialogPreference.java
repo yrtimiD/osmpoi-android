@@ -7,11 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import il.yrtimid.osm.osmpoi.Log;
-import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 import android.app.AlertDialog.Builder;
@@ -24,7 +22,6 @@ import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Toast;
 
 /**
  * @author yrtimid

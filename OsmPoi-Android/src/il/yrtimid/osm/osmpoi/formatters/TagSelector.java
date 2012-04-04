@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import il.yrtimid.osm.osmpoi.domain.Entity;
-import il.yrtimid.osm.osmpoi.domain.Tag;
 
 /**
  * @author yrtimid

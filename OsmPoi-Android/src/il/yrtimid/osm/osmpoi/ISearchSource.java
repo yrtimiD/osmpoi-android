@@ -3,7 +3,6 @@
  */
 package il.yrtimid.osm.osmpoi;
 
-import android.content.Context;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;

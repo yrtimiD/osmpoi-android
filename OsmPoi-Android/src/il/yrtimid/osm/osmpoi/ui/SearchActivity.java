@@ -1,7 +1,5 @@
 package il.yrtimid.osm.osmpoi.ui;
 
-import java.util.Collection;
-
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
@@ -9,9 +7,11 @@ import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
+
+import java.util.Collection;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -25,10 +25,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener {
 

@@ -4,20 +4,14 @@
 package il.yrtimid.osm.osmpoi.ui;
 
 
-import java.util.List;
-
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.text.AndroidCharacter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 

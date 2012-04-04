@@ -9,9 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 
 /**

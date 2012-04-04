@@ -9,7 +9,6 @@ import java.util.List;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
-import il.yrtimid.osm.osmpoi.dal.DbOpenHelper;
 import il.yrtimid.osm.osmpoi.dal.DbSearcher;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
@@ -18,10 +17,6 @@ import il.yrtimid.osm.osmpoi.ui.Preferences;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Location;
 
 import android.preference.PreferenceManager;

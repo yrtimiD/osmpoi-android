@@ -93,7 +93,8 @@ public class OsmosisBinaryParser extends BinaryParser {
               int uid = di.getUid(i) + lastuid; lastuid = uid;
               int userSid = di.getUserSid(i) + lastuserSid; lastuserSid = userSid;
               long timestamp = di.getTimestamp(i) + lasttimestamp; lasttimestamp = timestamp;
-              int version = di.getVersion(i); 
+	          @SuppressWarnings("unused")
+	          int version = di.getVersion(i); 
               long changeset = di.getChangeset(i) + lastchangeset; lastchangeset = changeset;
 
               Date date = new Date(date_granularity * timestamp);

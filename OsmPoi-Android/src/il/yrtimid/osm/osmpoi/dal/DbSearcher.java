@@ -21,7 +21,6 @@ import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 
 /**
  * @author yrtimid

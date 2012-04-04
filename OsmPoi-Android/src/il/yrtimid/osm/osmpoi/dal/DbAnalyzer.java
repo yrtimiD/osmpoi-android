@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import il.yrtimid.osm.osmpoi.Log;
-import il.yrtimid.osm.osmpoi.Point;
-import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import android.content.ContentValues;
 import android.content.Context;

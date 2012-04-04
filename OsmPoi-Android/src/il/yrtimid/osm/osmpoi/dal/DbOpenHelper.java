@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import il.yrtimid.osm.osmpoi.Log;
-import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import android.content.ContentValues;

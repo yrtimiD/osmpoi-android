@@ -3,8 +3,6 @@
  */
 package il.yrtimid.osm.osmpoi.ui;
 
-import org.w3c.dom.Text;
-
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;

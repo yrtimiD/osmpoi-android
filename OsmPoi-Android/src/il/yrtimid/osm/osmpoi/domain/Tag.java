@@ -1,8 +1,6 @@
 // This software is released into the Public Domain.  See copying.txt for details.
 package il.yrtimid.osm.osmpoi.domain;
 
-import java.util.Comparator;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 

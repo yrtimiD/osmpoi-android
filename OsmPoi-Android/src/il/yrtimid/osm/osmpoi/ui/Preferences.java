@@ -7,14 +7,10 @@ import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import com.kaloer.filepicker.FilePickerActivity;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
