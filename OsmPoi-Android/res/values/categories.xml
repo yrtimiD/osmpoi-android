@@ -119,6 +119,7 @@
     <string name="taxi">Taxi</string>
     <string name="bicycle_rental">Bicycle rental</string>
     <string name="bicycle_parking">Bicycle parking</string>
+    <string name="motorcycle_parking">Motorcycle parking</string>
     <string name="fuel_operator">Fuel operator</string>
     <string name="car_rental_operator">Car rental operator</string>
     <string name="bureau_de_change">Currency exchange</string>
@@ -186,4 +187,6 @@
 <string name="other">Other</string>
   <string name="marketplace">Marketplace</string>
   <string name="locksmith">Locksmith</string>
+  <string name="club">Club</string>
+  <string name="events_venue">Events Venue</string>
 </resources>

@@ -26,6 +26,7 @@
 		<inline name="car_rental_operator" query="amenity=car_rental &amp; operator=*" select="operator*" />
 		<search name="compressed_air" query="amenity=compressed_air" />
 		<search name="taxi" query="amenity=taxi" />
+		<search name="motorcycle_parking" query="amenity=motorcycle_parking" />
 		<search name="bicycle_rental" query="amenity=bicycle_rental" />
 		<search name="bicycle_parking" query="amenity=bicycle_parking" />
 	</category>
@@ -154,9 +155,10 @@
 		<search name="arts_centre" query="amenity=arts_centre" />
 		<search name="brothel" query="amenity=brothel" />
 		<search name="cinema" query="amenity=cinema" />
-		
+		<search name="club" query="club=*" />
 		<search name="dance" query="leisure=dance"/>
 		<search name="dog_park" query="leisure=dog_park"/>
+		<search name="events_venue" query="amenity=events_venue" />
 		<search name="fishing" query="leisure=fishing"/>
 		<search name="garden" query="leisure=garden"/>
 		<search name="golf_course" query="leisure=golf_course"/>
