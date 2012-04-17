@@ -7,6 +7,7 @@ import il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener;
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
@@ -173,7 +174,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		int count = adapter.getCount();
 		int dist = adapter.getMaximumDistance();
 
-		txt.setText(getResources().getQuantityString(R.plurals.results_within, count, count, dist));
+		txt.setText(getResources().getQuantityString(R.plurals.results_within, count, count, Util.formatDistance(dist)));
 	}
 
 	private void updateAccuracyView() {
@@ -207,10 +208,16 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		cancelCurrentTask();
 		updateCountView();
 
-		searchTask = new SearchAsyncTask(this, new ItemPipe<Entity>() {
+		searchTask = new SearchAsyncTask(this, new SearchPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
 				adapter.addItem(item);
+				updateCountView();
+			}
+
+			@Override
+			public void pushRadius(int radius) {
+				adapter.setRadius(radius);
 				updateCountView();
 			}
 

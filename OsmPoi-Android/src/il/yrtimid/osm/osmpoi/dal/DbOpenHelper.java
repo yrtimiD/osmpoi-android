@@ -78,7 +78,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (oldVersion == 1 && newVersion == 2){
+		if (oldVersion == 1 && newVersion > 1){
 			db.execSQL(context.getString(R.string.sql_create_starred_table));
 		}
 	}
@@ -150,11 +150,21 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.setLockingEnabled(true);
 	}
 	
-	public void clearGrid(){
+	public void initGrid(){
 		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("UPDATE "+NODES_TABLE+" SET grid_id=0");
+		//db.execSQL("UPDATE "+NODES_TABLE+" SET grid_id=1");
 		db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
 		db.execSQL(context.getString(R.string.sql_create_grid_table));
+	
+		String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
+								+" SELECT min(lat) minLat, min(lon) minLon, max(lat) maxLat, max(lon) maxLon"
+								+" FROM nodes";	
+		Log.d(sql_generate_grid);
+		db.execSQL(sql_generate_grid);
+		
+		String updateNodesGrid = "UPDATE nodes SET grid_id = 1";
+		Log.d(updateNodesGrid);
+		db.execSQL(updateNodesGrid);
 	}
 	
 	public void addEntity(Entity entity) {
@@ -387,7 +397,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/*
 	public void updateNodesGrid(){
 		SQLiteDatabase db = getWritableDatabase();
 		Double gridStep = 0.1;
@@ -404,12 +415,17 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		Log.d(updateNodesGrid);
 		db.execSQL(updateNodesGrid);
 	}
+	*/
 	
+	/**
+	 * Splits large cells until no cells with node count greater than maxItems least
+	 * @param maxItems
+	 */
 	public void optimizeGrid(Integer maxItems){
 		Collection<Integer> cells = null;
 		do{
 			cells = getBigCells(maxItems);
-			Log.d("OptimizeGrid: "+cells.size()+" need optimization for "+maxItems+" items");
+			Log.d("OptimizeGrid: "+cells.size()+" cells needs optimization for "+maxItems+" items");
 			if (cells.size() == 0) break;
 			for(Integer cellId : cells){
 				splitGridCell(cellId);
@@ -418,6 +434,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}while(true);
 	}
 	
+	/**
+	 * finds cells which have nodes count greater than minItems
+	 * @param minItems
+	 * @return
+	 */
 	private Collection<Integer> getBigCells(Integer minItems){
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cur = null;
@@ -438,13 +459,17 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		return gridIds;
 	}
 	
+	/**
+	 * Splits cell into 4 pieces and updates theirs nodes with the new split
+	 * @param id ID of the cell to split
+	 */
 	private void splitGridCell(Integer id){
 		SQLiteDatabase db = getWritableDatabase();
 		//db.beginTransaction();
 		try{
-			Log.d("splitGridCell "+id);
+			Log.d("splitGridCell id:"+id);
 			//calc new cell size to be 1/2 of the old one
-			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7)  from "+GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
+			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7) from "+GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
 			cur.moveToFirst();
 			Double newCellSize = cur.getDouble(0);
 			
@@ -470,23 +495,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			Log.wtf("splitGridCell", e);
 		}finally{
 			//db.endTransaction();q
-		}
-	}
-	
-	public boolean isNodeBelongsToWay(Node node){
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor cur = null;
-		try{
-			cur = db.rawQuery("SELECT 1 as _id FROM "+WAY_NODS_TABLE+" WHERE node_id=? LIMIT 1", new String[]{Long.toString(node.getId())});
-			if (cur.moveToFirst())
-				return true;
-			else 
-				return false;
-		}catch(Exception e){
-			Log.wtf("isNodeBelongsToWay id="+node.getId(), e);
-			return false;
-		}finally{
-			if (cur!=null) cur.close();
 		}
 	}
 

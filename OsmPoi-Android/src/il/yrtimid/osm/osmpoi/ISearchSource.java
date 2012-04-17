@@ -15,8 +15,8 @@ import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
  */
 public interface ISearchSource {
 	public abstract boolean isSupportsCancel(); 
-	public void getByDistance(SearchParameters search, ItemPipe<Entity> newItemNotifier, CancelFlag cancel);
-	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, ItemPipe<Entity> newItemNotifier, CancelFlag cancel);
+	public void getByDistance(SearchParameters search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
+	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
 	public abstract void close();
 	public abstract String getName();
 }

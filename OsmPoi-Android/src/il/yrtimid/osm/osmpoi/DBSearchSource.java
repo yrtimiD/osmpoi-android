@@ -52,7 +52,7 @@ public class DBSearchSource implements ISearchSource {
 	 * .nodematchers.EntityMatcher, il.yrtimid.osm.osmpoi.NewItemNotifier)
 	 */
 	@Override
-	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findAroundPlaceByTag(search.getCenter(), matcher, search.getMaxResults(), newItemNotifier, cancel);		
 	}
 
@@ -64,7 +64,7 @@ public class DBSearchSource implements ISearchSource {
 	 * .CircleArea, int, il.yrtimid.osm.osmpoi.NewItemNotifier)
 	 */
 	@Override
-	public void getByDistance(SearchParameters search, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	public void getByDistance(SearchParameters search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findAroundPlace(search.getCenter(), search.getMaxResults(), newItemNotifier, cancel);
 	}
 

@@ -24,6 +24,7 @@ public class ResultsAdapter extends BaseAdapter {
 	List<Entity> items;
 	Comparator<Entity> comparator;
 	List<EntityFormatter> formatters;
+	int radius;
 	
 	public ResultsAdapter(Context context, Location location, List<EntityFormatter> formatters) {
 		this.items = new ArrayList<Entity>();
@@ -69,6 +70,10 @@ public class ResultsAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 	
+	public void setRadius(int radius){
+		this.radius = radius;
+	}
+	
 	public void updateAndSort() {
 		Collections.sort(items, this.comparator);
 		notifyDataSetChanged();
@@ -94,7 +99,7 @@ public class ResultsAdapter extends BaseAdapter {
 				nl.setLatitude(node.getLatitude());
 				nl.setLongitude(node.getLongitude());
 				int bearing = Util.normalizeBearing ((int) location.bearingTo(nl)-(int)azimuth);
-				listItem.getText2().setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), Util.getDirectionChar(bearing), bearing));
+				listItem.getText2().setText(String.format("%s %c (%d˚)", Util.formatDistance((int) location.distanceTo(nl)), Util.getDirectionChar(bearing), bearing));
 			}
 		}
 
@@ -131,6 +136,10 @@ public class ResultsAdapter extends BaseAdapter {
 	}
 	
 	public int getMaximumDistance(){
+		return radius;
+	}
+	
+/*	public int getMaximumDistance(){
 		Node n = null;
 		if (items.size()>0){
 			n = il.yrtimid.osm.osmpoi.Util.getFirstNode(items.get(items.size()-1));
@@ -144,6 +153,5 @@ public class ResultsAdapter extends BaseAdapter {
 		}else {
 			return 0;
 		}
-		
-	}
+	}*/
 }

@@ -9,9 +9,7 @@ import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
-import il.yrtimid.osm.osmpoi.domain.Entity;
-import il.yrtimid.osm.osmpoi.domain.EntityType;
-import il.yrtimid.osm.osmpoi.domain.Node;
+import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.pbf.OsmImporter;
 import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
 import il.yrtimid.osm.osmpoi.ui.SearchActivity;
@@ -47,11 +45,14 @@ public class FileProcessingService extends Service {
 
 	public static final String EXTRA_FILE_PATH = "file_path";
 	public static final String EXTRA_OPERATION = "operation";
-	public static final int IMPORT_TO_DB_ID = 1;
-	public static final int CLEAR_DB = 3;
-	public static final int ABORTED = 4;
-	public static final int BUILD_GRID = 5;
-	public static final int DOWNLOAD_FILE = 6;
+	public static final int IMPORT_TO_DB = 1;
+	public static final int IMPORT_TO_DB_NODES = 11;
+	public static final int IMPORT_TO_DB_WAYS = 12;
+	public static final int IMPORT_TO_DB_RELS = 13;
+	public static final int CLEAR_DB = 20;
+	public static final int ABORTED = 30;
+	public static final int BUILD_GRID = 40;
+	public static final int DOWNLOAD_FILE = 50;
 	
 
 	private boolean hasRunningJobs = false;
@@ -202,16 +203,15 @@ public class FileProcessingService extends Service {
 
 			startForeground(BUILD_GRID, notif);
 
-			poiDbHelper.clearGrid();
-			//addressDbHelper.clearGrid();
+			final ImportSettings settings = Preferences.getImportSettings(context);
 			
 			notif.setLatestEventInfo(context, "Rebuilding grid", "Creating grid...", contentIntent);
 			notificationManager.notify(BUILD_GRID, notif);
-			poiDbHelper.updateNodesGrid();
+			poiDbHelper.initGrid();
 
 			notif.setLatestEventInfo(context, "Rebuilding grid", "Optimizing grid...", contentIntent);
 			notificationManager.notify(BUILD_GRID, notif);
-			poiDbHelper.optimizeGrid(1000);
+			poiDbHelper.optimizeGrid(settings.getGridSize());
 
 			stopForeground(true);
 			
@@ -220,10 +220,10 @@ public class FileProcessingService extends Service {
 			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Rebuilding grid", System.currentTimeMillis());
 			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
 			finalNotif.setLatestEventInfo(context, "Rebuilding grid", "Done successfully. ("+workTime+"min)", contentIntent);
-			notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+			notificationManager.notify(IMPORT_TO_DB, finalNotif);
 
 		} catch (Exception ex) {
-			Log.wtf("Exception while importing PBF into DB", ex);
+			Log.wtf("Exception while rebuilding grid", ex);
 		}
 	}
 	
@@ -246,9 +246,9 @@ public class FileProcessingService extends Service {
 
 			
 				notif.setLatestEventInfo(context, "PBF Import", "Clearing DB...", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				notificationManager.notify(IMPORT_TO_DB, notif);
 	
-				startForeground(IMPORT_TO_DB_ID, notif);
+				startForeground(IMPORT_TO_DB, notif);
 	
 				final ImportSettings settings = Preferences.getImportSettings(context);
 	
@@ -258,39 +258,57 @@ public class FileProcessingService extends Service {
 				}
 				
 				notif.setLatestEventInfo(context, "PBF Import", "Importing in progress...", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				notificationManager.notify(IMPORT_TO_DB, notif);
 	
 				
 				InputStream input;
 	
 				if (settings.isImportRelations()){
-					//input = new BufferedInputStream(new FileInputStream(sourceFile));
-					//importNodes(input, notif, settings);
-					//TODO import relations
+					input = new BufferedInputStream(new FileInputStream(sourceFile));
+					Long n = importRelations(input, notif, settings);
+					Log.d("Finished importing relations");
+					
+					Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
+					finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+					finalNotif.setLatestEventInfo(context, "PBF Import", "Imported "+n.toString()+" relations", contentIntent);
+					notificationManager.notify(IMPORT_TO_DB_RELS, finalNotif);
+					
 				}
 				
 				if (settings.isImportWays()){
 					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					importWays(input, notif, settings);
+					Long n = importWays(input, notif, settings);
 					Log.d("Finished importing ways");
+					
+					Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
+					finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+					finalNotif.setLatestEventInfo(context, "PBF Import", "Imported "+n.toString()+" ways", contentIntent);
+					notificationManager.notify(IMPORT_TO_DB_WAYS, finalNotif);
+
 				}
 				
 				if (settings.isImportNodes()){
 					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					importNodes(input, notif, settings);
+					Long n = importNodes(input, notif, settings);
 					Log.d("Finished importing nodes");
+					
+					Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
+					finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+					finalNotif.setLatestEventInfo(context, "PBF Import", "Imported "+n.toString()+" nodes", contentIntent);
+					notificationManager.notify(IMPORT_TO_DB_NODES, finalNotif);
+
 				}
 				
 				notif.setLatestEventInfo(context, "PBF Import", "Post-import calculations...", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				notificationManager.notify(IMPORT_TO_DB, notif);
 				
 				if(settings.isBuildGrid()){
 					notif.setLatestEventInfo(context, "PBF Import", "Creating grid...", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB_ID, notif);
-					poiDbHelper.updateNodesGrid();
+					notificationManager.notify(IMPORT_TO_DB, notif);
+					poiDbHelper.initGrid();
 	
 					notif.setLatestEventInfo(context, "PBF Import", "Optimizing grid...", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB_ID, notif);
+					notificationManager.notify(IMPORT_TO_DB, notif);
 					poiDbHelper.optimizeGrid(settings.getGridSize());
 					//TODO: is addr db needs grid too? 
 				}
@@ -303,12 +321,12 @@ public class FileProcessingService extends Service {
 				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
 				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
 				finalNotif.setLatestEventInfo(context, "PBF Import", "Import done successfully. ("+workTime+"min.)", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+				notificationManager.notify(IMPORT_TO_DB, finalNotif);
 			}else {
 				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
 				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
 				finalNotif.setLatestEventInfo(context, "PBF Import", "Import failed. File not found.", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, finalNotif);
+				notificationManager.notify(IMPORT_TO_DB, finalNotif);
 			}
 
 		} catch (Exception ex) {
@@ -316,6 +334,39 @@ public class FileProcessingService extends Service {
 		}
 	}
 
+
+	public Long importRelations(final InputStream input, final Notification notif, final ImportSettings settings) {
+		poiDbHelper.beginAdd();
+		addressDbHelper.beginAdd();
+		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
+			@Override
+			public void pushItem(Entity item) {
+				if (item.getType() == EntityType.Relation){
+					settings.cleanTags(item);
+					if (settings.isPoi(item))
+						poiDbHelper.addEntity(item);
+					else if (settings.isAddress(item))
+						addressDbHelper.addEntity(item);
+				}
+			}
+		}, new ProgressNotifier() {
+			@Override
+			public void onProgressChange(Progress progress) {
+				notif.setLatestEventInfo(context, "PBF Import", "Importing relations: " + progress.toString(), contentIntent);
+				notificationManager.notify(IMPORT_TO_DB, notif);
+			}
+		});
+		
+		if (count == -1L){
+			notif.setLatestEventInfo(context, "PBF Import", "Relations import failed", contentIntent);
+		}
+		
+		poiDbHelper.endAdd();
+		addressDbHelper.endAdd();
+		
+		return count;
+	}
+	
 	public Long importWays(final InputStream input, final Notification notif, final ImportSettings settings) {
 		poiDbHelper.beginAdd();
 		addressDbHelper.beginAdd();
@@ -329,7 +380,9 @@ public class FileProcessingService extends Service {
 					else if (settings.isAddress(item))
 						addressDbHelper.addEntity(item);
 					else if (settings.isImportRelations()){
-						//TODO: dbHelper.addWayIfBelongsToRelation((Way)item);
+						Way w = (Way)item;
+						poiDbHelper.addWayIfBelongsToRelation(w);
+						addressDbHelper.addWayIfBelongsToRelation(w);
 					}
 				}
 			}
@@ -337,7 +390,7 @@ public class FileProcessingService extends Service {
 			@Override
 			public void onProgressChange(Progress progress) {
 				notif.setLatestEventInfo(context, "PBF Import", "Importing ways: " + progress.toString(), contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				notificationManager.notify(IMPORT_TO_DB, notif);
 			}
 		});
 		
@@ -363,10 +416,16 @@ public class FileProcessingService extends Service {
 						poiDbHelper.addEntity(item);
 					else if (settings.isAddress(item))
 						addressDbHelper.addEntity(item);
-					else if (settings.isImportWays() || settings.isImportRelations()){
+					else {
 						Node n = (Node)item;
-						poiDbHelper.addNodeIfBelongsToWay(n);
-						addressDbHelper.addNodeIfBelongsToWay(n);
+						if (settings.isImportWays()){
+							poiDbHelper.addNodeIfBelongsToWay(n);
+							addressDbHelper.addNodeIfBelongsToWay(n);
+						}
+						if (settings.isImportRelations()){
+							poiDbHelper.addNodeIfBelongsToRelation(n);
+							addressDbHelper.addNodeIfBelongsToRelation(n);
+						}
 					}
 				}
 			}
@@ -374,7 +433,7 @@ public class FileProcessingService extends Service {
 			@Override
 			public void onProgressChange(Progress progress) {
 				notif.setLatestEventInfo(context, "PBF Import", "Importing nodes: " + progress.toString(), contentIntent);
-				notificationManager.notify(IMPORT_TO_DB_ID, notif);
+				notificationManager.notify(IMPORT_TO_DB, notif);
 			}
 		});
 		

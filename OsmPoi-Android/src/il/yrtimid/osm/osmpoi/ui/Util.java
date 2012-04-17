@@ -68,4 +68,10 @@ public class Util {
 		return bearing;
 	}
 	
+	public static String formatDistance(int meters){
+		if (meters<1000)
+			return String.format("%,dm", meters);
+		else
+			return String.format("%,dkm", meters/1000);
+	}
 }

@@ -52,7 +52,7 @@ public class OrientationChangeManager implements SensorEventListener {
 		for(float f : event.values){
 			b.append(f).append(" ");
 		}
-		Log.d(b.toString());
+		//Log.d(b.toString());
 		
 		if (listener != null){
 			listener.OnOrientationChanged(event.values[0]);

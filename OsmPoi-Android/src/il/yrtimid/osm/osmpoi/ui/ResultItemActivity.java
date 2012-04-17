@@ -116,15 +116,20 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 	}
 	
 	private void updateDistanceAndDirection(){
+		TextView tv = (TextView)findViewById(R.id.textDistanceAndDirection);
 		Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(entity);
+
 		if (node != null && this.location != null){
-			TextView tv = (TextView)findViewById(R.id.textDistanceAndDirection);
+			
 			Location nl = new Location(this.location);
 			nl.setLatitude(node.getLatitude());
 			nl.setLongitude(node.getLongitude());
 			int bearing = Util.normalizeBearing(((int) location.bearingTo(nl)-(int)azimuth));
 			
 			tv.setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), Util.getDirectionChar(bearing), bearing));
+		}
+		else {	
+			tv.setText("");
 		}
 	}
 

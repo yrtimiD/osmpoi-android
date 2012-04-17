@@ -47,8 +47,8 @@
 	<string name="title">Title</string>
 	<string name="place">Place</string>
     <plurals name="results_within" >
-	    <item quantity="one">One result within %2$dm</item>
-	    <item quantity="other">%1$d results within %2$dm</item>
+	    <item quantity="one">One result within %2$s</item>
+	    <item quantity="other">%1$d results within %2$s</item>
 	</plurals>
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
