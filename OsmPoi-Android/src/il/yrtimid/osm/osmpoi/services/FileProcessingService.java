@@ -29,6 +29,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.webkit.URLUtil;
 
@@ -265,38 +266,20 @@ public class FileProcessingService extends Service {
 	
 				if (settings.isImportRelations()){
 					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					Long n = importRelations(input, notif, settings);
+					importRelations(input, notif, settings);
 					Log.d("Finished importing relations");
-					
-					Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
-					finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-					finalNotif.setLatestEventInfo(context, "PBF Import", "Imported "+n.toString()+" relations", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB_RELS, finalNotif);
-					
 				}
 				
 				if (settings.isImportWays()){
 					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					Long n = importWays(input, notif, settings);
+					importWays(input, notif, settings);
 					Log.d("Finished importing ways");
-					
-					Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
-					finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-					finalNotif.setLatestEventInfo(context, "PBF Import", "Imported "+n.toString()+" ways", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB_WAYS, finalNotif);
-
 				}
 				
 				if (settings.isImportNodes()){
 					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					Long n = importNodes(input, notif, settings);
+					importNodes(input, notif, settings);
 					Log.d("Finished importing nodes");
-					
-					Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
-					finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-					finalNotif.setLatestEventInfo(context, "PBF Import", "Imported "+n.toString()+" nodes", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB_NODES, finalNotif);
-
 				}
 				
 				notif.setLatestEventInfo(context, "PBF Import", "Post-import calculations...", contentIntent);
@@ -306,11 +289,10 @@ public class FileProcessingService extends Service {
 					notif.setLatestEventInfo(context, "PBF Import", "Creating grid...", contentIntent);
 					notificationManager.notify(IMPORT_TO_DB, notif);
 					poiDbHelper.initGrid();
-	
+					
 					notif.setLatestEventInfo(context, "PBF Import", "Optimizing grid...", contentIntent);
 					notificationManager.notify(IMPORT_TO_DB, notif);
 					poiDbHelper.optimizeGrid(settings.getGridSize());
-					//TODO: is addr db needs grid too? 
 				}
 	
 				stopForeground(true);
@@ -449,7 +431,6 @@ public class FileProcessingService extends Service {
 		
 		final Notification notif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
 		notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-
 		notif.setLatestEventInfo(context, "PBF Import", "Downloading file...", contentIntent);
 		notificationManager.notify(DOWNLOAD_FILE, notif);
 
