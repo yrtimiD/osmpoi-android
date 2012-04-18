@@ -29,6 +29,7 @@
         </activity>
         <service android:exported="false" android:name=".services.FileProcessingService" android:label="@string/service_name"></service>
         <activity android:name=".ui.AboutActivity"></activity>
+        <activity android:name=".ui.DownloadActivity"></activity>
     </application>
 
 </manifest>

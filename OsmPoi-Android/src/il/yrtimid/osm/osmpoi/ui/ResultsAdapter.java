@@ -81,7 +81,7 @@ public class ResultsAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Entity item = items.get(position);
+		Entity item = (Entity)getItem(position);
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.results_view_row, parent, false);
 		}

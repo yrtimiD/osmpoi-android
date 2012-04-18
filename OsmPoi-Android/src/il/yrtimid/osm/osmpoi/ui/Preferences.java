@@ -34,7 +34,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
 	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
 	private static final String PREFERENCE_BUILD_GRID = "preference_build_grid";
-
+	private static final String PREFERENCE_DOWNLOAD = "preference_download";
 	
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
@@ -52,6 +52,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_BUILD_GRID).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
 	}
 
 	/*
@@ -101,6 +102,9 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		} else if (PREFERENCE_BUILD_GRID.equals(key)){
 			runBuildGridService();
 			return true;
+		} else if (PREFERENCE_DOWNLOAD.equals(key)){
+			Intent intent = new Intent(this, DownloadActivity.class);
+			startActivity(intent);
 		}
 
 		return false;

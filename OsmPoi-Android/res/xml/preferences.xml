@@ -18,10 +18,11 @@
         <PreferenceScreen
             android:summary="@string/imported_db_summary"
             android:title="@string/imported_db" >
-         	<il.yrtimid.osm.osmpoi.ui.SelectDownloadDialogPreference 
+         	<Preference 
          	    android:title="Download and Import..." 
-         	    android:key="preference_download" 
-         	    />
+         	    android:key="preference_download"
+         	    android:summary="Select and download offline area data"/>
+         	
             <Preference
                 android:key="preference_import_pbf"
                 android:summary="@string/import_pbf_summary"
