@@ -74,4 +74,16 @@ public class Util {
 		else
 			return String.format("%,dkm", meters/1000);
 	}
+	
+	public static String formatSize(int bytes){
+		if (bytes<1000)
+			return String.format("%dB", bytes);
+		else if (bytes<1000000)
+			return String.format("%dkB", bytes/1000);
+		else if (bytes<1000000000)
+			return String.format("%dMB", bytes/1000000);
+		else 
+			return String.format("%dGB", bytes/1000000000);
+	}
+	
 }

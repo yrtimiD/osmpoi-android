@@ -3,11 +3,19 @@
  */
 package il.yrtimid.osm.osmpoi.ui;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +25,15 @@ import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 import il.yrtimid.osm.osmpoi.ui.DownloadItem.ItemType;
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.view.Window;
 import android.webkit.URLUtil;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -30,7 +42,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author yrtimid
  * 
  */
-public class DownloadActivity extends Activity implements OnItemClickListener {
+public class DownloadActivity extends ListActivity implements ListView.OnScrollListener {
 	private DownloadListAdapter adapter;
 
 	@Override
@@ -38,7 +50,9 @@ public class DownloadActivity extends Activity implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.select_download);
+		// setContentView(R.layout.select_download);
+
+		getListView().setOnScrollListener(this);
 	}
 
 	@Override
@@ -46,18 +60,17 @@ public class DownloadActivity extends Activity implements OnItemClickListener {
 		super.onResume();
 
 		DownloadItem urls = loadList();
-		ListView lv = (ListView) this.findViewById(R.id.list);
+
 		adapter = new DownloadListAdapter(this, R.layout.select_download_row, urls);
-		lv.setAdapter(adapter);
-		lv.setOnItemClickListener(this);
+		setListAdapter(adapter);
 	}
 
 	private DownloadItem loadList() {
 		DownloadItem root = new DownloadItem();
-		root.Name="/";
+		root.Name = "/";
 		root.Type = ItemType.FOLDER;
 		root.SubItems = new ArrayList<DownloadItem>();
-		
+
 		List<String> urls = new ArrayList<String>();
 		try {
 			InputStream stream = this.getAssets().open("pbf_list");
@@ -100,7 +113,7 @@ public class DownloadActivity extends Activity implements OnItemClickListener {
 						if (currentFolder == null) {// we at root
 							root.SubItems.add(newFile);
 							newFile.Parent = root;
-						} else {//we at sub-folder
+						} else {// we at sub-folder
 							currentFolder.SubItems.add(newFile);
 							newFile.Parent = currentFolder;
 						}
@@ -120,7 +133,7 @@ public class DownloadActivity extends Activity implements OnItemClickListener {
 							if (currentFolder == null) {// we at root
 								root.SubItems.add(newFolder);
 								newFolder.Parent = root;
-							} else {//we at sub-folder
+							} else {// we at sub-folder
 								currentFolder.SubItems.add(newFolder);
 								newFolder.Parent = currentFolder;
 							}
@@ -131,41 +144,75 @@ public class DownloadActivity extends Activity implements OnItemClickListener {
 				}
 			}
 		}
-		
 
 		return root;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget
-	 * .AdapterView, android.view.View, int, long)
-	 */
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	protected void onListItemClick(ListView parent, View view, int position, long id) {
 		DownloadItem item = adapter.getItem(position);
 		if (item.Type == ItemType.FOLDER) {
 			adapter.changeLevel(item);
 			parent.setSelection(0);
 		} else {
+
+			checkDownloadItemAvailability(item);
+		}
+	}
+
+	private void checkDownloadItemAvailability(final DownloadItem item) {
+		new AsyncTask<DownloadItem, Void, Boolean>() {
+
+			@Override
+			protected Boolean doInBackground(DownloadItem... params) {
+				try {
+					DownloadItem item = params[0];
+					URL u = new URL(item.Url);
+					HttpURLConnection conn;
+					conn = (HttpURLConnection) u.openConnection();
+					item.Size = conn.getContentLength();
+					item.LastModified = new Date(conn.getLastModified());
+					return conn.getResponseCode() == 200;
+				} catch (IOException e) {
+					Log.wtf("checkDownloadItem", e);
+					return false;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Boolean result) {
+				setProgressBarIndeterminateVisibility(false);
+				confirmDownloading(result, item);
+			}
+		}.execute(item);
+		setProgressBarIndeterminateVisibility(true);
+	}
+
+	private void confirmDownloading(Boolean itemAvailable, DownloadItem item) {
+		if (itemAvailable) {
 			final String url = item.Url;
-			ConfirmDialog.Confirm(this, String.format(getString(R.string.confirm_download_and_import), item.Name),
+
+			final ConfirmDialog.Action runDownloadAndImportServiceAction =
 					new ConfirmDialog.Action() {
 						@Override
 						public void PositiveAction() {
-							ConfirmDialog.Confirm(DownloadActivity.this, getString(R.string.import_confirm),
-									new ConfirmDialog.Action() {
-										@Override
-										public void PositiveAction() {
-											runDownloadAndImportService(url);
-										}
-									}
-									);
+							runDownloadAndImportService(url);
 						}
-					}
-					);
+					};
+
+			final ConfirmDialog.Action confirmDownloadAction =
+					new ConfirmDialog.Action() {
+						@Override
+						public void PositiveAction() {
+							ConfirmDialog.Confirm(DownloadActivity.this, getString(R.string.import_confirm), runDownloadAndImportServiceAction);
+						}
+					};
+			String lastModified = DateFormat.getMediumDateFormat(this).format(item.LastModified);
+			String size = Util.formatSize(item.Size);
+			String message = getString(R.string.confirm_download_and_import, item.Name, size, lastModified);
+			ConfirmDialog.Confirm(this, message, confirmDownloadAction);
+		} else {
+			Util.showAlert(this, getString(R.string.file_unavailable, item.Name));
 		}
 	}
 
@@ -175,6 +222,31 @@ public class DownloadActivity extends Activity implements OnItemClickListener {
 		serviceIntent.putExtra(FileProcessingService.EXTRA_FILE_PATH, url);
 
 		startService(serviceIntent);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.widget.AbsListView.OnScrollListener#onScrollStateChanged(android
+	 * .widget.AbsListView, int)
+	 */
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.widget.AbsListView.OnScrollListener#onScroll(android.widget.
+	 * AbsListView, int, int, int)
+	 */
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		// TODO Auto-generated method stub
 
 	}
 }

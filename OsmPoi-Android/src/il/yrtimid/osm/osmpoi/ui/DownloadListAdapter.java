@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
 /**
@@ -73,17 +74,22 @@ public class DownloadListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		DownloadItem item = getItem(position);
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.results_view_row, parent, false);
+			//convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+			convertView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
 		}
 
-		TwoLineListItem listItem = (TwoLineListItem) convertView;
+		//TwoLineListItem listItem = (TwoLineListItem) convertView;
+		TextView listItem = (TextView) convertView;
 
-		if (position == 0 && parent != null)
-			listItem.getText1().setText("..");
-		else
-			listItem.getText1().setText(item.Name);
+		if (position == 0 && parent != null){
+			//listItem.getText1().setText("..");
+			listItem.setText("..");
+		} else{
+			//listItem.getText1().setText(item.Name);
+			listItem.setText(item.Name);
+		}
 
-		listItem.getText2().setText("");
+		//listItem.getText2().setText("");
 
 		return convertView;
 	}

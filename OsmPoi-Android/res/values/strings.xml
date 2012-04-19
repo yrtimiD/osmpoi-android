@@ -60,5 +60,6 @@
 	<string name="import_pbf">Import PBF…</string>
 	<string name="import_pbf_summary">Imports selected PBF file into local database</string>
 	<string name="large_file_confirm">Selected file is too large. Do you want to continue?</string>
-	<string name="confirm_download_and_import">Selected file %s will be downloaded and then imported.</string>
+	<string name="confirm_download_and_import">Selected file %1$s (%2$s) created on %3$s will be downloaded and then imported.</string>
+	<string name="file_unavailable">Selected file %1$s isn\'t available right now.</string>
 </resources>
