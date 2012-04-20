@@ -3,7 +3,7 @@
 	xsi:noNamespaceSchemaLocation="categories.xsd">
 	<custom name="custom_search" />
 	<starred name="starred" icon="star_big_on" />
-	<category name="emergency">
+	<category name="emergency" icon="caution">
 		<search name="hospital" query="amenity=hospital" />
 		<search name="clinic" query="amenity=clinic" />
 		<search name="doctors" query="amenity=doctors" />
@@ -13,7 +13,7 @@
 		<search name="police" query="amenity=police" />
 		<search name="shelter" query="amenity=shelter" />
 	</category>
-	<category name="transport">
+	<category name="transport" icon="highway">
 		<search name="bus_stop" query="highway=bus_stop" />
 		<search name="bus_station" query="amenity=bus_station | public_transport=station" />
 		<search name="railway_station" query="railway=station | building=train_station" />
@@ -30,12 +30,12 @@
 		<search name="bicycle_rental" query="amenity=bicycle_rental" />
 		<search name="bicycle_parking" query="amenity=bicycle_parking" />
 	</category>
-	<category name="finance">
+	<category name="finance" icon="bank">
 		<search name="bank" query="amenity=bank" />
 		<search name="atm" query="amenity=atm | atm=yes" />
 		<search name="bureau_de_change" query="amenity=bureau_de_change" />
 	</category>
-	<category name="shopping">
+	<category name="shopping" icon="supermarket">
 		<search name="all_in_this_category" query="shop=*" />
 		<inline name="supermarket" query="shop=supermarket" select="operator*" />
 		<search name="mall" query="shop=mall" />
@@ -129,7 +129,7 @@
 		<inline name="shop_operator" query="shop=*" select="operator*" />
 		<inline name="other_shop_type" query="shop=*" select="shop" />
 	</category>
-	<category name="services">
+	<category name="services" icon="tools">
 		<search name="drinking_water" query="amenity=drinking_water" />
 		<search name="post_box" query="amenity=post_box" />
 		<search name="post_office" query="amenity=post_office" />
@@ -138,7 +138,7 @@
 		<search name="toilet" query="amenity=toilets" />
 		<search name="waste_basket" query="amenity=waste_basket" />
 	</category>
-	<category name="food">
+	<category name="food" icon="fastfood">
 		<search name="cafe" query="amenity=cafe" />
 		<search name="restaurant" query="amenity=restaurant" />
 		<inline name="cuisine" query="cuisine=*" select="cuisine" />
@@ -150,7 +150,7 @@
 		<search name="food_court" query="amenity=food_court"/>
 		<search name="vending_machine" query="amenity=vending_machine" />
 	</category>
-	<category name="leisure">
+	<category name="leisure" icon="party_2">
 		<search name="all_in_this_category" query="leisure=*" />
 		<search name="arts_centre" query="amenity=arts_centre" />
 		<search name="brothel" query="amenity=brothel" />
@@ -180,7 +180,7 @@
 		<search name="track" query="leisure=track"/>
 		<search name="water_park" query="leisure=water_park"/>
 	</category>
-	<category name="tourism">
+	<category name="tourism" icon="world">
 		<search name="alpine_hut" query="amenity=alpine_hut"/> 
 		<search name="artwork" query="amenity=artwork"/> 
 		<search name="attraction" query="amenity=attraction"/> 
