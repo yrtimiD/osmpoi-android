@@ -108,23 +108,23 @@
                     android:title="Import addresses" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="preference_import_build_grid"
+                    android:key="debug_import_build_grid"
                     android:summary="debug option"
                     android:title="Build grid (debug)" android:dependency="show_debug_preferences"/>
                 <CheckBoxPreference
                     android:defaultValue="True"
-                    android:key="preference_clear_db_before_import"
+                    android:key="debug_import_cleardb"
                     android:summary="debug option"
                     android:title="Clear DB before import (debug)" android:dependency="show_debug_preferences"/>
             </PreferenceScreen>
 
             <Preference
-                android:key="preference_build_grid"
+                android:key="debug_rebuild_grid"
                 android:persistent="false"
                 android:summary="debug option"
                 android:title="Rebuild grid (debug)" android:dependency="show_debug_preferences" android:shouldDisableView="true"/>
             <Preference
-                android:key="preference_clear_db"
+                android:key="debug_clear_db"
                 android:persistent="false"
                 android:summary="debug option"
                 android:title="Clear DB (debug)" android:shouldDisableView="true" android:dependency="show_debug_preferences"/>

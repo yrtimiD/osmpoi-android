@@ -51,6 +51,7 @@
 	    <item quantity="other">%1$d results within %2$s</item>
 	</plurals>
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
+    <string name="about_map_icons2">Map icons CC-0 from &lt;a href=\'http://www.sjjb.co.uk/mapicons\'&gt;SJJB Management&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
 	<string name="db_on_sdcard">Store DB on sdcard</string>
 	<string name="db_on_sdcard_true">Database file will be stored on external storage</string>

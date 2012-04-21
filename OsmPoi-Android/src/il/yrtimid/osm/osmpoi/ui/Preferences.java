@@ -32,8 +32,8 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	public static final String RESULT_LANGUAGE = "result_language";
 	public static final String IS_DB_ON_SDCARD = "is_db_on_sdcard";
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
-	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
-	private static final String PREFERENCE_BUILD_GRID = "preference_build_grid";
+	private static final String PREFERENCE_CLEAR_DB = "debug_clear_db";
+	private static final String PREFERENCE_BUILD_GRID = "debug_rebuild_grid";
 	private static final String PREFERENCE_DOWNLOAD = "preference_download";
 	
 	
@@ -267,8 +267,8 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		ImportSettings settings = new ImportSettings();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
-		settings.setBuildGrid(prefs.getBoolean("preference_import_build_grid", true));
-		settings.setClearBeforeImport(prefs.getBoolean("preference_clear_db_before_import", true));
+		settings.setBuildGrid(prefs.getBoolean("debug_import_build_grid", true));
+		settings.setClearBeforeImport(prefs.getBoolean("debug_import_cleardb", true));
 		
 		settings.setNodeKey("highway", prefs.getBoolean("include_node_highway", false));
 		settings.setNodeKey("building",prefs.getBoolean("include_node_building", false));

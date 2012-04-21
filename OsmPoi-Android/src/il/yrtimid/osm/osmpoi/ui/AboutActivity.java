@@ -178,6 +178,10 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		TextView aboutMapIconsText = (TextView)view.findViewById(R.id.about_map_icons);
 		aboutMapIconsText.setMovementMethod(LinkMovementMethod.getInstance());
 		aboutMapIconsText.setText(Html.fromHtml(getString(R.string.about_map_icons)));
+		
+		TextView aboutMapIcons2Text = (TextView)view.findViewById(R.id.about_map_icons2);
+		aboutMapIcons2Text.setMovementMethod(LinkMovementMethod.getInstance());
+		aboutMapIcons2Text.setText(Html.fromHtml(getString(R.string.about_map_icons2)));
 	}
 	
 	private void populateDbStats(View v){
