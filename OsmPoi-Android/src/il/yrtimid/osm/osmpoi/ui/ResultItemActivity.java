@@ -150,8 +150,9 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 				Intent pref = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
 				startActivity(pref);
 			}
-
 			return true;
+		case R.id.mnu_find_associated:
+			
 		default:
 			return super.onOptionsItemSelected(item);
 		}

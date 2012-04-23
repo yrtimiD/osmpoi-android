@@ -8,9 +8,9 @@
         android:id="@+id/btnMoreResults"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/More"
+        android:text="@string/more"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:enabled="false" />
+        android:enabled="true" />
 
 
 </LinearLayout>

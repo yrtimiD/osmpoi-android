@@ -8,12 +8,14 @@ import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.SearchPipe;
+import il.yrtimid.osm.osmpoi.SearchType;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import android.app.Activity;
 import android.content.DialogInterface.OnCancelListener;
-//import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -33,6 +35,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OrientationChangeListener, OnClickListener {
+	public static final String SEARCH_TYPE = "SEARCH_TYPE";
+	public static final String SEARCH_PARAMETER = "SEARCH_PARAMETER";
+	
 	private static final int START_RESULTS = 20;
 	private static final int RESULTS_INCREMENT = 20;
 
@@ -45,11 +50,14 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 	private Boolean waitingForLocation = false;
 	private final Object waitingForLocationLocker = new Object();
-
+	private BaseSearchParameter currentSearch;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getSearchParameter();
+		
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.results_view);
 
@@ -58,6 +66,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		resultsList = (ListView) findViewById(R.id.listResults);
 		View footer = getLayoutInflater().inflate(R.layout.results_view_footer, null);
 
+		//button may become cancel/more only when will be possible to know currant state searching/idle
 		btnMoreResults = ((Button) footer.findViewById(R.id.btnMoreResults));
 		btnMoreResults.setOnClickListener(this);
 
@@ -66,14 +75,22 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 		resultsList.setOnItemClickListener(this);
 
-		OsmPoiApplication.currentSearch.setMaxResults(START_RESULTS);
-
 		Entity[] savedData = (Entity[]) getLastNonConfigurationInstance();
 		if (savedData != null)
 			adapter.addItems(savedData);
 		else{
 			search();
 		}
+	}
+
+	private void getSearchParameter() {
+		Bundle extras = getIntent().getExtras();
+		switch((SearchType)extras.get(SEARCH_TYPE)){
+		case SearchByKeyValue:
+			currentSearch = (SearchByKeyValue)extras.getParcelable(SEARCH_PARAMETER);
+			break;
+		}
+		currentSearch.setMaxResults(START_RESULTS);
 	}
 
 	/*
@@ -184,9 +201,9 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	}
 
 	private void search() {
-		if (OsmPoiApplication.currentSearch.hasExpression()) {
+		if (currentSearch instanceof SearchByKeyValue) {
 			try {
-				TagMatcher.parse(OsmPoiApplication.currentSearch.getExpression());
+				((SearchByKeyValue)currentSearch).getMatcher();
 			} catch (InvalidParameterException e) {
 				Toast.makeText(this, getText(R.string.cant_parse) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
 				return;
@@ -242,7 +259,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 		setProgressBarIndeterminateVisibility(true);
 		btnMoreResults.setEnabled(false);
-		searchTask.execute(OsmPoiApplication.currentSearch);
+		searchTask.execute(currentSearch);
 		Toast.makeText(this, OsmPoiApplication.searchSource.getName(), Toast.LENGTH_SHORT).show();
 		return;
 	}
@@ -281,8 +298,8 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btnMoreResults) {
-			int max = OsmPoiApplication.currentSearch.getMaxResults();
-			OsmPoiApplication.currentSearch.setMaxResults(max + RESULTS_INCREMENT);
+			int max = currentSearch.getMaxResults();
+			currentSearch.setMaxResults(max + RESULTS_INCREMENT);
 			search();
 		}
 

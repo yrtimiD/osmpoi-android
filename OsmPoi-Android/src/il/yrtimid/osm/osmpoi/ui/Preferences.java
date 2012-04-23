@@ -35,7 +35,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	private static final String PREFERENCE_CLEAR_DB = "debug_clear_db";
 	private static final String PREFERENCE_BUILD_GRID = "debug_rebuild_grid";
 	private static final String PREFERENCE_DOWNLOAD = "preference_download";
-	
+	private static final String PREFERENCE_DEBUG_SHOW = "debug_show_debug_preferences";
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -53,6 +53,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_BUILD_GRID).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_DEBUG_SHOW).setOnPreferenceChangeListener(this);
 	}
 
 	/*
@@ -172,7 +173,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		}
 		return false;
 		*/
-
+		
 		return true;
 	}
 

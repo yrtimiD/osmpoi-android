@@ -12,7 +12,6 @@ import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
 import il.yrtimid.osm.osmpoi.dal.DbSearcher;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
-import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
 import android.app.Application;
 import android.content.Context;
@@ -27,7 +26,6 @@ import android.preference.PreferenceManager;
  */
 public class OsmPoiApplication extends Application {
 	public static ISearchSource searchSource;
-	public static SearchParameters currentSearch;
 	public static Category mainCategory;
 	private static Location location;
 	public static LocationChangeManager locationManager;
@@ -58,10 +56,15 @@ public class OsmPoiApplication extends Application {
 		return location;
 	}
 
+	public static Point getCurrentLocationPoint() {
+		return new Point(location.getLatitude(), location.getLongitude());
+	}
+
+	
 	public static boolean setCurrentLocation(Location location) {
 		if (Util.isBetterLocation(location, OsmPoiApplication.location)) {
 			OsmPoiApplication.location = location;
-			currentSearch.setCenter( new Point(location.getLatitude(), location.getLongitude()));
+			//currentSearch.setCenter( new Point(location.getLatitude(), location.getLongitude()));
 			return true;
 		}
 		else {
@@ -80,10 +83,6 @@ public class OsmPoiApplication extends Application {
 			setupDbLocation(context, isDbOnSdcard);
 			
 			OsmPoiApplication.databases.reset();
-			
-			if (currentSearch == null){
-				currentSearch = new SearchParameters();
-			}
 			
 			tryCreateSearchSource(context);
 		}

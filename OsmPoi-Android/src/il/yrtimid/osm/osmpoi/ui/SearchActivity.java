@@ -3,10 +3,14 @@ package il.yrtimid.osm.osmpoi.ui;
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.SearchType;
 import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 
 import java.util.Collection;
 
@@ -33,7 +37,7 @@ import android.widget.TextView;
 public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener {
 
 	private static final String EXTRA_CATEGORY = "CATEGORY";
-
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -156,10 +160,15 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		}
 	}
 
-	private void search() {
+	private void search(String expression) {
+		SearchByKeyValue search = new SearchByKeyValue();
+		search.setCenter(OsmPoiApplication.getCurrentLocationPoint());
+		search.setExpression(expression);
+
 		Intent intent = new Intent(this, ResultsActivity.class);
-		//intent.putExtra(ResultsActivity.LOCATION, currentLocation);
-		//intent.putExtra(ResultsActivity.SEARCH, currentSearch);
+
+		intent.putExtra(ResultsActivity.SEARCH_TYPE, SearchType.SearchByKeyValue);
+		intent.putExtra(ResultsActivity.SEARCH_PARAMETER, search);
 		startActivity(intent);
 	}
 
@@ -188,16 +197,14 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
             	.setView(textEntryView)
             	.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-        			OsmPoiApplication.currentSearch.setExpression(textEntryView.getText().toString());
-        			search();
+        			search(textEntryView.getText().toString());
                 }
             })
             .create()
             .show();
 			break;
 		case SEARCH:
-			OsmPoiApplication.currentSearch.setExpression(cat.getQuery());
-			search();
+			search(cat.getQuery());
 			break;
 		case INLINE_SEARCH:
 			if (cat.getSubCategoriesCount()>0){

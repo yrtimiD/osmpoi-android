@@ -123,16 +123,36 @@ public class DbSearcher extends DbOpenHelper {
 	private boolean getById(Point point, IdMatcher idMatcher, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		if(cancel.isCancelled()) return true;
 		Entity result = null;
-		switch(idMatcher.getEntityType()){
-		case Node:
-			result = getNodeById(point, idMatcher);
-			break;
-		case Way:
-			result = getWayById(point, idMatcher);
-			break;
-		case Relation:
-			result = getRelationById(point, idMatcher);
-			break;
+		
+		Cursor cur = null;
+		try{
+			String sql = "SELECT * FROM "+entityTypeToTableName.get(idMatcher.getEntityType())+" WHERE id=?";
+			SQLiteDatabase db = getReadableDatabase();
+			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString()});
+			if (cur.moveToFirst()){
+				switch(idMatcher.getEntityType()){
+				case Node:
+					Node node = constructNode(cur);
+					fillTags(node);
+					result = node;
+					break;
+				case Way:
+					Way way = constructWay(cur);
+					fillTags(way);
+					result = way;
+					break;
+				case Relation:
+					Relation rel = constructRelation(cur);
+					fillTags(rel);
+					result = rel;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			Log.wtf("getById", e);
+			return false;
+		} finally {
+			if (cur!= null) cur.close();
 		}
 		
 		if (result != null)
@@ -141,81 +161,6 @@ public class DbSearcher extends DbOpenHelper {
 		return true;
 	}
 
-	private Node getNodeById(Point point, IdMatcher idMatcher){
-		Cursor cur = null;
-		try{
-			
-			String sql = "SELECT * FROM nodes WHERE id=?";
-			SQLiteDatabase db = getReadableDatabase();
-			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString()});
-			if (cur.moveToFirst()){
-				Long id = cur.getLong(cur.getColumnIndex("id"));
-				Node node = constructNode(cur, id);
-				fillTags(node);
-				return node;
-			}
-			
-			return null;
-		} catch (Exception e) {
-			Log.wtf("getNodeById", e);
-			return null;
-		} finally {
-			if (cur!= null) cur.close();
-		}
-	}
-	
-	/**
-	 * Returns way populated with single nearest to point node 
-	 * @param point
-	 * @param idMatcher
-	 * @return
-	 */
-	private Way getWayById(Point point, IdMatcher idMatcher){
-		Cursor cur = null;
-		try{
-			String sql = "select way_nodes.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon"
-								+" from way_nodes"
-								+" inner join nodes on way_nodes.node_id = nodes.id"
-								+ " WHERE way_nodes.id=?"
-								+ " order by (abs(lat-?)+abs(lon-?))"
-								+ " limit 1";
-			SQLiteDatabase db = getReadableDatabase();
-			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString(), point.getLatitude().toString(), point.getLongitude().toString()});
-			if (cur.moveToFirst()){
-				Long nodeId = cur.getLong(cur.getColumnIndex("node_id"));
-				Node node = constructNode(cur, nodeId);
-				Way way = constructWay(cur, node);
-				fillTags(way);
-				return way;
-			}			
-			return null;
-		} catch (Exception e) {
-			Log.wtf("getWayById", e);
-			return null;
-		} finally {
-			if (cur!= null) cur.close();
-		}
-	}
-	
-	private Relation getRelationById(Point point, IdMatcher idMatcher){
-		Cursor cur = null;
-		try{
-			String sql = "SELECT id, timestamp FROM "+RELATIONS_TABLE+" WHERE id=?";
-			SQLiteDatabase db = getReadableDatabase();
-			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString()});
-			if (cur.moveToFirst()){
-				Relation rel = constructRelation(cur);
-				fillTags(rel);
-				return rel;
-			}			
-			return null;
-		} catch (Exception e) {
-			Log.wtf("getRelationById", e);
-			return null;
-		} finally {
-			if (cur!= null) cur.close();
-		}
-	}
 	
 	private enum FindType{
 		AROUND_PLACE,
@@ -227,7 +172,7 @@ public class DbSearcher extends DbOpenHelper {
 		int waysOffset = 0;
 		int relationsOffset = 0;
 		
-		int gridSize = 2;
+		int gridSize = 2;//TODO: fix when grid have only one cell
 		boolean lastRun = false;
 		try {
 			Cursor cur = null;
@@ -237,13 +182,14 @@ public class DbSearcher extends DbOpenHelper {
 				int radius = getDistanceToCell(point, gridIds[gridIds.length-1]);
 				newItemNotifier.pushRadius(radius);
 				
-				if (gridSize*gridSize>gridIds.length){
-					if (gridIds.length>((gridSize-1)*(gridSize-1)))//new grid bigger than previous
-						lastRun = true;
-					else
-						return true;
+				if (gridSize > 2){ //not first run, the whole grid may have only one cell
+					if (gridSize*gridSize>gridIds.length){
+						if (gridIds.length>((gridSize-1)*(gridSize-1)))//new grid bigger than previous
+							lastRun = true;
+						else
+							return true;
+					}
 				}
-				
 				int nodesCount = 0;
 				int waysCount = 0;
 				int relationsCount = 0;
@@ -252,10 +198,10 @@ public class DbSearcher extends DbOpenHelper {
 					cur = getNodesAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
 					nodesCount = readNodes(cur, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getWaysAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
+					cur = getWaysAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, waysOffset);
 					waysCount = readWays(cur, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getRelationsAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
+					cur = getRelationsAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, relationsOffset);
 					relationsCount = readRelations(cur, maxResults, newItemNotifier, cancel);
 					cur.close();
 					break;
@@ -266,7 +212,7 @@ public class DbSearcher extends DbOpenHelper {
 					cur = getWaysAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, waysOffset);
 					waysCount = readWays(cur, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getRelationsAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, waysOffset);
+					cur = getRelationsAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, relationsOffset);
 					relationsCount = readRelations(cur, maxResults, newItemNotifier, cancel);
 					cur.close();
 					break;
@@ -280,7 +226,7 @@ public class DbSearcher extends DbOpenHelper {
 				maxResults-=waysCount;
 				maxResults-=relationsCount;
 				
-				if ((nodesCount+waysCount) == 0 && maxResults>0){//query returned no results - time to wider search
+				if ((nodesCount+waysCount+relationsCount) == 0 && maxResults>0){//query returned no results - time to wider search
 					gridSize++;
 				}
 			} while (maxResults>0 && cancel.isNotCancelled() && !lastRun);
@@ -293,25 +239,17 @@ public class DbSearcher extends DbOpenHelper {
 	}
 	
 	private int readNodes(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
-		Map<Long, Node> nodes = new HashMap<Long, Node>();
-
+		int count = 0;
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					long id = cur.getLong(cur.getColumnIndex("id"));
-					if (nodes.containsKey(id)) {
-						continue;
-					}
-
-					Node n = constructNode(cur, id);
-					nodes.put(id, n);
+					Node n = constructNode(cur);
 					fillTags(n);
-					if (n.hasTags()) {
-						notifier.pushItem(n);
+					notifier.pushItem(n);
 						
-						maxResults--;
-						if (maxResults == 0) break;
-					}
+					maxResults--;
+					count++;
+					if (maxResults == 0) break;
 					
 				} while (cur.moveToNext() && maxResults>0 && cancel.isNotCancelled());
 			}
@@ -319,28 +257,20 @@ public class DbSearcher extends DbOpenHelper {
 			e.printStackTrace();
 		}
 		
-		return nodes.keySet().size();
+		return count;
 	}
 
 	private int readWays(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
-		Map<Long, Way> ways = new HashMap<Long, Way>();
-
+		int count = 0;
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					long wayId = cur.getLong(cur.getColumnIndex("id"));
-					long nodeId = cur.getLong(cur.getColumnIndex("node_id"));
-					
-					if (ways.containsKey(wayId)) continue;
-
-					Node n = constructNode(cur, nodeId);
-					Way w = constructWay(cur, n);
+					Way w = constructWay(cur);
 					fillTags(w);
-
-					ways.put(w.getId(), w);
 					notifier.pushItem(w);
 						
 					maxResults--;
+					count++;
 					if (maxResults == 0) break;
 					
 				} while (cur.moveToNext() && maxResults>0 && cancel.isNotCancelled());
@@ -349,25 +279,20 @@ public class DbSearcher extends DbOpenHelper {
 			e.printStackTrace();
 		}
 		
-		return ways.keySet().size();
+		return count;
 	}
 	
 	private int readRelations(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
-		Map<Long, Relation> rels = new HashMap<Long, Relation>();
-
+		int count = 0;
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					long relId = cur.getLong(cur.getColumnIndex("id"));
-					if (rels.containsKey(relId)) continue;
-
 					Relation r = constructRelation(cur);
 					fillTags(r);
-
-					rels.put(r.getId(), r);
 					notifier.pushItem(r);
 						
 					maxResults--;
+					count++;
 					if (maxResults == 0) break;
 					
 				} while (cur.moveToNext() && maxResults>0 && cancel.isNotCancelled());
@@ -376,7 +301,7 @@ public class DbSearcher extends DbOpenHelper {
 			e.printStackTrace();
 		}
 		
-		return rels.keySet().size();
+		return count;
 	}
 	
 	private Cursor getNodesAroundPlace(Point point, Integer[] gridIds, Integer limit, Integer offset) {
@@ -608,14 +533,15 @@ public class DbSearcher extends DbOpenHelper {
 		}
 	}
 	
-	private CommonEntityData constructEntity(Cursor cur, long id) {
+	private CommonEntityData constructEntity(Cursor cur) {
+		long id = cur.getLong(cur.getColumnIndex("id"));
 		long timestamp = cur.getLong(cur.getColumnIndex("timestamp"));
 		CommonEntityData entityData = new CommonEntityData(id, timestamp);
 		return entityData;
 	}
 
-	private Node constructNode(Cursor cur, long id) {
-		CommonEntityData entityData = constructEntity(cur, id);
+	private Node constructNode(Cursor cur) {
+		CommonEntityData entityData = constructEntity(cur);
 		Double lat = cur.getDouble(cur.getColumnIndex("lat"));
 		Double lon = cur.getDouble(cur.getColumnIndex("lon"));
 		return new Node(entityData, lat, lon);
@@ -627,18 +553,14 @@ public class DbSearcher extends DbOpenHelper {
 		return new Tag(k, v);
 	}
 
-	private Way constructWay(Cursor cur, Node node) {
-		long id = cur.getLong(cur.getColumnIndex("id"));
-		CommonEntityData entityData = constructEntity(cur, id);
+	private Way constructWay(Cursor cur) {
+		CommonEntityData entityData = constructEntity(cur);
 		Way w = new Way(entityData);
-		if (node != null)
-			w.getWayNodes().add(node);
 		return w;
 	}
 	
 	private Relation constructRelation(Cursor cur){
-		long id = cur.getLong(cur.getColumnIndex("id"));
-		CommonEntityData entityData = constructEntity(cur, id);
+		CommonEntityData entityData = constructEntity(cur);
 		Relation rel = new Relation(entityData);
 		return rel;
 	}

@@ -5,7 +5,8 @@
         android:id="@+id/mnu_open"
         android:icon="@android:drawable/ic_menu_view"
         android:menuCategory="container"
-        android:title="@string/locate">
-    </item>
+        android:title="@string/locate" />
+    <item android:id="@+id/mnu_find_associated"
+        android:title="Find associated" />
 
 </menu>

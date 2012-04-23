@@ -4,8 +4,7 @@
     <string name="search">Search</string>
     <string name="Settings">Settings</string>
     <string name="Templates">Templates</string>
-    <string name="Less">Less</string>
-    <string name="More">Give me more</string>
+    <string name="more">Give me more</string>
 	<string name="file_location">File location</string>
 	<string name="no_search_source_configured">No search source configured</string>
 	<string name="Accuracy">Accuracy:</string>
@@ -29,8 +28,8 @@
 	<string name="search_again">Search again</string>
 	<string name="search_finished">Search finished</string>
 	<string name="search_cancelled">Search has been cancelled</string>
-	<string name="imported_db">Imported DB</string>
-	<string name="imported_db_summary">Search in local database created by importing OSM-extract file</string>
+	<string name="offline_db">Offline DB</string>
+	<string name="offline_db_summary">Search in local offline database</string>
 	<string name="pbf_file_summary">Local OSM extract file in PBF format</string>
 	<string name="compact">Compact</string>
 	<string name="service_name">OsmPoi file import service</string>
@@ -58,8 +57,8 @@
 	<string name="db_on_sdcard_false">Database file will be stored on internal storage</string>
 	<string name="import_settings">Import Settings…</string>
 	<string name="import_settings_summary">Customization of import process</string>
-	<string name="import_pbf">Import PBF…</string>
-	<string name="import_pbf_summary">Imports selected PBF file into local database</string>
+	<string name="import_pbf">Import local file…</string>
+	<string name="import_pbf_summary">Imports local PBF file into local offline database</string>
 	<string name="large_file_confirm">Selected file is too large. Do you want to continue?</string>
 	<string name="confirm_download_and_import">Selected file %1$s (%2$s) created on %3$s will be downloaded and then imported.</string>
 	<string name="file_unavailable">Selected file %1$s isn\'t available right now.</string>

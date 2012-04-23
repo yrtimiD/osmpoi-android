@@ -7,7 +7,9 @@ import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.ResultItem;
 import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
-import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import android.content.Context;
@@ -15,7 +17,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 
-public class SearchAsyncTask extends AsyncTask<SearchParameters, ResultItem, Boolean> {
+public class SearchAsyncTask extends AsyncTask<BaseSearchParameter, ResultItem, Boolean> {
 	
 	public class AsyncTaskCancelFlag extends CancelFlag{
 		AsyncTask<?,?,?> task;
@@ -64,7 +66,7 @@ public class SearchAsyncTask extends AsyncTask<SearchParameters, ResultItem, Boo
 	}
 
 	@Override
-	protected Boolean doInBackground(SearchParameters... task) {
+	protected Boolean doInBackground(BaseSearchParameter... task) {
 		this.cancelFlag = new AsyncTaskCancelFlag(this);
 		if (OsmPoiApplication.searchSource == null) return false;
 		try{
@@ -84,11 +86,10 @@ public class SearchAsyncTask extends AsyncTask<SearchParameters, ResultItem, Boo
 	
 			if (this.isCancelled()) return false;
 			Log.d("Search task started");
-			if (task[0].hasExpression()){
-				TagMatcher matcher = TagMatcher.parse(task[0].getExpression());
-				OsmPoiApplication.searchSource.getByDistanceAndKeyValue(task[0], matcher, notifier, this.cancelFlag);
-			}else {
-				OsmPoiApplication.searchSource.getByDistance(task[0], notifier, this.cancelFlag);
+			if (task[0] instanceof SearchByKeyValue){
+				OsmPoiApplication.searchSource.getByDistanceAndKeyValue((SearchByKeyValue)task[0], notifier, this.cancelFlag);
+			}else if (task[0] instanceof SearchAround){
+				OsmPoiApplication.searchSource.getByDistance((SearchAround)task[0], notifier, this.cancelFlag);
 			}
 			return true;
 		}catch(Exception e){

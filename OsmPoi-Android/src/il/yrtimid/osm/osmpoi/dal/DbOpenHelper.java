@@ -6,7 +6,10 @@ package il.yrtimid.osm.osmpoi.dal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
@@ -43,7 +46,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	
 	
 	private static final int DATABASE_VERSION = 2;
-
+	protected static final Map<EntityType, String> entityTypeToTableName = new HashMap<EntityType, String>();
+	
 	Context context;
 
 	/**
@@ -55,6 +59,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	public DbOpenHelper(Context context, File dbLocation) {
 		super(context, dbLocation.getPath(), null, DATABASE_VERSION);
 		this.context = context;
+		
+		entityTypeToTableName.put(EntityType.Node, NODES_TABLE);
+		entityTypeToTableName.put(EntityType.Way, WAYS_TABLE);
+		entityTypeToTableName.put(EntityType.Relation, RELATIONS_TABLE);
 	}
 
 	/*

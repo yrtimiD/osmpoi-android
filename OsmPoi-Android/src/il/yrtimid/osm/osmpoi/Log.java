@@ -6,7 +6,7 @@ package il.yrtimid.osm.osmpoi;
 
 /**
  * @author yrtimid
- *
+ * use setprop log.tag.OsmPoi VERBOSE to enable logging
  */
 public class Log {
 		static final String TAG = "OsmPoi";

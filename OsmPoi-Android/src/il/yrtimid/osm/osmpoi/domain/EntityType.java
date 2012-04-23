@@ -8,6 +8,7 @@ package il.yrtimid.osm.osmpoi.domain;
  * @author Brett Henderson
  */
 public enum EntityType {
+	None,
 	/**
 	 * Representation of the latitude/longitude bounding box of the entity stream.
 	 */
