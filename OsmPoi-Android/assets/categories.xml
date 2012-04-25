@@ -52,7 +52,7 @@
 		<search name="beauty" query="shop=beauty" />
 		<search name="bed" query="shop=bed" />
 		<search name="beverage" query="shop=beverage" />
-		<search name="bycicle" query="shop=bycicle" />
+		<search name="bicycle" query="shop=bicycle" />
 		<search name="books" query="shop=books" />
 		<search name="boutique" query="shop=boutique" />
 		<search name="butcher" query="shop=butcher" />
