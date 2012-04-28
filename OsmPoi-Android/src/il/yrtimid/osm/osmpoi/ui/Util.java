@@ -86,4 +86,14 @@ public class Util {
 			return String.format("%dGB", bytes/1000000000);
 	}
 	
+	public static String getLocalName(Context context, String key){
+		if (key == null || key.length()==0) return key;
+		if (false == Character.isLetter(key.charAt(0))) return key; //getIdentifier internally tries to convert name to integer, so if key=="10" we'll not get it resolved to real ID
+		
+		int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
+		if (resId == 0)
+			return key;
+		else 
+			return context.getResources().getString(resId);
+	}
 }

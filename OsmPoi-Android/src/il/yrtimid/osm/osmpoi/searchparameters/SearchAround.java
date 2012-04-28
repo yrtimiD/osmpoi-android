@@ -42,11 +42,7 @@ public class SearchAround extends BaseSearchParameter implements android.os.Parc
 	public Point getCenter() {
 		return center;
 	}
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);

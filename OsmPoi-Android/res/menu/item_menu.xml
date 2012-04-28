@@ -7,6 +7,7 @@
         android:menuCategory="container"
         android:title="@string/locate" />
     <item android:id="@+id/mnu_find_associated"
+        android:icon="@android:drawable/ic_menu_search"
         android:title="Find associated" />
 
 </menu>

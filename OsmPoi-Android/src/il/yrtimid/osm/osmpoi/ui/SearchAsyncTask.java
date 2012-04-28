@@ -9,7 +9,9 @@ import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import android.content.Context;
@@ -86,11 +88,8 @@ public class SearchAsyncTask extends AsyncTask<BaseSearchParameter, ResultItem, 
 	
 			if (this.isCancelled()) return false;
 			Log.d("Search task started");
-			if (task[0] instanceof SearchByKeyValue){
-				OsmPoiApplication.searchSource.getByDistanceAndKeyValue((SearchByKeyValue)task[0], notifier, this.cancelFlag);
-			}else if (task[0] instanceof SearchAround){
-				OsmPoiApplication.searchSource.getByDistance((SearchAround)task[0], notifier, this.cancelFlag);
-			}
+			OsmPoiApplication.searchSource.search(task[0], notifier, this.cancelFlag);
+
 			return true;
 		}catch(Exception e){
 			Log.wtf("doInBackground", e);

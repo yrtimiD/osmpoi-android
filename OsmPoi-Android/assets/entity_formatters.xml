@@ -16,5 +16,4 @@
 	<formatter match="addr:street=* &amp; addr:housename=*" select_pattern="{addr:street} {addr:housename}" />
 	<formatter match="addr:housenumber=*" select_pattern="{addr:housenumber}" />
 	<formatter match="addr:housename=*" select_pattern="{addr:housename}" />
-
 </formatters>

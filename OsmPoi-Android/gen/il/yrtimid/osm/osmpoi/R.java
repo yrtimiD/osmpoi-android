@@ -145,6 +145,7 @@ public final class R {
         public static final int bed=0x7f060028;
         public static final int bed_and_breakfast=0x7f0600a9;
         public static final int beverage=0x7f060029;
+        public static final int bicycle=0x7f06002a;
         public static final int bicycle_parking=0x7f060075;
         public static final int bicycle_rental=0x7f060074;
         public static final int biergarten=0x7f060086;
@@ -155,7 +156,6 @@ public final class R {
         public static final int bus_station=0x7f060008;
         public static final int bus_stop=0x7f060007;
         public static final int butcher=0x7f06002d;
-        public static final int bycicle=0x7f06002a;
         public static final int cafe=0x7f060080;
         public static final int camp_site=0x7f0600aa;
         public static final int cancel=0x7f0600db;

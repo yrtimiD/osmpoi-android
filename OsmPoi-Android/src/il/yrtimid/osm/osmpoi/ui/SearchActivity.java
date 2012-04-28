@@ -10,6 +10,7 @@ import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
 import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 
 import java.util.Collection;
@@ -160,15 +161,16 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		}
 	}
 
-	private void search(String expression) {
-		SearchByKeyValue search = new SearchByKeyValue();
-		search.setCenter(OsmPoiApplication.getCurrentLocationPoint());
-		search.setExpression(expression);
-
+	private void search(BaseSearchParameter search) {
 		Intent intent = new Intent(this, ResultsActivity.class);
-
-		intent.putExtra(ResultsActivity.SEARCH_TYPE, SearchType.SearchByKeyValue);
-		intent.putExtra(ResultsActivity.SEARCH_PARAMETER, search);
+		
+		//intent.putExtra(ResultsActivity.SEARCH_TYPE, searchType);
+		if (search instanceof SearchByKeyValue){
+			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchByKeyValue)search);
+		}else if (search instanceof SearchById){
+			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchById)search);
+		} 
+		
 		startActivity(intent);
 	}
 
@@ -197,17 +199,17 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
             	.setView(textEntryView)
             	.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-        			search(textEntryView.getText().toString());
+        			search(new SearchByKeyValue(textEntryView.getText().toString()));
                 }
             })
             .create()
             .show();
 			break;
 		case SEARCH:
-			search(cat.getQuery());
+			search(cat.getSearchParameter());
 			break;
 		case INLINE_SEARCH:
-			if (cat.getSubCategoriesCount()>0){
+			if (cat.isSubCategoriesFetched()){
 				showCategory(cat);
 			}else {
 				AsyncTask<Category, Void, Category> asyncLoad = new AsyncTask<Category, Void, Category>(){

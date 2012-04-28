@@ -28,9 +28,10 @@ public class SearchByKeyValue extends SearchAround implements android.os.Parcela
 		}
 	};
 	
-	public SearchByKeyValue(){
+	public SearchByKeyValue(String expression){
 		this.center = new Point(0,0);
 		this.maxResults = 0;
+		this.expression = expression;
 	}
 	
 	public SearchByKeyValue(Parcel source){
@@ -59,11 +60,6 @@ public class SearchByKeyValue extends SearchAround implements android.os.Parcela
 		return matcher;
 	}
 	
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);

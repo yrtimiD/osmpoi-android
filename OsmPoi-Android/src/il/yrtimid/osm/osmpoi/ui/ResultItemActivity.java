@@ -1,16 +1,25 @@
 package il.yrtimid.osm.osmpoi.ui;
 
+import java.security.InvalidParameterException;
+
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,9 +30,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,7 +110,6 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		OsmPoiApplication.orientationManager.setOrientationChangeListener(null);
 	}
 	
-	
 	private void setIcon() {
 		ImageView imageType = ((ImageView)findViewById(R.id.imageType));
 		switch (entity.getType()) {
@@ -125,8 +137,8 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 			nl.setLatitude(node.getLatitude());
 			nl.setLongitude(node.getLongitude());
 			int bearing = Util.normalizeBearing(((int) location.bearingTo(nl)-(int)azimuth));
-			
-			tv.setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), Util.getDirectionChar(bearing), bearing));
+			String distance = Util.formatDistance((int) location.distanceTo(nl));
+			tv.setText(String.format("%s %c (%d˚)", distance, Util.getDirectionChar(bearing), bearing));
 		}
 		else {	
 			tv.setText("");
@@ -152,7 +164,9 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 			}
 			return true;
 		case R.id.mnu_find_associated:
-			
+			Intent intent = new Intent(this, ResultsActivity.class);
+			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, new SearchByParentId(entity.getType(), entity.getId()));
+			startActivity(intent);
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -209,5 +223,4 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		this.azimuth = azimuth;
 		updateDistanceAndDirection();
 	}
-
 }

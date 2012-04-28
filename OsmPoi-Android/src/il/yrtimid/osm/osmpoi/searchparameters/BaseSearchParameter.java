@@ -2,7 +2,7 @@ package il.yrtimid.osm.osmpoi.searchparameters;
 
 import android.os.Parcel;
 
-public class BaseSearchParameter{
+public abstract class BaseSearchParameter implements android.os.Parcelable{
 	protected int maxResults;
 	
 	public BaseSearchParameter(){
@@ -23,5 +23,10 @@ public class BaseSearchParameter{
 
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(maxResults);
+	}
+	
+	@Override
+	public int describeContents() {
+		return 0;
 	}
 }

@@ -15,6 +15,7 @@ import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 
 /**
  * @author yrtimid
@@ -88,7 +89,7 @@ public class DbStarred extends DbOpenHelper {
 					cat.setLocalizable(false);
 					cat.setName(title);
 					EntityType entityType = Enum.valueOf(EntityType.class, type);
-					cat.setQuery(entityType.toString().toLowerCase()+"_id="+id.toString());
+					cat.setSearchParameter(new SearchById(entityType, id));
 					
 					results.add(cat);
 				}while(cur.moveToNext());

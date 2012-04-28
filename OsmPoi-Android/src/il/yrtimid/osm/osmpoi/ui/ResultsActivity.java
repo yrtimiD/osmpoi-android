@@ -4,16 +4,13 @@ import java.security.InvalidParameterException;
 
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener;
-import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.SearchPipe;
-import il.yrtimid.osm.osmpoi.SearchType;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
-import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
-
 import android.app.Activity;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface;
@@ -35,7 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OrientationChangeListener, OnClickListener {
-	public static final String SEARCH_TYPE = "SEARCH_TYPE";
+	//public static final String SEARCH_TYPE = "SEARCH_TYPE";
 	public static final String SEARCH_PARAMETER = "SEARCH_PARAMETER";
 	
 	private static final int START_RESULTS = 20;
@@ -85,11 +82,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 	private void getSearchParameter() {
 		Bundle extras = getIntent().getExtras();
-		switch((SearchType)extras.get(SEARCH_TYPE)){
-		case SearchByKeyValue:
-			currentSearch = (SearchByKeyValue)extras.getParcelable(SEARCH_PARAMETER);
-			break;
-		}
+		currentSearch = (BaseSearchParameter)extras.getParcelable(SEARCH_PARAMETER);
 		currentSearch.setMaxResults(START_RESULTS);
 	}
 
@@ -201,15 +194,6 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	}
 
 	private void search() {
-		if (currentSearch instanceof SearchByKeyValue) {
-			try {
-				((SearchByKeyValue)currentSearch).getMatcher();
-			} catch (InvalidParameterException e) {
-				Toast.makeText(this, getText(R.string.cant_parse) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
-				return;
-			}
-		}
-		
 		if (waitingForLocation) return;
 		if (false == OsmPoiApplication.hasLocation()) {
 			waitingForLocation = true;
@@ -220,6 +204,18 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 				}
 			});
 			return;
+		}
+		
+		if (currentSearch instanceof SearchByKeyValue) {
+			try {
+				((SearchByKeyValue)currentSearch).getMatcher();
+			} catch (InvalidParameterException e) {
+				Toast.makeText(this, getText(R.string.cant_parse) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
+				return;
+			}
+			((SearchByKeyValue)currentSearch).setCenter(OsmPoiApplication.getCurrentLocationPoint());
+		}else if (currentSearch instanceof SearchAround){
+			((SearchAround)currentSearch).setCenter(OsmPoiApplication.getCurrentLocationPoint());
 		}
 		
 		cancelCurrentTask();
@@ -274,6 +270,8 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		cancelCurrentTask();
+		
 		Entity entity = (Entity) resultsList.getItemAtPosition(position);
 
 		Intent intent = new Intent(this, ResultItemActivity.class);

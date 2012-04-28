@@ -10,10 +10,15 @@ import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.CommonEntityData;
 import il.yrtimid.osm.osmpoi.domain.Entity;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.domain.Node;
 import il.yrtimid.osm.osmpoi.domain.Relation;
 import il.yrtimid.osm.osmpoi.domain.Tag;
 import il.yrtimid.osm.osmpoi.domain.Way;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+import il.yrtimid.osm.osmpoi.tagmatchers.AssociatedMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.IdMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
@@ -107,30 +112,34 @@ public class DbSearcher extends DbOpenHelper {
 		}
 	}
 	
-	public boolean findAroundPlace(Point point, int maxResults, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		return find(FindType.AROUND_PLACE, point, null, maxResults, newItemNotifier, cancel);
+	public boolean findAroundPlace(SearchAround search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		return find(FindType.AROUND_PLACE, search.getCenter(), null, search.getMaxResults(), newItemNotifier, cancel);
 	}
 	
-	public boolean findAroundPlaceByTag(Point point, TagMatcher tagMatcher, int maxResults, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		if (tagMatcher instanceof IdMatcher){
-			return getById(point, (IdMatcher)tagMatcher, newItemNotifier, cancel);
-		}else{ 
-			return find(FindType.BY_TAG, point, tagMatcher, maxResults, newItemNotifier, cancel);
-		}
+	public boolean findAroundPlaceByTag(SearchByKeyValue search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		
+		return find(FindType.BY_TAG, search.getCenter(), search.getMatcher(), search.getMaxResults(), newItemNotifier, cancel);
+	}
+	
+	public boolean findById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel){
+		return getById(search.getEntityType(), search.getId(), newItemNotifier, cancel);
+	}
+	
+	public boolean findByParentId(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel){
+		return getByParentId(search.getEntityType(), search.getId(), newItemNotifier, cancel);
 	}
 
-
-	private boolean getById(Point point, IdMatcher idMatcher, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	private boolean getById(EntityType entityType, Long id, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		if(cancel.isCancelled()) return true;
 		Entity result = null;
 		
 		Cursor cur = null;
 		try{
-			String sql = "SELECT * FROM "+entityTypeToTableName.get(idMatcher.getEntityType())+" WHERE id=?";
+			String sql = "SELECT * FROM "+entityTypeToTableName.get(entityType)+" WHERE id=?";
 			SQLiteDatabase db = getReadableDatabase();
-			cur = db.rawQuery(sql, new String[]{idMatcher.getId().toString()});
+			cur = db.rawQuery(sql, new String[]{id.toString()});
 			if (cur.moveToFirst()){
-				switch(idMatcher.getEntityType()){
+				switch(entityType){
 				case Node:
 					Node node = constructNode(cur);
 					fillTags(node);
@@ -160,19 +169,21 @@ public class DbSearcher extends DbOpenHelper {
 		
 		return true;
 	}
-
 	
 	private enum FindType{
 		AROUND_PLACE,
 		BY_TAG
 	}
 	
-	public boolean find(FindType findType, Point point, TagMatcher tagMatcher, int maxResults, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	/**
+	 * Used for cases where result count isn't known
+	 */
+	private boolean find(FindType findType, Point point, TagMatcher tagMatcher, int maxResults, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		int nodesOffset = 0;
 		int waysOffset = 0;
 		int relationsOffset = 0;
 		
-		int gridSize = 2;//TODO: fix when grid have only one cell
+		int gridSize = 2;
 		boolean lastRun = false;
 		try {
 			Cursor cur = null;
@@ -238,6 +249,9 @@ public class DbSearcher extends DbOpenHelper {
 		}
 	}
 	
+	/**
+	 * @param maxResults negative number - no limit
+	 */
 	private int readNodes(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
 		int count = 0;
 		try {
@@ -251,7 +265,7 @@ public class DbSearcher extends DbOpenHelper {
 					count++;
 					if (maxResults == 0) break;
 					
-				} while (cur.moveToNext() && maxResults>0 && cancel.isNotCancelled());
+				} while (cur.moveToNext() && cancel.isNotCancelled());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -260,6 +274,9 @@ public class DbSearcher extends DbOpenHelper {
 		return count;
 	}
 
+	/**
+	 * @param maxResults negative number - no limit
+	 */
 	private int readWays(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
 		int count = 0;
 		try {
@@ -273,7 +290,7 @@ public class DbSearcher extends DbOpenHelper {
 					count++;
 					if (maxResults == 0) break;
 					
-				} while (cur.moveToNext() && maxResults>0 && cancel.isNotCancelled());
+				} while (cur.moveToNext() && cancel.isNotCancelled());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,6 +299,9 @@ public class DbSearcher extends DbOpenHelper {
 		return count;
 	}
 	
+	/**
+	 * @param maxResults negative number - no limit
+	 */
 	private int readRelations(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
 		int count = 0;
 		try {
@@ -295,7 +315,7 @@ public class DbSearcher extends DbOpenHelper {
 					count++;
 					if (maxResults == 0) break;
 					
-				} while (cur.moveToNext() && maxResults>0 && cancel.isNotCancelled());
+				} while (cur.moveToNext() && cancel.isNotCancelled());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -470,6 +490,71 @@ public class DbSearcher extends DbOpenHelper {
 		}
 	}
 
+	private boolean getByParentId(EntityType entityType, Long id, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		if(cancel.isCancelled()) return true;
+
+		switch(entityType){
+		case Node:
+			return true;
+		case Way:
+			return getNodesByWayId(id, newItemNotifier, cancel);
+		case Relation:
+			return getNodesAndWaysByRelationId(id, newItemNotifier, cancel);
+		}
+		
+		return false;
+	}
+	
+	private boolean getNodesByWayId(Long wayId, SearchPipe<Entity> notifier, CancelFlag cancel){
+		Cursor cur = null;
+		try{
+			String sql = "SELECT n.* FROM "+NODES_TABLE+" n INNER JOIN "+WAY_NODS_TABLE+" w ON n.id=w.node_id WHERE w.way_id=?";
+			SQLiteDatabase db = getReadableDatabase();
+			cur = db.rawQuery(sql, new String[]{wayId.toString()});
+			readNodes(cur, -1, notifier, cancel);
+		} catch (Exception e) {
+			Log.wtf("getNodesByWayId", e);
+			return false;
+		} finally {
+			if (cur!= null) cur.close();
+		}
+		
+		return true;
+	}
+	
+	private boolean getNodesAndWaysByRelationId(Long relationId, SearchPipe<Entity> notifier, CancelFlag cancel){
+		Cursor cur = null;
+		try{
+			SQLiteDatabase db = getReadableDatabase();
+			
+			String sql = "SELECT n.* FROM "+NODES_TABLE+" n INNER JOIN "+MEMBERS_TABLE+" m ON m.Type='"+EntityType.Node+"' AND n.id=m.ref WHERE m.relation_id=?";
+			Log.d(sql);
+			cur = db.rawQuery(sql, new String[]{relationId.toString()});
+			readNodes(cur, -1, notifier, cancel);
+			cur.close();
+			
+			sql = "SELECT w.* FROM "+WAYS_TABLE+" w INNER JOIN "+MEMBERS_TABLE+" m ON m.Type='"+EntityType.Way+"' AND w.id=m.ref WHERE m.relation_id=?";
+			Log.d(sql);
+			cur = db.rawQuery(sql, new String[]{relationId.toString()});
+			readWays(cur, -1, notifier, cancel);
+			cur.close();
+
+			sql = "SELECT r.* FROM "+RELATIONS_TABLE+" r INNER JOIN "+MEMBERS_TABLE+" m ON m.Type='"+EntityType.Relation+"' AND r.id=m.ref WHERE m.relation_id=?";
+			Log.d(sql);
+			cur = db.rawQuery(sql, new String[]{relationId.toString()});
+			readRelations(cur, -1, notifier, cancel);
+			cur.close();
+
+		} catch (Exception e) {
+			Log.wtf("getNodesAndWaysByRelationId", e);
+			return false;
+		} finally {
+			if (cur!= null) cur.close();
+		}
+
+		return true;
+	}
+	
 	private void fillTags(Node node) {
 		Collection<Tag> tags = node.getTags();
 		SQLiteDatabase db = null;

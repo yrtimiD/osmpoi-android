@@ -3,7 +3,6 @@
  */
 package il.yrtimid.osm.osmpoi.searchparameters;
 
-import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,10 +29,10 @@ public class SearchById extends BaseSearchParameter implements android.os.Parcel
 		}
 	};
 	
-	public SearchById(){
+	public SearchById(EntityType entityType, long id){
 		this.maxResults = 0;
-		this.id = 0;
-		this.type = EntityType.None;
+		this.id = id;
+		this.type = entityType;
 	}
 	
 	public SearchById(Parcel source){
@@ -57,11 +56,7 @@ public class SearchById extends BaseSearchParameter implements android.os.Parcel
 	public EntityType getEntityType() {
 		return type;
 	}
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
