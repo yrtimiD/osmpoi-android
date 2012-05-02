@@ -37,7 +37,8 @@
 	</category>
 	<category name="shopping" icon="supermarket">
 		<search name="all_in_this_category" query="shop=*" />
-		<inline name="supermarket" query="shop=supermarket" select="operator*" />
+		<inline name="supermarket_by_operator" query="shop=supermarket" select="operator*" />
+		<search name="supermarket" query="shop=supermarket"/>
 		<search name="mall" query="shop=mall" />
 		<search name="pharmacy" query="amenity=pharmacy" />
 		<search name="marketplace" query="amenity=marketplace" />
@@ -181,26 +182,28 @@
 		<search name="water_park" query="leisure=water_park"/>
 	</category>
 	<category name="tourism" icon="world">
-		<search name="alpine_hut" query="amenity=alpine_hut"/> 
-		<search name="artwork" query="amenity=artwork"/> 
-		<search name="attraction" query="amenity=attraction"/> 
-		<search name="bed_and_breakfast" query="amenity=bed_and_breakfast"/> 
-		<search name="camp_site" query="amenity=camp_site"/> 
-		<search name="caravan_site" query="amenity=caravan_site"/> 
-		<search name="chalet" query="amenity=chalet"/> 
-		<search name="guest_house" query="amenity=guest_house"/> 
-		<search name="hostel" query="amenity=hostel"/> 
-		<search name="hotel" query="amenity=hotel"/> 
-		<search name="information" query="amenity=information"/> 
-		<search name="motel" query="amenity=motel"/> 
-		<search name="museum" query="amenity=museum"/> 
-		<search name="picnic_site" query="amenity=picnic_site"/> 
-		<search name="theme_park" query="amenity=theme_park"/> 
-		<search name="viewpoint" query="amenity=viewpoint"/> 
-		<search name="zoo" query="amenity=zoo"/> 
+		<search name="all_in_this_category" query="tourism=*"/>
+		<search name="alpine_hut" query="tourism=alpine_hut"/> 
+		<search name="artwork" query="tourism=artwork"/> 
+		<search name="attraction" query="tourism=attraction"/> 
+		<search name="bed_and_breakfast" query="tourism=bed_and_breakfast"/> 
+		<search name="camp_site" query="tourism=camp_site"/> 
+		<search name="caravan_site" query="tourism=caravan_site"/> 
+		<search name="chalet" query="tourism=chalet"/> 
+		<search name="guest_house" query="tourism=guest_house"/> 
+		<search name="hostel" query="tourism=hostel"/> 
+		<search name="hotel" query="tourism=hotel"/> 
+		<search name="information" query="tourism=information"/> 
+		<search name="motel" query="tourism=motel"/> 
+		<search name="museum" query="tourism=museum"/> 
+		<search name="picnic_site" query="tourism=picnic_site"/> 
+		<search name="theme_park" query="tourism=theme_park"/> 
+		<search name="viewpoint" query="tourism=viewpoint"/> 
+		<search name="zoo" query="tourism=zoo"/> 
 	</category>
 	<category name="other">
 			<search name="embassy" query="amenity=embassy" />
+			<search name="office" query="office=*" />
 	</category>
 	<inline name="place" query="place=*" select="place" />
 	<categories name="(debug)">
