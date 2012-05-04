@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="categories.xsd">
+<categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="categories.xsd">
 	<custom name="custom_search" />
 	<starred name="starred" icon="star_big_on" />
 	<category name="emergency" icon="caution">
@@ -38,11 +37,11 @@
 	<category name="shopping" icon="supermarket">
 		<search name="all_in_this_category" query="shop=*" />
 		<inline name="supermarket_by_operator" query="shop=supermarket" select="operator*" />
-		<search name="supermarket" query="shop=supermarket"/>
+		<search name="supermarket" query="shop=supermarket" />
 		<search name="mall" query="shop=mall" />
 		<search name="pharmacy" query="amenity=pharmacy" />
 		<search name="marketplace" query="amenity=marketplace" />
-     
+
 		<search name="alcohol" query="shop=alcohol" />
 		<search name="anime" query="shop=anime" />
 		<search name="appliance" query="shop=appliance" />
@@ -126,9 +125,61 @@
 		<search name="trade" query="shop=trade" />
 		<search name="vacuum_cleaner" query="shop=vacuum_cleaner" />
 		<search name="video" query="shop=video" />
-		
+
 		<inline name="shop_operator" query="shop=*" select="operator*" />
 		<inline name="other_shop_type" query="shop=*" select="shop" />
+	</category>
+	<category name="craft">
+		<search name="agricultural_engines" query="craft=agricultural_engines" />
+		<search name="basket_maker" query="craft=basket_maker" />
+		<search name="beekeeper" query="craft=beekeeper" />
+		<search name="blacksmith" query="craft=blacksmith" />
+		<search name="boatbuilder" query="craft=boatbuilder" />
+		<search name="bonfires" query="craft=bonfires" />
+		<search name="bookbinder" query="craft=bookbinder" />
+		<search name="brewery" query="craft=brewery" />
+		<search name="carpenter" query="craft=carpenter" />
+		<search name="carpet_layer" query="craft=carpet_layer" />
+		<search name="caterer" query="craft=caterer" />
+		<search name="clockmaker" query="craft=clockmaker" />
+		<search name="confectionery" query="craft=confectionery" />
+		<search name="dressmaker" query="craft=dressmaker" />
+		<search name="electrician" query="craft=electrician" />
+		<search name="falles" query="craft=falles" />
+		<search name="gardener" query="craft=gardener" />
+		<search name="glaziery" query="craft=glaziery" />
+		<search name="handicraft" query="craft=handicraft" />
+		<search name="hvac" query="craft=hvac" />
+		<search name="insulation" query="craft=insulation" />
+		<search name="jeweller" query="craft=jeweller" />
+		<search name="locksmith" query="craft=locksmith" />
+		<search name="key_cutter" query="craft=key_cutter" />
+		<search name="metal_construction" query="craft=metal_construction" />
+		<search name="optician" query="craft=optician" />
+		<search name="painter" query="craft=painter" />
+		<search name="parquet_layer" query="craft=parquet_layer" />
+		<search name="photographer" query="craft=photographer" />
+		<search name="photographic_laboratory" query="craft=photographic_laboratory" />
+		<search name="plasterer" query="craft=plasterer" />
+		<search name="plumber" query="craft=plumber" />
+		<search name="pottery" query="craft=pottery" />
+		<search name="rigger" query="craft=rigger" />
+		<search name="roofer" query="craft=roofer" />
+		<search name="saddler" query="craft=saddler" />
+		<search name="sailmaker" query="craft=sailmaker" />
+		<search name="sawmill" query="craft=sawmill" />
+		<search name="scaffolder" query="craft=scaffolder" />
+		<search name="sculptor" query="craft=sculptor" />
+		<search name="shoemaker" query="craft=shoemaker" />
+		<search name="stand_builder" query="craft=stand_builder" />
+		<search name="stonemason" query="craft=stonemason" />
+		<search name="sun_protection" query="craft=sun_protection" />
+		<search name="sweep" query="craft=sweep" />
+		<search name="tailor" query="craft=tailor" />
+		<search name="tiler" query="craft=tiler" />
+		<search name="tinsmith" query="craft=tinsmith" />
+		<search name="upholsterer" query="craft=upholsterer" />
+		<search name="watchmaker" query="craft=watchmaker" />
 	</category>
 	<category name="services" icon="tools">
 		<search name="drinking_water" query="amenity=drinking_water" />
@@ -146,9 +197,9 @@
 		<search name="fast_food" query="amenity=fast_food" />
 		<search name="pub" query="amenity=pub" />
 		<search name="bar" query="amenity=bar" />
-		<search name="ice_cream" query="amenity=ice_cream"/>
-		<search name="biergarten" query="amenity=biergarten"/>
-		<search name="food_court" query="amenity=food_court"/>
+		<search name="ice_cream" query="amenity=ice_cream" />
+		<search name="biergarten" query="amenity=biergarten" />
+		<search name="food_court" query="amenity=food_court" />
 		<search name="vending_machine" query="amenity=vending_machine" />
 	</category>
 	<category name="leisure" icon="party_2">
@@ -157,53 +208,53 @@
 		<search name="brothel" query="amenity=brothel" />
 		<search name="cinema" query="amenity=cinema" />
 		<search name="club" query="club=*" />
-		<search name="dance" query="leisure=dance"/>
-		<search name="dog_park" query="leisure=dog_park"/>
+		<search name="dance" query="leisure=dance" />
+		<search name="dog_park" query="leisure=dog_park" />
 		<search name="events_venue" query="amenity=events_venue" />
-		<search name="fishing" query="leisure=fishing"/>
-		<search name="garden" query="leisure=garden"/>
-		<search name="golf_course" query="leisure=golf_course"/>
-		<search name="ice_rink" query="leisure=ice_rink"/>
-		<search name="marina" query="leisure=marina"/>
-		<search name="miniature_golf" query="leisure=miniature_golf"/>
-		<search name="nature_reserve" query="leisure=nature_reserve"/>
+		<search name="fishing" query="leisure=fishing" />
+		<search name="garden" query="leisure=garden" />
+		<search name="golf_course" query="leisure=golf_course" />
+		<search name="ice_rink" query="leisure=ice_rink" />
+		<search name="marina" query="leisure=marina" />
+		<search name="miniature_golf" query="leisure=miniature_golf" />
+		<search name="nature_reserve" query="leisure=nature_reserve" />
 		<search name="nightclub" query="amenity=nightclub" />
-		<search name="park" query="leisure=park"/>
-		<search name="pitch" query="leisure=pitch"/>
-		<search name="playground" query="leisure=playground"/>
-		<search name="slipway" query="leisure=slipway"/>
+		<search name="park" query="leisure=park" />
+		<search name="pitch" query="leisure=pitch" />
+		<search name="playground" query="leisure=playground" />
+		<search name="slipway" query="leisure=slipway" />
 		<search name="social_centre" query="amenity=social_centre" />
-		<search name="sports_centre" query="leisure=sports_centre"/>
-		<search name="stadium" query="leisure=stadium"/>
+		<search name="sports_centre" query="leisure=sports_centre" />
+		<search name="stadium" query="leisure=stadium" />
 		<search name="stripclub" query="amenity=stripclub" />
-		<search name="swimming_pool" query="leisure=swimming_pool"/>
+		<search name="swimming_pool" query="leisure=swimming_pool" />
 		<search name="theatre" query="amenity=theatre" />
-		<search name="track" query="leisure=track"/>
-		<search name="water_park" query="leisure=water_park"/>
+		<search name="track" query="leisure=track" />
+		<search name="water_park" query="leisure=water_park" />
 	</category>
 	<category name="tourism" icon="world">
-		<search name="all_in_this_category" query="tourism=*"/>
-		<search name="alpine_hut" query="tourism=alpine_hut"/> 
-		<search name="artwork" query="tourism=artwork"/> 
-		<search name="attraction" query="tourism=attraction"/> 
-		<search name="bed_and_breakfast" query="tourism=bed_and_breakfast"/> 
-		<search name="camp_site" query="tourism=camp_site"/> 
-		<search name="caravan_site" query="tourism=caravan_site"/> 
-		<search name="chalet" query="tourism=chalet"/> 
-		<search name="guest_house" query="tourism=guest_house"/> 
-		<search name="hostel" query="tourism=hostel"/> 
-		<search name="hotel" query="tourism=hotel"/> 
-		<search name="information" query="tourism=information"/> 
-		<search name="motel" query="tourism=motel"/> 
-		<search name="museum" query="tourism=museum"/> 
-		<search name="picnic_site" query="tourism=picnic_site"/> 
-		<search name="theme_park" query="tourism=theme_park"/> 
-		<search name="viewpoint" query="tourism=viewpoint"/> 
-		<search name="zoo" query="tourism=zoo"/> 
+		<search name="all_in_this_category" query="tourism=*" />
+		<search name="alpine_hut" query="tourism=alpine_hut" />
+		<search name="artwork" query="tourism=artwork" />
+		<search name="attraction" query="tourism=attraction" />
+		<search name="bed_and_breakfast" query="tourism=bed_and_breakfast" />
+		<search name="camp_site" query="tourism=camp_site" />
+		<search name="caravan_site" query="tourism=caravan_site" />
+		<search name="chalet" query="tourism=chalet" />
+		<search name="guest_house" query="tourism=guest_house" />
+		<search name="hostel" query="tourism=hostel" />
+		<search name="hotel" query="tourism=hotel" />
+		<search name="information" query="tourism=information" />
+		<search name="motel" query="tourism=motel" />
+		<search name="museum" query="tourism=museum" />
+		<search name="picnic_site" query="tourism=picnic_site" />
+		<search name="theme_park" query="tourism=theme_park" />
+		<search name="viewpoint" query="tourism=viewpoint" />
+		<search name="zoo" query="tourism=zoo" />
 	</category>
 	<category name="other">
-			<search name="embassy" query="amenity=embassy" />
-			<search name="office" query="office=*" />
+		<search name="embassy" query="amenity=embassy" />
+		<search name="office" query="office=*" />
 	</category>
 	<inline name="place" query="place=*" select="place" />
 	<categories name="(debug)">
