@@ -189,4 +189,7 @@
   <string name="locksmith">Locksmith</string>
   <string name="club">Club</string>
   <string name="events_venue">Events Venue</string>
+  <string name="cafe_by_operator">Cafe operators</string>
+  <string name="restaurant_by_operator">Restaurant operators</string>
+  <string name="fast_food_by_operator">Fast food operators</string>
 </resources>

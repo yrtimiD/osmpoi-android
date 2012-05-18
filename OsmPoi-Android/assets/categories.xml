@@ -192,15 +192,19 @@
 	</category>
 	<category name="food" icon="fastfood">
 		<search name="cafe" query="amenity=cafe" />
+		<inline name="cafe_by_operator" query="amenity=cafe" select="operator"/>
 		<search name="restaurant" query="amenity=restaurant" />
+		<inline name="restaurant_by_operator" query="amenity=restaurant" select="operator"/>
 		<inline name="cuisine" query="cuisine=*" select="cuisine" />
 		<search name="fast_food" query="amenity=fast_food" />
+		<inline name="fast_food_by_operator" query="amenity=fast_food" select="operator"/>
 		<search name="pub" query="amenity=pub" />
 		<search name="bar" query="amenity=bar" />
 		<search name="ice_cream" query="amenity=ice_cream" />
 		<search name="biergarten" query="amenity=biergarten" />
 		<search name="food_court" query="amenity=food_court" />
 		<search name="vending_machine" query="amenity=vending_machine" />
+
 	</category>
 	<category name="leisure" icon="party_2">
 		<search name="all_in_this_category" query="leisure=*" />
