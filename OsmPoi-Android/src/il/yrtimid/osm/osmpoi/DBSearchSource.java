@@ -111,7 +111,7 @@ public class DBSearchSource implements ISearchSource {
 	 * @see il.yrtimid.osm.osmpoi.ISearchSource#getByParentId(il.yrtimid.osm.osmpoi.searchparameters.SearchById, il.yrtimid.osm.osmpoi.SearchPipe, il.yrtimid.osm.osmpoi.CancelFlag)
 	 */
 	@Override
-	public void getByParentId(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	public void getByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findByParentId(search, newItemNotifier, cancel);
 	}
 

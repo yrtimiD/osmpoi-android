@@ -28,7 +28,7 @@
 	<string name="search_again">Search again</string>
 	<string name="search_finished">Search finished</string>
 	<string name="search_cancelled">Search has been cancelled</string>
-	<string name="offline_db">Offline DB</string>
+	<string name="offline_db">Offline</string>
 	<string name="offline_db_summary">Search in local offline database</string>
 	<string name="pbf_file_summary">Local OSM extract file in PBF format</string>
 	<string name="compact">Compact</string>

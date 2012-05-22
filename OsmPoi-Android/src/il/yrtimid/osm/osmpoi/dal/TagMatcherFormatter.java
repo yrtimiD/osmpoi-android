@@ -31,14 +31,14 @@ public class TagMatcherFormatter {
 			String kf;
 			String vf;
 			if (kv.isKeyExactMatch())
-				kf = String.format("k='%s'", kv.getKey());
+				kf = String.format("k='%s'", kv.getKey().replace("'", "''"));
 			else 
-				kf = String.format("k like '%s'", kv.getKey().replace('*', '%'));
+				kf = String.format("k like '%s'", kv.getKey().replace('*', '%').replace("'", "''"));
 			
 			if (kv.isValueExactMatch())
-				vf = String.format("v='%s'", kv.getValue());
+				vf = String.format("v='%s'", kv.getValue().replace("'", "''"));
 			else
-				vf = String.format("v like '%s'", kv.getValue().replace('*', '%'));
+				vf = String.format("v like '%s'", kv.getValue().replace('*', '%').replace("'", "''"));
 				
 			String where = String.format("(%s) AND (%s)", kf, vf);
 			return new WhereClause(String.format(baseQuery, where));

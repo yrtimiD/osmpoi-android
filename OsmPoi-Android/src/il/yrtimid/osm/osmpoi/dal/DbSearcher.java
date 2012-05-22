@@ -4,6 +4,7 @@
 package il.yrtimid.osm.osmpoi.dal;
 
 import il.yrtimid.osm.osmpoi.CancelFlag;
+import il.yrtimid.osm.osmpoi.CollectionPipe;
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.SearchPipe;
@@ -13,11 +14,13 @@ import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.domain.Node;
 import il.yrtimid.osm.osmpoi.domain.Relation;
+import il.yrtimid.osm.osmpoi.domain.RelationMember;
 import il.yrtimid.osm.osmpoi.domain.Tag;
 import il.yrtimid.osm.osmpoi.domain.Way;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 import il.yrtimid.osm.osmpoi.tagmatchers.AssociatedMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.IdMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
@@ -39,8 +42,8 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public class DbSearcher extends DbOpenHelper {
 
-	private static final int SEARCH_SIZE = 20;  
-	
+	private static final int SEARCH_SIZE = 20;
+
 	/**
 	 * @param context
 	 */
@@ -48,133 +51,125 @@ public class DbSearcher extends DbOpenHelper {
 		super(context, dbLocation);
 	}
 
-	/** 
-	 * Returns count grid cells around p point 
-	 * @param p point to get cells around
-	 * @param count how much cells to return
+	/**
+	 * Returns count grid cells around p point
+	 * 
+	 * @param p
+	 *            point to get cells around
+	 * @param count
+	 *            how much cells to return
 	 * */
-	private Integer[] getGrid(Point p, int count){
+	private Integer[] getGrid(Point p, int count) {
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cur = null;
-		try{
-			cur = db.rawQuery("select id from grid order by (abs((minLat+maxLat)/2-?)+abs((minLon+maxLon)/2-?)) limit ?", 
-					new String[]{p.getLatitude().toString(),p.getLongitude().toString(), Integer.toString(count)});
-			
+		try {
+			cur = db.rawQuery("select id from grid order by (abs((minLat+maxLat)/2-?)+abs((minLon+maxLon)/2-?)) limit ?", new String[] { p.getLatitude().toString(), p.getLongitude().toString(), Integer.toString(count) });
+
 			List<Integer> ids = new ArrayList<Integer>();
-			if (cur.moveToFirst()){
-				do{
+			if (cur.moveToFirst()) {
+				do {
 					ids.add(cur.getInt(0));
-				}while(cur.moveToNext());
+				} while (cur.moveToNext());
 			}
-			
+
 			return ids.toArray(new Integer[ids.size()]);
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.wtf("getGrid", e);
 			return null;
-		}finally{
-			if (cur != null) cur.close();
+		} finally {
+			if (cur != null)
+				cur.close();
 		}
 	}
-	
+
 	/**
 	 * Distance in meters up to most distant cell corner
+	 * 
 	 * @param from
 	 * @param cellId
 	 * @return
 	 */
-	private Integer getDistanceToCell(Point from, int cellId){
+	private Integer getDistanceToCell(Point from, int cellId) {
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cur = null;
 		Integer distance = 0;
-		try{
-			cur = db.rawQuery("select * from grid where id=?", new String[]{Integer.toString(cellId)});
-			if (cur.moveToFirst()){
-				double  minLat, minLon, maxLat, maxLon;
+		try {
+			cur = db.rawQuery("select * from grid where id=?", new String[] { Integer.toString(cellId) });
+			if (cur.moveToFirst()) {
+				double minLat, minLon, maxLat, maxLon;
 				minLat = cur.getInt(cur.getColumnIndex("minLat"));
 				minLon = cur.getInt(cur.getColumnIndex("minLon"));
 				maxLat = cur.getInt(cur.getColumnIndex("maxLat"));
 				maxLon = cur.getInt(cur.getColumnIndex("maxLon"));
-				
+
 				int d1 = from.getDistance(minLat, minLon);
 				int d2 = from.getDistance(minLat, maxLon);
 				int d3 = from.getDistance(maxLat, minLon);
 				int d4 = from.getDistance(maxLat, maxLon);
-				
+
 				distance = Math.max(d1, Math.max(d2, Math.max(d3, d4)));
 			}
-			
+
 			return distance;
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.wtf("getDistanceToCell", e);
 			return null;
-		}finally{
-			if (cur != null) cur.close();
+		} finally {
+			if (cur != null)
+				cur.close();
 		}
 	}
-	
+
 	public boolean findAroundPlace(SearchAround search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		return find(FindType.AROUND_PLACE, search.getCenter(), null, search.getMaxResults(), newItemNotifier, cancel);
 	}
-	
+
 	public boolean findAroundPlaceByTag(SearchByKeyValue search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		
+
 		return find(FindType.BY_TAG, search.getCenter(), search.getMatcher(), search.getMaxResults(), newItemNotifier, cancel);
 	}
-	
-	public boolean findById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel){
+
+	public boolean findById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		return getById(search.getEntityType(), search.getId(), newItemNotifier, cancel);
 	}
-	
-	public boolean findByParentId(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel){
-		return getByParentId(search.getEntityType(), search.getId(), newItemNotifier, cancel);
+
+	public boolean findByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		return getByParentId(search, newItemNotifier, cancel);
 	}
 
 	private boolean getById(EntityType entityType, Long id, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		if(cancel.isCancelled()) return true;
+		if (cancel.isCancelled())
+			return true;
 		Entity result = null;
-		
+
 		Cursor cur = null;
-		try{
-			String sql = "SELECT * FROM "+entityTypeToTableName.get(entityType)+" WHERE id=?";
+		try {
+			String sql = "SELECT * FROM " + entityTypeToTableName.get(entityType) + " WHERE id=?";
 			SQLiteDatabase db = getReadableDatabase();
-			cur = db.rawQuery(sql, new String[]{id.toString()});
-			if (cur.moveToFirst()){
-				switch(entityType){
-				case Node:
-					Node node = constructNode(cur);
-					fillTags(node);
-					result = node;
-					break;
-				case Way:
-					Way way = constructWay(cur);
-					fillTags(way);
-					result = way;
-					break;
-				case Relation:
-					Relation rel = constructRelation(cur);
-					fillTags(rel);
-					result = rel;
-					break;
-				}
+			cur = db.rawQuery(sql, new String[] { id.toString() });
+			if (cur.moveToFirst()) {
+				result = constructEntity(cur, entityType);
+				fillTags(result);
+				fillSubItems(result, cancel);
 			}
 		} catch (Exception e) {
 			Log.wtf("getById", e);
 			return false;
 		} finally {
-			if (cur!= null) cur.close();
+			if (cur != null)
+				cur.close();
 		}
-		
+
 		if (result != null)
 			newItemNotifier.pushItem(result);
-		
+
 		return true;
 	}
-	
-	private enum FindType{
-		AROUND_PLACE,
-		BY_TAG
+
+	private enum FindType {
+		AROUND_PLACE, BY_TAG
 	}
-	
+
 	/**
 	 * Used for cases where result count isn't known
 	 */
@@ -182,20 +177,21 @@ public class DbSearcher extends DbOpenHelper {
 		int nodesOffset = 0;
 		int waysOffset = 0;
 		int relationsOffset = 0;
-		
+
 		int gridSize = 2;
 		boolean lastRun = false;
 		try {
 			Cursor cur = null;
 			do {
-				Integer[] gridIds = getGrid(point, gridSize*gridSize);
-				Log.d("Grid size: "+gridIds.length);
-				int radius = getDistanceToCell(point, gridIds[gridIds.length-1]);
+				Integer[] gridIds = getGrid(point, gridSize * gridSize);
+				Log.d("Grid size: " + gridIds.length);
+				int radius = getDistanceToCell(point, gridIds[gridIds.length - 1]);
 				newItemNotifier.pushRadius(radius);
-				
-				if (gridSize > 2){ //not first run, the whole grid may have only one cell
-					if (gridSize*gridSize>gridIds.length){
-						if (gridIds.length>((gridSize-1)*(gridSize-1)))//new grid bigger than previous
+
+				if (gridSize > 2) { // not first run, the whole grid may have
+									// only one cell
+					if (gridSize * gridSize > gridIds.length) {
+						if (gridIds.length > ((gridSize - 1) * (gridSize - 1)))// new grid bigger than previous
 							lastRun = true;
 						else
 							return true;
@@ -204,43 +200,43 @@ public class DbSearcher extends DbOpenHelper {
 				int nodesCount = 0;
 				int waysCount = 0;
 				int relationsCount = 0;
-				switch(findType){
+				switch (findType) {
 				case AROUND_PLACE:
-					cur = getNodesAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
-					nodesCount = readNodes(cur, maxResults, newItemNotifier, cancel);
+					cur = getNodesAroundPlace(point, gridIds, maxResults > SEARCH_SIZE ? SEARCH_SIZE : maxResults, nodesOffset);
+					nodesCount = readEntities(cur, EntityType.Node, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getWaysAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, waysOffset);
-					waysCount = readWays(cur, maxResults, newItemNotifier, cancel);
+					cur = getWaysAroundPlace(point, gridIds, maxResults > SEARCH_SIZE ? SEARCH_SIZE : maxResults, waysOffset);
+					waysCount = readEntities(cur, EntityType.Way, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getRelationsAroundPlace(point, gridIds, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, relationsOffset);
-					relationsCount = readRelations(cur, maxResults, newItemNotifier, cancel);
+					cur = getRelationsAroundPlace(point, gridIds, maxResults > SEARCH_SIZE ? SEARCH_SIZE : maxResults, relationsOffset);
+					relationsCount = readEntities(cur, EntityType.Relation, maxResults, newItemNotifier, cancel);
 					cur.close();
 					break;
 				case BY_TAG:
-					cur = getNodesAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, nodesOffset);
-					nodesCount = readNodes(cur, maxResults, newItemNotifier, cancel);
+					cur = getNodesAroundPlaceByTag(point, gridIds, tagMatcher, maxResults > SEARCH_SIZE ? SEARCH_SIZE : maxResults, nodesOffset);
+					nodesCount = readEntities(cur, EntityType.Node, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getWaysAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, waysOffset);
-					waysCount = readWays(cur, maxResults, newItemNotifier, cancel);
+					cur = getWaysAroundPlaceByTag(point, gridIds, tagMatcher, maxResults > SEARCH_SIZE ? SEARCH_SIZE : maxResults, waysOffset);
+					waysCount = readEntities(cur, EntityType.Way, maxResults, newItemNotifier, cancel);
 					cur.close();
-					cur = getRelationsAroundPlaceByTag(point, gridIds, tagMatcher, maxResults>SEARCH_SIZE?SEARCH_SIZE:maxResults, relationsOffset);
-					relationsCount = readRelations(cur, maxResults, newItemNotifier, cancel);
+					cur = getRelationsAroundPlaceByTag(point, gridIds, tagMatcher, maxResults > SEARCH_SIZE ? SEARCH_SIZE : maxResults, relationsOffset);
+					relationsCount = readEntities(cur, EntityType.Relation, maxResults, newItemNotifier, cancel);
 					cur.close();
 					break;
 				}
-				
-				Log.d((nodesCount+waysCount)+" results");
+
+				Log.d((nodesCount + waysCount) + " results");
 				nodesOffset += nodesCount;
 				waysOffset += waysCount;
 				relationsOffset += relationsCount;
-				maxResults-=nodesCount;
-				maxResults-=waysCount;
-				maxResults-=relationsCount;
-				
-				if ((nodesCount+waysCount+relationsCount) == 0 && maxResults>0){//query returned no results - time to wider search
+				maxResults -= nodesCount;
+				maxResults -= waysCount;
+				maxResults -= relationsCount;
+
+				if ((nodesCount + waysCount + relationsCount) == 0 && maxResults > 0) {// query returned no results - it's time to wider search
 					gridSize++;
 				}
-			} while (maxResults>0 && cancel.isNotCancelled() && !lastRun);
+			} while (maxResults > 0 && cancel.isNotCancelled() && !lastRun);
 			return true;
 		} catch (Exception e) {
 			Log.wtf("findAroundPlace", e);
@@ -248,99 +244,75 @@ public class DbSearcher extends DbOpenHelper {
 		} finally {
 		}
 	}
-	
+
 	/**
-	 * @param maxResults negative number - no limit
+	 * @param maxResults
+	 *            negative number or zero - no limit
 	 */
-	private int readNodes(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
+	private int readEntities(Cursor cur, EntityType entityType, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
 		int count = 0;
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					Node n = constructNode(cur);
-					fillTags(n);
-					notifier.pushItem(n);
-						
+					Entity entity = constructEntity(cur, entityType);
+					fillTags(entity);
+					fillSubItems(entity, cancel);
+					notifier.pushItem(entity);
+
 					maxResults--;
 					count++;
-					if (maxResults == 0) break;
-					
+					if (maxResults == 0)
+						break;
+
 				} while (cur.moveToNext() && cancel.isNotCancelled());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return count;
 	}
 
-	/**
-	 * @param maxResults negative number - no limit
-	 */
-	private int readWays(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
+	private int readMembers(Cursor cur, EntityType entityType, SearchPipe<RelationMember> pipe, CancelFlag cancel) {
 		int count = 0;
+		Entity entity;
 		try {
 			if (cur.moveToFirst()) {
 				do {
-					Way w = constructWay(cur);
-					fillTags(w);
-					notifier.pushItem(w);
+					entity = constructEntity(cur, entityType);
+					fillTags(entity);
+					fillSubItems(entity, cancel);
+
+					String role = cur.getString(cur.getColumnIndex("role"));
+					if (entity != null){
+						RelationMember rm = new RelationMember(entity, role);
 						
-					maxResults--;
-					count++;
-					if (maxResults == 0) break;
-					
+						pipe.pushItem(rm);
+						count++;
+					}
 				} while (cur.moveToNext() && cancel.isNotCancelled());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return count;
 	}
-	
-	/**
-	 * @param maxResults negative number - no limit
-	 */
-	private int readRelations(Cursor cur, int maxResults, SearchPipe<Entity> notifier, CancelFlag cancel) {
-		int count = 0;
-		try {
-			if (cur.moveToFirst()) {
-				do {
-					Relation r = constructRelation(cur);
-					fillTags(r);
-					notifier.pushItem(r);
-						
-					maxResults--;
-					count++;
-					if (maxResults == 0) break;
-					
-				} while (cur.moveToNext() && cancel.isNotCancelled());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return count;
-	}
+
 	
 	private Cursor getNodesAroundPlace(Point point, Integer[] gridIds, Integer limit, Integer offset) {
 		SQLiteDatabase db;
-		try{
+		try {
 			db = getReadableDatabase();
-			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
-			
-			String query = "select id, timestamp, lat, lon"
-					+ " from nodes"
-					+ " where "+inClause
-					+ " order by (abs(lat-?)+abs(lon-?))"
-					+ " limit ? offset ?";
-			String[] args = new String[] {point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString()};
+			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
+
+			String query = "select id, timestamp, lat, lon" + " from nodes" + " where " + inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
+			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[])args));
-			Cursor cur = db.rawQuery(query,args);
+			Log.d(Util.join(", ", (Object[]) args));
+			Cursor cur = db.rawQuery(query, args);
 			return cur;
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.wtf("getNodesAroundPlace", e);
 			return null;
 		}
@@ -348,118 +320,90 @@ public class DbSearcher extends DbOpenHelper {
 
 	private Cursor getWaysAroundPlace(Point point, Integer[] gridIds, Integer limit, Integer offset) {
 		SQLiteDatabase db;
-		try{
+		try {
 			db = getReadableDatabase();
-			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
-			
-			String query = "select ways.id as id, nodes.id as node_id, ways.timestamp, lat, lon"
-					+ " from ways"
-					+ " inner join way_nodes on ways.id=way_nodes.way_id"
-					+ " inner join nodes on way_nodes.node_id=nodes.id"
-					+ " where "+inClause
-					+ " order by (abs(lat-?)+abs(lon-?))"
-					+ " limit ? offset ?";
-			String[] args = new String[] {point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString()};
+			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
+
+			String query = "select ways.id as id, nodes.id as node_id, ways.timestamp, lat, lon" + " from ways" + " inner join way_nodes on ways.id=way_nodes.way_id" + " inner join nodes on way_nodes.node_id=nodes.id" + " where " + inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
+			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[])args));
-			Cursor cur = db.rawQuery(query,args);
+			Log.d(Util.join(", ", (Object[]) args));
+			Cursor cur = db.rawQuery(query, args);
 			return cur;
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.wtf("getWaysAroundPlace", e);
 			return null;
 		}
 	}
-	
-	//TODO: implement
+
+	// TODO: implement
 	private Cursor getRelationsAroundPlace(Point point, Integer[] gridIds, Integer limit, Integer offset) {
 		SQLiteDatabase db;
-		try{
+		try {
 			db = getReadableDatabase();
-			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
-		/*	
-			String queryRelByWays = "select relations.id as id, relations.timestamp"
-					+ " from relations"
-					+ " inner join members on relations.id=members.relation_id"
-					+ " inner join way_nodes on members.type='WAY' AND members.ref=way_nodes.way_id"
-					+ " inner join nodes on way_nodes.node_id=nodes.id"
-					+ " where "+inClause
-					+ " order by (abs(lat-?)+abs(lon-?))"
-					+ " limit ? offset ?";
-			
-			String queryRelByNodes = "select relations.id as id, relations.timestamp"
-					+ " from relations"
-					+ " inner join members on relations.id=members.relation_id"
-					+ " inner join way_nodes on members.type='WAY' AND members.ref=way_nodes.way_id"
-					+ " inner join nodes on way_nodes.node_id=nodes.id"
-					+ " where "+inClause
-					+ " order by (abs(lat-?)+abs(lon-?))"
-					+ " limit ? offset ?";
-*/
+			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
+			/*
+			 * String queryRelByWays = "select relations.id as id, relations.timestamp" + " from relations" + " inner join members on relations.id=members.relation_id" + " inner join way_nodes on members.type='WAY' AND members.ref=way_nodes.way_id" + " inner join nodes on way_nodes.node_id=nodes.id" + " where "+inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
+			 * 
+			 * String queryRelByNodes = "select relations.id as id, relations.timestamp" + " from relations" + " inner join members on relations.id=members.relation_id" + " inner join way_nodes on members.type='WAY' AND members.ref=way_nodes.way_id" + " inner join nodes on way_nodes.node_id=nodes.id" + " where "+inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
+			 */
 			String query = "select relations.id as id, relations.timestamp from relations where 1=2";
-			
-			String[] args = new String[] {point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString()};
+
+			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[])args));
-			Cursor cur = db.rawQuery(query,args);
+			Log.d(Util.join(", ", (Object[]) args));
+			Cursor cur = db.rawQuery(query, args);
 			return cur;
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.wtf("getRelationsAroundPlace", e);
 			return null;
 		}
 	}
-	
-	private Cursor getNodesAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset){
+
+	private Cursor getNodesAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset) {
 		SQLiteDatabase db;
 		try {
 
-			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
+			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM node_tags WHERE (%s) AND node_tags.node_id=nodes.id)");
 
-			String query = "select distinct nodes.id as id, timestamp, lat, lon from nodes"
-					+ " where "+inClause+" AND ( "+ where.where + " )"
-					+ " order by (abs(lat-?) + abs(lon-?))"
-					+ " limit ? offset ?";
+			String query = "select distinct nodes.id, timestamp, lat, lon from nodes" + " where " + inClause + " AND ( " + where.where + " )" + " order by (abs(lat-?) + abs(lon-?))" + " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[])args));
+			Log.d(Util.join(", ", (Object[]) args));
 			db = getReadableDatabase();
 			Cursor cur = db.rawQuery(query, args);
-			
+
 			return cur;
 		} catch (Exception e) {
 			Log.wtf("getNodesAroundPlaceByTag", e);
 			return null;
 		}
 	}
-	
-	private Cursor getWaysAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset){
+
+	private Cursor getWaysAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset) {
 		SQLiteDatabase db;
 		try {
-			db = getReadableDatabase(); 
-			String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
+			db = getReadableDatabase();
+			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM way_tags WHERE (%s) AND way_tags.way_id=ways.id)");
 
-			String query = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways"
-					+" inner join way_nodes on ways.id = way_nodes.way_id"
-					+" inner join nodes on way_nodes.node_id = nodes.id"
-					+ " where "+inClause+" AND ("+ where.where +")"
-					+ " group by ways.id"
-					+ " order by (abs(lat-?) + abs(lon-?))"
-					+ " limit ? offset ?";
+			String query = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways" + " inner join way_nodes on ways.id = way_nodes.way_id" + " inner join nodes on way_nodes.node_id = nodes.id" + " where " + inClause + " AND (" + where.where + ")" + " group by ways.id" + " order by (abs(lat-?) + abs(lon-?))" + " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[])args));
+			Log.d(Util.join(", ", (Object[]) args));
 			Cursor cur = db.rawQuery(query, args);
-			
+
 			return cur;
 		} catch (Exception e) {
 			Log.wtf("getWaysAroundPlaceByTag", e);
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Ignores point, just searches for any relation accordingly to matcher
+	 * 
 	 * @param point
 	 * @param gridIds
 	 * @param matcher
@@ -467,22 +411,20 @@ public class DbSearcher extends DbOpenHelper {
 	 * @param offset
 	 * @return
 	 */
-	private Cursor getRelationsAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset){
+	private Cursor getRelationsAroundPlaceByTag(Point point, Integer[] gridIds, TagMatcher matcher, Integer limit, Integer offset) {
 		SQLiteDatabase db;
 		try {
-			db = getReadableDatabase(); 
-			//String inClause = "grid_id in ("+Util.join(",", (Object[])gridIds) +")";
+			db = getReadableDatabase();
+			// String inClause = "grid_id in ("+Util.join(",",
+			// (Object[])gridIds) +")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM relation_tags WHERE (%s) AND relation_tags.relation_id=relations.id)");
 
-			String query = "select distinct relations.id, relations.timestamp from relations"
-					+ " where ("+ where.where +")"
-					+ " group by relations.id"
-					+ " limit ? offset ?";
+			String query = "select distinct relations.id, relations.timestamp from relations" + " where (" + where.where + ")" + " group by relations.id" + " limit ? offset ?";
 			String[] args = new String[] { limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[])args));
+			Log.d(Util.join(", ", (Object[]) args));
 			Cursor cur = db.rawQuery(query, args);
-			
+
 			return cur;
 		} catch (Exception e) {
 			Log.wtf("getRelationsAroundPlaceByTag", e);
@@ -490,78 +432,182 @@ public class DbSearcher extends DbOpenHelper {
 		}
 	}
 
-	private boolean getByParentId(EntityType entityType, Long id, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		if(cancel.isCancelled()) return true;
+	private boolean getByParentId(SearchByParentId search, final SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		if (cancel.isCancelled())
+			return true;
 
-		switch(entityType){
+		switch (search.getEntityType()) {
 		case Node:
 			return true;
 		case Way:
-			return getNodesByWayId(id, newItemNotifier, cancel);
+			return getNodesByWayId(search, newItemNotifier, cancel);
 		case Relation:
-			return getNodesAndWaysByRelationId(id, newItemNotifier, cancel);
+			SearchPipe<RelationMember> pipe = new SearchPipe<RelationMember>() {
+				@Override
+				public void pushItem(RelationMember item) {
+					newItemNotifier.pushItem(item.getMember());
+				}
+				
+				@Override
+				public void pushRadius(int radius) {
+					newItemNotifier.pushRadius(radius);
+				}
+			};
+			return getMembersByRelationId(search, pipe, cancel);
 		}
-		
+
 		return false;
 	}
-	
-	private boolean getNodesByWayId(Long wayId, SearchPipe<Entity> notifier, CancelFlag cancel){
+
+	/**
+	 * 
+	 * @param search
+	 *            if search has result count limiting - the center point will be used to find N nearest objects
+	 */
+	private boolean getNodesByWayId(SearchByParentId search, SearchPipe<Entity> notifier, CancelFlag cancel) {
 		Cursor cur = null;
-		try{
-			String sql = "SELECT n.* FROM "+NODES_TABLE+" n INNER JOIN "+WAY_NODS_TABLE+" w ON n.id=w.node_id WHERE w.way_id=?";
+		Long wayId = search.getId();
+
+		try {
 			SQLiteDatabase db = getReadableDatabase();
-			cur = db.rawQuery(sql, new String[]{wayId.toString()});
-			readNodes(cur, -1, notifier, cancel);
+
+			String sql = "SELECT n.* FROM " + NODES_TABLE + " n INNER JOIN " + WAY_NODS_TABLE + " w ON n.id=w.node_id WHERE w.way_id=?";
+			String[] args;
+			if (search.getMaxResults() > 0) {
+				sql += " order by (abs(lat-?)+abs(lon-?)) limit ?";
+				args = new String[] { wayId.toString(), search.getCenter().getLatitude().toString(), search.getCenter().getLongitude().toString(), search.getMaxResults().toString() };
+			} else {
+				args = new String[] { wayId.toString() };
+			}
+			cur = db.rawQuery(sql, args);
+			readEntities(cur, EntityType.Node, search.getMaxResults(), notifier, cancel);
 		} catch (Exception e) {
 			Log.wtf("getNodesByWayId", e);
 			return false;
 		} finally {
-			if (cur!= null) cur.close();
+			if (cur != null)
+				cur.close();
 		}
-		
+
 		return true;
 	}
-	
-	private boolean getNodesAndWaysByRelationId(Long relationId, SearchPipe<Entity> notifier, CancelFlag cancel){
+
+	/*private boolean getNodesAndWaysByRelationId(SearchByParentId search, SearchPipe<Entity> notifier, CancelFlag cancel) {
 		Cursor cur = null;
-		try{
+		Long relationId = search.getId();
+		try {
 			SQLiteDatabase db = getReadableDatabase();
-			
-			String sql = "SELECT n.* FROM "+NODES_TABLE+" n INNER JOIN "+MEMBERS_TABLE+" m ON m.Type='"+EntityType.Node+"' AND n.id=m.ref WHERE m.relation_id=?";
+			Integer maxResults = search.getMaxResults();
+
+			String sql = "SELECT n.* FROM " + NODES_TABLE + " n INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Node + "' AND n.id=m.ref WHERE m.relation_id=?";
+			String[] args;
+			if (maxResults > 0) {
+				sql += " order by (abs(lat-?)+abs(lon-?)) limit ?";
+				args = new String[] { relationId.toString(), search.getCenter().getLatitude().toString(), search.getCenter().getLongitude().toString(), maxResults.toString() };
+			} else {
+				args = new String[] { relationId.toString() };
+			}
 			Log.d(sql);
-			cur = db.rawQuery(sql, new String[]{relationId.toString()});
-			readNodes(cur, -1, notifier, cancel);
-			cur.close();
-			
-			sql = "SELECT w.* FROM "+WAYS_TABLE+" w INNER JOIN "+MEMBERS_TABLE+" m ON m.Type='"+EntityType.Way+"' AND w.id=m.ref WHERE m.relation_id=?";
-			Log.d(sql);
-			cur = db.rawQuery(sql, new String[]{relationId.toString()});
-			readWays(cur, -1, notifier, cancel);
+			cur = db.rawQuery(sql, args);
+			maxResults -= readEntities(cur, EntityType.Node, maxResults, notifier, cancel);
 			cur.close();
 
-			sql = "SELECT r.* FROM "+RELATIONS_TABLE+" r INNER JOIN "+MEMBERS_TABLE+" m ON m.Type='"+EntityType.Relation+"' AND r.id=m.ref WHERE m.relation_id=?";
-			Log.d(sql);
-			cur = db.rawQuery(sql, new String[]{relationId.toString()});
-			readRelations(cur, -1, notifier, cancel);
-			cur.close();
+			if (maxResults > 0) {
+				sql = "SELECT w.* FROM " + WAYS_TABLE + " w INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Way + "' AND w.id=m.ref WHERE m.relation_id=?";
+				Log.d(sql);
+				cur = db.rawQuery(sql, new String[] { relationId.toString() });
+				maxResults -= readEntities(cur, EntityType.Way, maxResults, notifier, cancel);
+				cur.close();
+			}
+
+			if (maxResults > 0) {
+				sql = "SELECT r.* FROM " + RELATIONS_TABLE + " r INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Relation + "' AND r.id=m.ref WHERE m.relation_id=?";
+				Log.d(sql);
+				cur = db.rawQuery(sql, new String[] { relationId.toString() });
+				maxResults -= readEntities(cur, EntityType.Relation, maxResults, notifier, cancel);
+				cur.close();
+			}
 
 		} catch (Exception e) {
 			Log.wtf("getNodesAndWaysByRelationId", e);
 			return false;
 		} finally {
-			if (cur!= null) cur.close();
+			if (cur != null)
+				cur.close();
+		}
+
+		return true;
+	}*/
+
+	private boolean getMembersByRelationId(SearchByParentId search, SearchPipe<RelationMember> pipe, CancelFlag cancel) {
+		Cursor cur = null;
+		Long relationId = search.getId();
+		try {
+			SQLiteDatabase db = getReadableDatabase();
+			Integer maxResults = search.getMaxResults();
+
+			String sql = "SELECT n.*, role FROM " + NODES_TABLE + " n INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Node + "' AND n.id=m.ref WHERE m.relation_id=?";
+			sql += " order by (abs(lat-?)+abs(lon-?))";
+			String[] args;
+			if (maxResults > 0) {
+				sql += " limit ?";
+				args = new String[] { relationId.toString(), search.getCenter().getLatitude().toString(), search.getCenter().getLongitude().toString(), maxResults.toString() };
+			} else {
+				args = new String[] { relationId.toString(), search.getCenter().getLatitude().toString(), search.getCenter().getLongitude().toString() };
+			}
+			Log.d(sql);
+			cur = db.rawQuery(sql, args);
+			maxResults -= readMembers(cur, EntityType.Node, pipe, cancel);
+			cur.close();
+
+			if (maxResults > 0) {
+				sql = "SELECT w.*, role FROM " + WAYS_TABLE + " w INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Way + "' AND w.id=m.ref WHERE m.relation_id=?";
+				Log.d(sql);
+				cur = db.rawQuery(sql, new String[] { relationId.toString() });
+				maxResults -= readMembers(cur, EntityType.Way, pipe, cancel);
+				cur.close();
+			}
+
+			if (maxResults > 0) {
+				sql = "SELECT r.*, role FROM " + RELATIONS_TABLE + " r INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Relation + "' AND r.id=m.ref WHERE m.relation_id=?";
+				Log.d(sql);
+				cur = db.rawQuery(sql, new String[] { relationId.toString() });
+				maxResults -= readMembers(cur, EntityType.Relation, pipe, cancel);
+				cur.close();
+			}
+
+		} catch (Exception e) {
+			Log.wtf("getNodesAndWaysByRelationId", e);
+			return false;
+		} finally {
+			if (cur != null)
+				cur.close();
 		}
 
 		return true;
 	}
 	
-	private void fillTags(Node node) {
-		Collection<Tag> tags = node.getTags();
+	private void fillTags(Entity entity) {
+		Collection<Tag> tags = entity.getTags();
 		SQLiteDatabase db = null;
 		Cursor cur = null;
 		try {
 			db = getReadableDatabase();
-			cur = db.rawQuery("select k,v from node_tags where node_id = ?", new String[] { Long.toString(node.getId()) });
+			String sql = null;
+			switch(entity.getType()){
+			case Node:
+				sql = "select k,v from " + NODES_TAGS_TABLE + " where node_id = ?";
+				break;
+			case Way:
+				sql = "select k,v from " + WAY_TAGS_TABLE + " where way_id = ?";
+				break;
+			case Relation:
+				sql = "select k,v from " + RELATION_TAGS_TABLE + " where relation_id = ?";
+				break;
+			}
+			
+			cur = db.rawQuery(sql, new String[] { Long.toString(entity.getId()) });
+			
 			if (cur.moveToFirst()) {
 				do {
 					Tag t = constructTag(cur);
@@ -569,55 +615,13 @@ public class DbSearcher extends DbOpenHelper {
 				} while (cur.moveToNext());
 			}
 		} catch (Exception e) {
-			Log.wtf("fillTags node", e);
+			Log.wtf("fillTags for "+entity.getType().name()+", with id "+entity.getId(), e);
 		} finally {
 			if (cur != null)
 				cur.close();
 		}
 	}
 
-	private void fillTags(Way way) {
-		Collection<Tag> tags = way.getTags();
-		SQLiteDatabase db = null;
-		Cursor cur = null;
-		try {
-			db = getReadableDatabase();
-			cur = db.rawQuery("select k,v from way_tags where way_id = ?", new String[] { Long.toString(way.getId()) });
-			if (cur.moveToFirst()) {
-				do {
-					Tag t = constructTag(cur);
-					tags.add(t);
-				} while (cur.moveToNext());
-			}
-		} catch (Exception e) {
-			Log.wtf("fillTags way", e);
-		} finally {
-			if (cur != null)
-				cur.close();
-		}
-	}
-
-	private void fillTags(Relation rel) {
-		Collection<Tag> tags = rel.getTags();
-		SQLiteDatabase db = null;
-		Cursor cur = null;
-		try {
-			db = getReadableDatabase();
-			cur = db.rawQuery("select k,v from "+RELATION_TAGS_TABLE+" where relation_id = ?", new String[] { Long.toString(rel.getId()) });
-			if (cur.moveToFirst()) {
-				do {
-					Tag t = constructTag(cur);
-					tags.add(t);
-				} while (cur.moveToNext());
-			}
-		} catch (Exception e) {
-			Log.wtf("fillTags relation", e);
-		} finally {
-			if (cur != null)
-				cur.close();
-		}
-	}
-	
 	private CommonEntityData constructEntity(Cursor cur) {
 		long id = cur.getLong(cur.getColumnIndex("id"));
 		long timestamp = cur.getLong(cur.getColumnIndex("timestamp"));
@@ -625,6 +629,18 @@ public class DbSearcher extends DbOpenHelper {
 		return entityData;
 	}
 
+	private Entity constructEntity(Cursor cur, EntityType entityType){
+		switch (entityType) {
+		case Node:
+			return constructNode(cur);
+		case Way:
+			return constructWay(cur);
+		case Relation:
+			return constructRelation(cur);
+		}
+		return null;
+	}
+	
 	private Node constructNode(Cursor cur) {
 		CommonEntityData entityData = constructEntity(cur);
 		Double lat = cur.getDouble(cur.getColumnIndex("lat"));
@@ -643,10 +659,36 @@ public class DbSearcher extends DbOpenHelper {
 		Way w = new Way(entityData);
 		return w;
 	}
-	
-	private Relation constructRelation(Cursor cur){
+
+	private Relation constructRelation(Cursor cur) {
 		CommonEntityData entityData = constructEntity(cur);
 		Relation rel = new Relation(entityData);
 		return rel;
+	}
+
+	private void fillSubItems(Entity entity, CancelFlag cancel){
+		SearchByParentId search = new SearchByParentId(entity.getType(), entity.getId());
+		
+		switch(entity.getType()){
+		case Node:
+			break;
+		case Way:
+			{
+				CollectionPipe<Entity> pipe = new CollectionPipe<Entity>();
+				getNodesByWayId(search, pipe, cancel);
+				List<Node> list = ((Way)entity).getWayNodes();
+				for(Entity e: pipe.getItems()){
+					list.add((Node)e);
+				}
+			}
+			break;
+		case Relation:
+			{
+				CollectionPipe<RelationMember> pipe = new CollectionPipe<RelationMember>();
+				getMembersByRelationId(search, pipe, cancel);
+				((Relation)entity).getMembers().addAll(pipe.getItems());
+			}
+			break;
+		}
 	}
 }

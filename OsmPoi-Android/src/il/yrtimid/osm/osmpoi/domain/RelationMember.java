@@ -121,6 +121,13 @@ public class RelationMember implements Comparable<RelationMember>, Parcelable {
 		return memberRole;
 	}
 
+	/**
+	 * @return the member
+	 */
+	public Entity getMember() {
+		return member;
+	}
+	
     /** 
      * ${@inheritDoc}.
      */

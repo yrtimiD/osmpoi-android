@@ -47,6 +47,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	
 	private static final int DATABASE_VERSION = 2;
 	protected static final Map<EntityType, String> entityTypeToTableName = new HashMap<EntityType, String>();
+	protected static final Map<EntityType, String> entityTypeToTagsTableName = new HashMap<EntityType, String>();
 	
 	Context context;
 
@@ -63,6 +64,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		entityTypeToTableName.put(EntityType.Node, NODES_TABLE);
 		entityTypeToTableName.put(EntityType.Way, WAYS_TABLE);
 		entityTypeToTableName.put(EntityType.Relation, RELATIONS_TABLE);
+		
+		entityTypeToTagsTableName.put(EntityType.Node, NODES_TAGS_TABLE);
+		entityTypeToTagsTableName.put(EntityType.Way, WAY_TAGS_TABLE);
+		entityTypeToTagsTableName.put(EntityType.Relation, RELATION_TAGS_TABLE);
+
 	}
 
 	/*

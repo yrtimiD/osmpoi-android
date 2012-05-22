@@ -3,7 +3,7 @@ package il.yrtimid.osm.osmpoi.searchparameters;
 import android.os.Parcel;
 
 public abstract class BaseSearchParameter implements android.os.Parcelable{
-	protected int maxResults;
+	protected Integer maxResults;
 	
 	public BaseSearchParameter(){
 		this.maxResults = 0;
@@ -13,10 +13,18 @@ public abstract class BaseSearchParameter implements android.os.Parcelable{
 		maxResults = source.readInt();
 	}
 	
-	public int getMaxResults() {
+	/**
+	 * Limiting results count. Negative or zero values equal to no limit.
+	 * @return
+	 */
+	public Integer getMaxResults() {
 		return maxResults;
 	}
 	
+	/**
+	 * Limiting results count. Negative or zero values equal to no limit.
+	 * @param maxResults
+	 */
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
 	}
