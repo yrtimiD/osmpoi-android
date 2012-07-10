@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.Map;
 
 import il.yrtimid.osm.osmpoi.Log;
-import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+import java.sql.SQLException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
@@ -93,34 +92,34 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (oldVersion == 1 && newVersion > 1){
-			db.execSQL(context.getString(R.string.sql_create_starred_table));
+			db.execSQL(Queries.sql_create_starred_table);
 		}
 	}
 	
 	private void createAllTables(SQLiteDatabase db){
-		db.execSQL(context.getString(R.string.sql_create_node_table));
-		db.execSQL(context.getString(R.string.sql_create_node_tags_table));
-		db.execSQL(context.getString(R.string.sql_node_tags_idx));
+		db.execSQL(Queries.sql_create_node_table);
+		db.execSQL(Queries.sql_create_node_tags_table);
+		db.execSQL(Queries.sql_node_tags_idx);
 		
-		db.execSQL(context.getString(R.string.sql_create_ways_table));
-		db.execSQL(context.getString(R.string.sql_create_way_nodes_table));
-		db.execSQL(context.getString(R.string.sql_way_nodes_way_idx));
-		db.execSQL(context.getString(R.string.sql_way_nodes_node_idx));
-		db.execSQL(context.getString(R.string.sql_create_way_tags_table));
-		db.execSQL(context.getString(R.string.sql_way_tags_idx));
+		db.execSQL(Queries.sql_create_ways_table);
+		db.execSQL(Queries.sql_create_way_nodes_table);
+		db.execSQL(Queries.sql_way_nodes_way_idx);
+		db.execSQL(Queries.sql_way_nodes_node_idx);
+		db.execSQL(Queries.sql_create_way_tags_table);
+		db.execSQL(Queries.sql_way_tags_idx);
 		
-		db.execSQL(context.getString(R.string.sql_create_relations_table));
-		db.execSQL(context.getString(R.string.sql_create_relation_tags_table));
-		db.execSQL(context.getString(R.string.sql_relation_tags_idx));
-		db.execSQL(context.getString(R.string.sql_create_members_table));
-		db.execSQL(context.getString(R.string.sql_relation_members_idx));
+		db.execSQL(Queries.sql_create_relations_table);
+		db.execSQL(Queries.sql_create_relation_tags_table);
+		db.execSQL(Queries.sql_relation_tags_idx);
+		db.execSQL(Queries.sql_create_members_table);
+		db.execSQL(Queries.sql_relation_members_idx);
 		
-		db.execSQL(context.getString(R.string.sql_create_grid_table));
+		db.execSQL(Queries.sql_create_grid_table);
 		
-		db.execSQL(context.getString(R.string.sql_create_inline_queries_table));
-		db.execSQL(context.getString(R.string.sql_create_inline_results_table));
+		db.execSQL(Queries.sql_create_inline_queries_table);
+		db.execSQL(Queries.sql_create_inline_results_table);
 		
-		db.execSQL(context.getString(R.string.sql_create_starred_table));
+		db.execSQL(Queries.sql_create_starred_table);
 	}
 
 	private void dropAllTables(SQLiteDatabase db){
@@ -168,7 +167,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		//db.execSQL("UPDATE "+NODES_TABLE+" SET grid_id=1");
 		db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
-		db.execSQL(context.getString(R.string.sql_create_grid_table));
+		db.execSQL(Queries.sql_create_grid_table);
 	
 		String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
 								+" SELECT min(lat) minLat, min(lon) minLon, max(lat) maxLat, max(lon) maxLon"
@@ -201,7 +200,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(NODES_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Node was not inserted");
+				throw new SQLException("Node was not inserted");
 
 			Collection<Tag> tags = node.getTags();
 			long nodeId = node.getId();
@@ -233,7 +232,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				insert.bind(lonCol, node.getLongitude());
 				long id = insert.execute();
 				if (id == -1)
-					throw new SQLiteException("Node was not inserted");
+					throw new SQLException("Node was not inserted");
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -258,7 +257,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(NODES_TAGS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Node tag was not inserted");
+				throw new SQLException("Node tag was not inserted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -283,7 +282,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 					insert.bind(vCol, tag.getValue());
 					long id = insert.execute();
 					if (id == -1)
-						throw new SQLiteException("Node tag was not inserted");
+						throw new SQLException("Node tag was not inserted");
 				}
 			}
 			db.setTransactionSuccessful();
@@ -305,7 +304,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(WAYS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Way was not inserted");
+				throw new SQLException("Way was not inserted");
 
 			Collection<Tag> tags = way.getTags();
 			long wayId = way.getId();
@@ -332,7 +331,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(WAY_TAGS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Node tag was not inserted");
+				throw new SQLException("Node tag was not inserted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -347,7 +346,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(WAY_NODS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Node tag was not inserted");
+				throw new SQLException("Node tag was not inserted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -362,7 +361,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(RELATIONS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Relation was not inserted");
+				throw new SQLException("Relation was not inserted");
 
 			Collection<Tag> tags = rel.getTags();
 			long relId = rel.getId();
@@ -389,7 +388,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(RELATION_TAGS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Relation tag was not inserted");
+				throw new SQLException("Relation tag was not inserted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -406,7 +405,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 			long id = db.insert(MEMBERS_TABLE, null, values);
 			if (id == -1)
-				throw new SQLiteException("Relation member was not inserted");
+				throw new SQLException("Relation member was not inserted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
