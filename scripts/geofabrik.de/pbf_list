@@ -1,5 +1,7 @@
 http://download.geofabrik.de/osm/africa/burkina_faso.osm.pbf
 http://download.geofabrik.de/osm/africa/canary_islands.osm.pbf
+http://download.geofabrik.de/osm/africa/congo_democratic_republic.osm.pbf
+http://download.geofabrik.de/osm/africa/egypt.osm.pbf
 http://download.geofabrik.de/osm/africa/ethiopia.osm.pbf
 http://download.geofabrik.de/osm/africa/guinea-bissau.osm.pbf
 http://download.geofabrik.de/osm/africa/guinea.osm.pbf
@@ -30,6 +32,7 @@ http://download.geofabrik.de/osm/asia/mongolia.osm.pbf
 http://download.geofabrik.de/osm/asia/pakistan.osm.pbf
 http://download.geofabrik.de/osm/asia/philippines.osm.pbf
 http://download.geofabrik.de/osm/asia/taiwan.osm.pbf
+http://download.geofabrik.de/osm/asia/tajikistan.osm.pbf
 http://download.geofabrik.de/osm/asia/turkmenistan.osm.pbf
 http://download.geofabrik.de/osm/asia/uzbekistan.osm.pbf
 http://download.geofabrik.de/osm/asia/vietnam.osm.pbf
@@ -67,6 +70,10 @@ http://download.geofabrik.de/osm/europe/france/poitou-charentes.osm.pbf
 http://download.geofabrik.de/osm/europe/france/provence-alpes-cote-d-azur.osm.pbf
 http://download.geofabrik.de/osm/europe/france/reunion.osm.pbf
 http://download.geofabrik.de/osm/europe/france/rhone-alpes.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/baden-wuerttemberg/freiburg-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/baden-wuerttemberg/karlsruhe-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/baden-wuerttemberg/stuttgart-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/baden-wuerttemberg/tuebingen-regbez.osm.pbf
 http://download.geofabrik.de/osm/europe/germany/bayern/mittelfranken.osm.pbf
 http://download.geofabrik.de/osm/europe/germany/bayern/niederbayern.osm.pbf
 http://download.geofabrik.de/osm/europe/germany/bayern/oberbayern.osm.pbf
@@ -90,11 +97,11 @@ http://download.geofabrik.de/osm/europe/germany/sachsen-anhalt.osm.pbf
 http://download.geofabrik.de/osm/europe/germany/sachsen.osm.pbf
 http://download.geofabrik.de/osm/europe/germany/schleswig-holstein.osm.pbf
 http://download.geofabrik.de/osm/europe/germany/thueringen.osm.pbf
-http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/arnsberg.osm.pbf
-http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/detmold.osm.pbf
-http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/duesseldorf.osm.pbf
-http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/koeln.osm.pbf
-http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/muenster.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/arnsberg-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/detmold-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/duesseldorf-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/koeln-regbez.osm.pbf
+http://download.geofabrik.de/osm/europe/germany/nordrhein-westfalen/muenster-regbez.osm.pbf
 http://download.geofabrik.de/osm/europe/great_britain/england/buckinghamshire.osm.pbf
 http://download.geofabrik.de/osm/europe/great_britain/england/cambridgeshire.osm.pbf
 http://download.geofabrik.de/osm/europe/great_britain/england/cheshire.osm.pbf
