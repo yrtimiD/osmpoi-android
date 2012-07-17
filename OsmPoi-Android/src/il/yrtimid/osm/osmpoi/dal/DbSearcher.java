@@ -471,7 +471,7 @@ public class DbSearcher extends DbOpenHelper {
 		try {
 			SQLiteDatabase db = getReadableDatabase();
 
-			String sql = "SELECT n.* FROM " + NODES_TABLE + " n INNER JOIN " + WAY_NODS_TABLE + " w ON n.id=w.node_id WHERE w.way_id=?";
+			String sql = "SELECT n.* FROM " + Queries.NODES_TABLE + " n INNER JOIN " + Queries.WAY_NODS_TABLE + " w ON n.id=w.node_id WHERE w.way_id=?";
 			String[] args;
 			if (search.getMaxResults() > 0) {
 				sql += " order by (abs(lat-?)+abs(lon-?)) limit ?";
@@ -546,7 +546,7 @@ public class DbSearcher extends DbOpenHelper {
 			SQLiteDatabase db = getReadableDatabase();
 			Integer maxResults = search.getMaxResults();
 
-			String sql = "SELECT n.*, role FROM " + NODES_TABLE + " n INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Node + "' AND n.id=m.ref WHERE m.relation_id=?";
+			String sql = "SELECT n.*, role FROM " + Queries.NODES_TABLE + " n INNER JOIN " + Queries.MEMBERS_TABLE + " m ON m.Type='" + EntityType.Node + "' AND n.id=m.ref WHERE m.relation_id=?";
 			sql += " order by (abs(lat-?)+abs(lon-?))";
 			String[] args;
 			if (maxResults > 0) {
@@ -561,7 +561,7 @@ public class DbSearcher extends DbOpenHelper {
 			cur.close();
 
 			if (maxResults > 0) {
-				sql = "SELECT w.*, role FROM " + WAYS_TABLE + " w INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Way + "' AND w.id=m.ref WHERE m.relation_id=?";
+				sql = "SELECT w.*, role FROM " + Queries.WAYS_TABLE + " w INNER JOIN " + Queries.MEMBERS_TABLE + " m ON m.Type='" + EntityType.Way + "' AND w.id=m.ref WHERE m.relation_id=?";
 				Log.d(sql);
 				cur = db.rawQuery(sql, new String[] { relationId.toString() });
 				maxResults -= readMembers(cur, EntityType.Way, pipe, cancel);
@@ -569,7 +569,7 @@ public class DbSearcher extends DbOpenHelper {
 			}
 
 			if (maxResults > 0) {
-				sql = "SELECT r.*, role FROM " + RELATIONS_TABLE + " r INNER JOIN " + MEMBERS_TABLE + " m ON m.Type='" + EntityType.Relation + "' AND r.id=m.ref WHERE m.relation_id=?";
+				sql = "SELECT r.*, role FROM " + Queries.RELATIONS_TABLE + " r INNER JOIN " + Queries.MEMBERS_TABLE + " m ON m.Type='" + EntityType.Relation + "' AND r.id=m.ref WHERE m.relation_id=?";
 				Log.d(sql);
 				cur = db.rawQuery(sql, new String[] { relationId.toString() });
 				maxResults -= readMembers(cur, EntityType.Relation, pipe, cancel);
@@ -596,13 +596,13 @@ public class DbSearcher extends DbOpenHelper {
 			String sql = null;
 			switch(entity.getType()){
 			case Node:
-				sql = "select k,v from " + NODES_TAGS_TABLE + " where node_id = ?";
+				sql = "select k,v from " + Queries.NODES_TAGS_TABLE + " where node_id = ?";
 				break;
 			case Way:
-				sql = "select k,v from " + WAY_TAGS_TABLE + " where way_id = ?";
+				sql = "select k,v from " + Queries.WAY_TAGS_TABLE + " where way_id = ?";
 				break;
 			case Relation:
-				sql = "select k,v from " + RELATION_TAGS_TABLE + " where relation_id = ?";
+				sql = "select k,v from " + Queries.RELATION_TAGS_TABLE + " where relation_id = ?";
 				break;
 			}
 			

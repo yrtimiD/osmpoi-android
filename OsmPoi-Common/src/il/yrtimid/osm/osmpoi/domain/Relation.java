@@ -6,18 +6,18 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 
 /**
  * A data class representing a single OSM relation.
  * 
  * @author Brett Henderson
  */
-public class Relation extends Entity implements Comparable<Relation>, Parcelable {
+public class Relation extends Entity implements Comparable<Relation>{
 	private List<RelationMember> members;
 	
+	protected Relation(){
+		this(new CommonEntityData());
+	}
 
 	/**
 	 * Creates a new instance.
@@ -49,15 +49,7 @@ public class Relation extends Entity implements Comparable<Relation>, Parcelable
 		this(new CommonEntityData(relationId, -1));
 	}
 	
-	
-	/**
-	 * @param source
-	 */
-	public Relation(Parcel source) {
-		super(source);
-		members = new ArrayList<RelationMember>();
-		source.readTypedList(members, RelationMember.CREATOR);
-	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -195,35 +187,5 @@ public class Relation extends Entity implements Comparable<Relation>, Parcelable
     }
 
     
-	public static final Parcelable.Creator<Relation> CREATOR = new Parcelable.Creator<Relation>() {
 
-		@Override
-		public Relation createFromParcel(Parcel source) {
-			return new Relation(source);
-		}
-
-		@Override
-		public Relation[] newArray(int size) {
-			return new Relation[size];
-		}
-		
-	};
-
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeTypedList(members);
-	}
 }

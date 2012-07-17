@@ -7,27 +7,19 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * Contains data common to all entity types. This is separated from the entity
  * class to allow it to be instantiated before all the data required for a full
  * entity is available.
  */
-public class CommonEntityData implements Parcelable {
+public class CommonEntityData {
 
-	private long id;
-	private long timestamp;
-	private TagCollection tags;
+	protected long id;
+	protected long timestamp;
+	protected TagCollection tags;
 
-	public CommonEntityData(Parcel source) {
-		this.id = source.readLong();
-		this.timestamp = source.readLong();
-		this.tags = new TagCollection();
-		source.readTypedList((List<Tag>) this.tags, Tag.CREATOR);
-	}
-
+	protected CommonEntityData(){}
+	
 	public CommonEntityData(long id, Date date) {
 		this(id, date.getTime(), new ArrayList<Tag>());
 	}
@@ -119,40 +111,4 @@ public class CommonEntityData implements Parcelable {
 		// There are no differences.
 		return 0;
 	}
-
-	public static final Parcelable.Creator<CommonEntityData> CREATOR = new Parcelable.Creator<CommonEntityData>() {
-
-		@Override
-		public CommonEntityData createFromParcel(Parcel source) {
-			return new CommonEntityData(source);
-		}
-
-		@Override
-		public CommonEntityData[] newArray(int size) {
-			return new CommonEntityData[size];
-		}
-	};
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(id);
-		dest.writeLong(timestamp);
-		dest.writeTypedList(tags);
-	}
-
 }

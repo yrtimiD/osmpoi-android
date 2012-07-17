@@ -11,6 +11,7 @@ import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
 import il.yrtimid.osm.osmpoi.dal.DbSearcher;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
+import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
 import android.app.Application;
@@ -192,12 +193,12 @@ public class OsmPoiApplication extends Application {
 		}
 
 		
-		public CachedDbOpenHelper getPoiDb(){
+		public IDbCachedFiller getPoiDb(){
 			if (cachedPoiBasic == null) cachedPoiBasic = new CachedDbOpenHelper(context,  OsmPoiApplication.Config.getPoiDbLocation());
 			return cachedPoiBasic;
 		}
 		
-		public CachedDbOpenHelper getAddressDb(){
+		public IDbCachedFiller getAddressDb(){
 			if (cachedAddrBasic == null) cachedAddrBasic = new CachedDbOpenHelper(context,  OsmPoiApplication.Config.getAddressDbLocation());
 			return cachedAddrBasic;
 		}

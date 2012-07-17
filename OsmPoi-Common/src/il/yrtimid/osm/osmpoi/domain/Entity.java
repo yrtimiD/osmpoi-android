@@ -3,19 +3,17 @@ package il.yrtimid.osm.osmpoi.domain;
 
 import java.util.Collection;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-
 /**
  * A data class representing a single OSM entity. All top level data types
  * inherit from this class.
  * 
  * @author Brett Henderson
  */
-public abstract class Entity implements Parcelable {
+public abstract class Entity{
 	
 	protected CommonEntityData entityData;
+	
+	protected Entity(){}
 	
 	/**
 	 * Creates a new instance.
@@ -25,10 +23,6 @@ public abstract class Entity implements Parcelable {
 	 */
 	public Entity(CommonEntityData entityData) {
 		this.entityData = entityData;
-	}
-	
-	public Entity(Parcel source){
-		entityData = source.readParcelable(CommonEntityData.class.getClassLoader());
 	}
 	
 	/**
@@ -103,11 +97,4 @@ public abstract class Entity implements Parcelable {
 		return entityData.compareTags(comparisonTags);
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(entityData, flags);
-	}
 }

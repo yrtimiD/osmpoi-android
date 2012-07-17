@@ -35,7 +35,7 @@ public class DbStarred extends DbOpenHelper {
 			values.put("type", entity.getType().name());
 			values.put("id", entity.getId());
 			values.put("title", title);
-			db.insertWithOnConflict(STARRED_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+			db.insertWithOnConflict(Queries.STARRED_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 		}catch (Exception e) {
 			Log.wtf("addStarred",e);
 		}finally{
@@ -47,7 +47,7 @@ public class DbStarred extends DbOpenHelper {
 		SQLiteDatabase db = null;
 		try{
 			db = getWritableDatabase();
-			db.delete(STARRED_TABLE, "type=? AND id=?", new String[] {entity.getType().name(), Long.toString(entity.getId())});
+			db.delete(Queries.STARRED_TABLE, "type=? AND id=?", new String[] {entity.getType().name(), Long.toString(entity.getId())});
 		}catch(Exception e){
 			Log.wtf("removeStarred",e);
 		}finally{
@@ -60,7 +60,7 @@ public class DbStarred extends DbOpenHelper {
 		Cursor cur = null;
 		try{
 			db = getReadableDatabase();
-			cur = db.rawQuery("SELECT 1 FROM "+STARRED_TABLE+" WHERE type=? AND id=?", new String[] {entity.getType().name(), Long.toString(entity.getId())});
+			cur = db.rawQuery("SELECT 1 FROM "+Queries.STARRED_TABLE+" WHERE type=? AND id=?", new String[] {entity.getType().name(), Long.toString(entity.getId())});
 			boolean hasResults = (cur.moveToFirst());
 			return hasResults;
 		}catch(Exception e){
@@ -78,7 +78,7 @@ public class DbStarred extends DbOpenHelper {
 		Collection<Category> results = new ArrayList<Category>();
 		try{
 			db = getReadableDatabase();
-			cur = db.rawQuery("SELECT * FROM "+STARRED_TABLE, null);
+			cur = db.rawQuery("SELECT * FROM "+Queries.STARRED_TABLE, null);
 			if (cur.moveToFirst()){
 				do{
 					String title = cur.getString(cur.getColumnIndex("title"));

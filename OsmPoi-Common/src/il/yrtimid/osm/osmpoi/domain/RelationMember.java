@@ -3,18 +3,17 @@ package il.yrtimid.osm.osmpoi.domain;
 
 import java.security.InvalidParameterException;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * A data class representing a single member within a relation entity.
  *
  * @author Brett Henderson
  */
-public class RelationMember implements Comparable<RelationMember>, Parcelable {
+public class RelationMember implements Comparable<RelationMember>{
 	
 	private String memberRole;
 	private Entity member = null;
+	
+	protected RelationMember(){}
 	
 	public RelationMember(Entity member, String memberRole) {
 		this.memberRole = memberRole;
@@ -39,16 +38,6 @@ public class RelationMember implements Comparable<RelationMember>, Parcelable {
 		}
 	}
 	
-	
-	/**
-	 * @param source
-	 */
-	public RelationMember(Parcel source) {
-		memberRole = source.readString();
-		EntityType memberType = Enum.valueOf(EntityType.class, source.readString());
-		//TODO: check creating from parcel
-		member = source.readParcelable(Entity.class.getClassLoader());
-	}
 	
 	/**
 	 * Compares this relation member to the specified relation member. The
@@ -111,7 +100,7 @@ public class RelationMember implements Comparable<RelationMember>, Parcelable {
 		return member.getType();
 	}
 	
-	
+
 	/**
 	 * Returns the role that this member forms within the relation.
 	 * 
@@ -122,10 +111,24 @@ public class RelationMember implements Comparable<RelationMember>, Parcelable {
 	}
 
 	/**
+	 * @param memberRole the memberRole to set
+	 */
+	public void setMemberRole(String memberRole) {
+		this.memberRole = memberRole;
+	}
+
+	/**
 	 * @return the member
 	 */
 	public Entity getMember() {
 		return member;
+	}
+	
+	/**
+	 * @param member the member to set
+	 */
+	public void setMember(Entity member) {
+		this.member = member;
 	}
 	
     /** 
@@ -137,35 +140,4 @@ public class RelationMember implements Comparable<RelationMember>, Parcelable {
 				+ "')";
     }
 
-	public static final Parcelable.Creator<RelationMember> CREATOR = new Parcelable.Creator<RelationMember>() {
-
-		@Override
-		public RelationMember createFromParcel(Parcel source) {
-			return new RelationMember(source);
-		}
-
-		@Override
-		public RelationMember[] newArray(int size) {
-			return new RelationMember[size];
-		}
-		
-	};
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(memberRole);
-		dest.writeString(getMemberType().name());
-		dest.writeParcelable(member, flags);
-	}
 }

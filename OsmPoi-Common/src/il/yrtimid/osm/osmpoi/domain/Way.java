@@ -6,19 +6,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 
 /**
  * A data class representing a single OSM way.
  * 
  * @author Brett Henderson
  */
-public class Way extends Entity implements Comparable<Way>, Parcelable {
+public class Way extends Entity implements Comparable<Way> {
 	
 	private List<Node> wayNodes;
 	
+	protected Way() {
+		this(new CommonEntityData());
+	}
 
 	/**
 	 * Creates a new instance.
@@ -50,14 +50,6 @@ public class Way extends Entity implements Comparable<Way>, Parcelable {
 		this.wayNodes = new ArrayList<Node>(wayNodes);
 	}
 	
-	/**
-	 * @param source
-	 */
-	public Way(Parcel source) {
-		super(source);
-		wayNodes = new ArrayList<Node>();
-		source.readTypedList(wayNodes, Node.CREATOR);
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -195,35 +187,4 @@ public class Way extends Entity implements Comparable<Way>, Parcelable {
         return "Way(id=" + getId() + ", #tags=" +  getTags().size() + ")";
     }
     
-	public static final Parcelable.Creator<Way> CREATOR = new Parcelable.Creator<Way>() {
-
-		@Override
-		public Way createFromParcel(Parcel source) {
-			return new Way(source);
-		}
-
-		@Override
-		public Way[] newArray(int size) {
-			return new Way[size];
-		}
-		
-	};
-
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeTypedList(wayNodes);
-	}
 }

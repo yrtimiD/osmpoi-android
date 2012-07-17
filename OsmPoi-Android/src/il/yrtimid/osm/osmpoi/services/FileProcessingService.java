@@ -8,7 +8,7 @@ import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
-import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
+import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.pbf.OsmImporter;
 import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
@@ -58,8 +58,8 @@ public class FileProcessingService extends Service {
 
 	private boolean hasRunningJobs = false;
 
-	CachedDbOpenHelper poiDbHelper;
-	CachedDbOpenHelper addressDbHelper;
+	IDbCachedFiller poiDbHelper;
+	IDbCachedFiller addressDbHelper;
 	NotificationManager notificationManager;
 	PendingIntent contentIntent;
 	Context context;

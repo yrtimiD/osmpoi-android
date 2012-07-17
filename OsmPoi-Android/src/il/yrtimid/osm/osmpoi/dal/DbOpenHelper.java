@@ -24,24 +24,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author yrtimiD
  * 
  */
-public class DbOpenHelper extends SQLiteOpenHelper {
-	protected static final String NODES_TABLE = "nodes";
-	protected static final String NODES_TAGS_TABLE = "node_tags";
+public class DbOpenHelper extends SQLiteOpenHelper implements IDbFiller {
 
-	protected static final String WAYS_TABLE = "ways";
-	protected static final String WAY_TAGS_TABLE = "way_tags";
-	protected static final String WAY_NODS_TABLE = "way_nodes";
-
-	protected static final String RELATIONS_TABLE = "relations";
-	protected static final String RELATION_TAGS_TABLE = "relation_tags";
-	protected static final String MEMBERS_TABLE = "members";
-
-	protected static final String GRID_TABLE = "grid";
-	
-	protected static final String INLINE_QUERIES_TABLE = "inline_queries";
-	protected static final String INLINE_RESULTS_TABLE = "inline_results";
-	
-	protected static final String STARRED_TABLE = "starred";
 	
 	
 	private static final int DATABASE_VERSION = 2;
@@ -60,13 +44,13 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		super(context, dbLocation.getPath(), null, DATABASE_VERSION);
 		this.context = context;
 		
-		entityTypeToTableName.put(EntityType.Node, NODES_TABLE);
-		entityTypeToTableName.put(EntityType.Way, WAYS_TABLE);
-		entityTypeToTableName.put(EntityType.Relation, RELATIONS_TABLE);
+		entityTypeToTableName.put(EntityType.Node, Queries.NODES_TABLE);
+		entityTypeToTableName.put(EntityType.Way, Queries.WAYS_TABLE);
+		entityTypeToTableName.put(EntityType.Relation, Queries.RELATIONS_TABLE);
 		
-		entityTypeToTagsTableName.put(EntityType.Node, NODES_TAGS_TABLE);
-		entityTypeToTagsTableName.put(EntityType.Way, WAY_TAGS_TABLE);
-		entityTypeToTagsTableName.put(EntityType.Relation, RELATION_TAGS_TABLE);
+		entityTypeToTagsTableName.put(EntityType.Node, Queries.NODES_TAGS_TABLE);
+		entityTypeToTagsTableName.put(EntityType.Way, Queries.WAY_TAGS_TABLE);
+		entityTypeToTagsTableName.put(EntityType.Relation, Queries.RELATION_TAGS_TABLE);
 
 	}
 
@@ -92,54 +76,54 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (oldVersion == 1 && newVersion > 1){
-			db.execSQL(Queries.sql_create_starred_table);
+			db.execSQL(Queries.SQL_CREATE_STARRED_TABLE);
 		}
 	}
 	
 	private void createAllTables(SQLiteDatabase db){
-		db.execSQL(Queries.sql_create_node_table);
-		db.execSQL(Queries.sql_create_node_tags_table);
-		db.execSQL(Queries.sql_node_tags_idx);
+		db.execSQL(Queries.SQL_CREATE_NODE_TABLE);
+		db.execSQL(Queries.SQL_CREATE_NODE_TAGS_TABLE);
+		db.execSQL(Queries.SQL_NODE_TAGS_IDX);
 		
-		db.execSQL(Queries.sql_create_ways_table);
-		db.execSQL(Queries.sql_create_way_nodes_table);
-		db.execSQL(Queries.sql_way_nodes_way_idx);
-		db.execSQL(Queries.sql_way_nodes_node_idx);
-		db.execSQL(Queries.sql_create_way_tags_table);
-		db.execSQL(Queries.sql_way_tags_idx);
+		db.execSQL(Queries.SQL_CREATE_WAYS_TABLE);
+		db.execSQL(Queries.SQL_CREATE_WAY_NODES_TABLE);
+		db.execSQL(Queries.SQL_WAY_NODES_WAY_IDX);
+		db.execSQL(Queries.SQL_WAY_NODES_NODE_IDX);
+		db.execSQL(Queries.SQL_CREATE_WAY_TAGS_TABLE);
+		db.execSQL(Queries.SQL_WAY_TAGS_IDX);
 		
-		db.execSQL(Queries.sql_create_relations_table);
-		db.execSQL(Queries.sql_create_relation_tags_table);
-		db.execSQL(Queries.sql_relation_tags_idx);
-		db.execSQL(Queries.sql_create_members_table);
-		db.execSQL(Queries.sql_relation_members_idx);
+		db.execSQL(Queries.SQL_CREATE_RELATIONS_TABLE);
+		db.execSQL(Queries.SQL_CREATE_RELATION_TAGS_TABLE);
+		db.execSQL(Queries.SQL_RELATION_TAGS_IDX);
+		db.execSQL(Queries.SQL_CREATE_MEMBERS_TABLE);
+		db.execSQL(Queries.SQL_RELATION_MEMBERS_IDX);
 		
-		db.execSQL(Queries.sql_create_grid_table);
+		db.execSQL(Queries.SQL_CREATE_GRID_TABLE);
 		
-		db.execSQL(Queries.sql_create_inline_queries_table);
-		db.execSQL(Queries.sql_create_inline_results_table);
+		db.execSQL(Queries.SQL_CREATE_INLINE_QUERIES_TABLE);
+		db.execSQL(Queries.SQL_CREATE_INLINE_RESULTS_TABLE);
 		
-		db.execSQL(Queries.sql_create_starred_table);
+		db.execSQL(Queries.SQL_CREATE_STARRED_TABLE);
 	}
 
 	private void dropAllTables(SQLiteDatabase db){
 		db.beginTransaction();
 		try{
-			db.execSQL("DROP TABLE IF EXISTS "+MEMBERS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS "+RELATION_TAGS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS "+RELATIONS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.MEMBERS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.RELATION_TAGS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.RELATIONS_TABLE);
 	
-			db.execSQL("DROP TABLE IF EXISTS "+WAY_NODS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS "+WAY_TAGS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS "+WAYS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAY_NODS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAY_TAGS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAYS_TABLE);
 	
-			db.execSQL("DROP TABLE IF EXISTS "+NODES_TAGS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS "+NODES_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.NODES_TAGS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.NODES_TABLE);
 			
-			db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.GRID_TABLE);
 			
-			db.execSQL("DROP TABLE IF EXISTS "+INLINE_RESULTS_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS "+INLINE_QUERIES_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.INLINE_RESULTS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.INLINE_QUERIES_TABLE);
 			
 			db.setTransactionSuccessful();
 		}catch(Exception e){
@@ -155,6 +139,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	//	context.deleteDatabase(DATABASE_NAME);
 	//}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#clearAll()
+	 */
+	@Override
 	public void clearAll() {
 		SQLiteDatabase db = getWritableDatabase();
 		db.setLockingEnabled(false);
@@ -163,11 +151,15 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.setLockingEnabled(true);
 	}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#initGrid()
+	 */
+	@Override
 	public void initGrid(){
 		SQLiteDatabase db = getWritableDatabase();
 		//db.execSQL("UPDATE "+NODES_TABLE+" SET grid_id=1");
-		db.execSQL("DROP TABLE IF EXISTS "+GRID_TABLE);
-		db.execSQL(Queries.sql_create_grid_table);
+		db.execSQL("DROP TABLE IF EXISTS "+Queries.GRID_TABLE);
+		db.execSQL(Queries.SQL_CREATE_GRID_TABLE);
 	
 		String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
 								+" SELECT min(lat) minLat, min(lon) minLon, max(lat) maxLat, max(lon) maxLon"
@@ -180,6 +172,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(updateNodesGrid);
 	}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addEntity(il.yrtimid.osm.osmpoi.domain.Entity)
+	 */
+	@Override
 	public void addEntity(Entity entity) {
 		if (entity instanceof Node)
 			addNode((Node) entity);
@@ -189,6 +185,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			addRelation((Relation) entity);
 	}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNode(il.yrtimid.osm.osmpoi.domain.Node)
+	 */
+	@Override
 	public void addNode(Node node) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -198,7 +198,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("lat", node.getLatitude());
 			values.put("lon", node.getLongitude());
 
-			long id = db.insert(NODES_TABLE, null, values);
+			long id = db.insert(Queries.NODES_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Node was not inserted");
 
@@ -212,13 +212,17 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNodes(java.util.Collection)
+	 */
+	@Override
 	public void addNodes(Collection<Node> nodes) {
 		SQLiteDatabase db = getWritableDatabase();
 		db.setLockingEnabled(false);
 		db.beginTransaction();
 
 		try {
-			InsertHelper insert = new InsertHelper(db, NODES_TABLE);
+			InsertHelper insert = new InsertHelper(db, Queries.NODES_TABLE);
 			final int idCol = insert.getColumnIndex("id");
 			final int timestampCol = insert.getColumnIndex("timestamp");
 			final int latCol = insert.getColumnIndex("lat");
@@ -246,6 +250,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNodeTag(long, il.yrtimid.osm.osmpoi.domain.Tag)
+	 */
+	@Override
 	public void addNodeTag(long nodeId, Tag tag) {
 		SQLiteDatabase db = getWritableDatabase();
 		try {
@@ -255,7 +263,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("k", tag.getKey());
 			values.put("v", tag.getValue());
 
-			long id = db.insert(NODES_TAGS_TABLE, null, values);
+			long id = db.insert(Queries.NODES_TAGS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Node tag was not inserted");
 		} catch (Exception e) {
@@ -263,13 +271,17 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNodesTags(java.util.Collection)
+	 */
+	@Override
 	public void addNodesTags(Collection<Node> nodes) {
 		SQLiteDatabase db = getWritableDatabase();		
 		db.setLockingEnabled(false);
 		db.beginTransaction();
 
 		try {
-			InsertHelper insert = new InsertHelper(db, NODES_TAGS_TABLE);
+			InsertHelper insert = new InsertHelper(db, Queries.NODES_TAGS_TABLE);
 			final int nodeIdCol = insert.getColumnIndex("node_id");
 			final int kCol = insert.getColumnIndex("k");
 			final int vCol = insert.getColumnIndex("v");
@@ -295,6 +307,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addWay(il.yrtimid.osm.osmpoi.domain.Way)
+	 */
+	@Override
 	public void addWay(Way way) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -302,7 +318,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("id", way.getId());
 			values.put("timestamp", way.getTimestamp());
 
-			long id = db.insert(WAYS_TABLE, null, values);
+			long id = db.insert(Queries.WAYS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Way was not inserted");
 
@@ -321,6 +337,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addWayTag(long, il.yrtimid.osm.osmpoi.domain.Tag)
+	 */
+	@Override
 	public void addWayTag(long wayId, Tag tag) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -329,7 +349,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("k", tag.getKey());
 			values.put("v", tag.getValue());
 
-			long id = db.insert(WAY_TAGS_TABLE, null, values);
+			long id = db.insert(Queries.WAY_TAGS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Node tag was not inserted");
 		} catch (Exception e) {
@@ -337,6 +357,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addWayNode(long, int, il.yrtimid.osm.osmpoi.domain.Node)
+	 */
+	@Override
 	public void addWayNode(long wayId, int index, Node wayNode) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -344,7 +368,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("way_id", wayId);
 			values.put("node_id", wayNode.getId());
 
-			long id = db.insert(WAY_NODS_TABLE, null, values);
+			long id = db.insert(Queries.WAY_NODS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Node tag was not inserted");
 		} catch (Exception e) {
@@ -352,6 +376,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addRelation(il.yrtimid.osm.osmpoi.domain.Relation)
+	 */
+	@Override
 	public void addRelation(Relation rel) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -359,7 +387,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("id", rel.getId());
 			values.put("timestamp", rel.getTimestamp());
 
-			long id = db.insert(RELATIONS_TABLE, null, values);
+			long id = db.insert(Queries.RELATIONS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Relation was not inserted");
 
@@ -378,6 +406,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addRelationTag(long, il.yrtimid.osm.osmpoi.domain.Tag)
+	 */
+	@Override
 	public void addRelationTag(long relId, Tag tag) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -386,7 +418,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("k", tag.getKey());
 			values.put("v", tag.getValue());
 
-			long id = db.insert(RELATION_TAGS_TABLE, null, values);
+			long id = db.insert(Queries.RELATION_TAGS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Relation tag was not inserted");
 		} catch (Exception e) {
@@ -394,6 +426,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addRelationMember(long, int, il.yrtimid.osm.osmpoi.domain.RelationMember)
+	 */
+	@Override
 	public void addRelationMember(long relId, int index, RelationMember mem) {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
@@ -403,7 +439,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			values.put("ref", mem.getMemberId());
 			values.put("role", mem.getMemberRole());
 
-			long id = db.insert(MEMBERS_TABLE, null, values);
+			long id = db.insert(Queries.MEMBERS_TABLE, null, values);
 			if (id == -1)
 				throw new SQLException("Relation member was not inserted");
 		} catch (Exception e) {
@@ -430,10 +466,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	}
 	*/
 	
-	/**
-	 * Splits large cells until no cells with node count greater than maxItems least
-	 * @param maxItems
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#optimizeGrid(java.lang.Integer)
 	 */
+	@Override
 	public void optimizeGrid(Integer maxItems){
 		Collection<Integer> cells = null;
 		do{
@@ -458,7 +494,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		Collection<Integer> gridIds = new ArrayList<Integer>();
 		try{
 			
-			cur = db.rawQuery("SELECT grid_id FROM "+NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString(), null);
+			cur = db.rawQuery("SELECT grid_id FROM "+Queries.NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString(), null);
 			if (cur.moveToFirst()){
 				do{
 					gridIds.add(cur.getInt(0));
@@ -482,7 +518,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		try{
 			Log.d("splitGridCell id:"+id);
 			//calc new cell size to be 1/2 of the old one
-			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7) from "+GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
+			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7) from "+Queries.GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
 			cur.moveToFirst();
 			Double newCellSize = cur.getDouble(0);
 			
@@ -496,10 +532,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 			db.execSQL(sql_generate_grid, new Object[] {newCellSize,newCellSize,newCellSize,newCellSize,newCellSize,newCellSize, id});
 			
 			//delete old cell
-			db.delete(GRID_TABLE, "id=?", new String[]{id.toString()});
+			db.delete(Queries.GRID_TABLE, "id=?", new String[]{id.toString()});
 			
 			//update nodes to use new cells
-			String update_nodes = "UPDATE nodes SET grid_id = (SELECT g.id FROM grid g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id=?";
+			String update_nodes = "UPDATE nodes SET grid_id = (SELECT g.id FROM "+Queries.GRID_TABLE+" g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id=?";
 			Log.d(update_nodes);
 			db.execSQL(update_nodes, new Object[]{id});
 			

@@ -7,6 +7,7 @@
 		<project>Osmosis-Pbf</project>
 		<project>Osmosis-TagFilter</project>
 		<project>Osmosis-Xml</project>
+		<project>OsmPoi-Common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

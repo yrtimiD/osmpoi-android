@@ -1,15 +1,12 @@
 // This software is released into the Public Domain.  See copying.txt for details.
 package il.yrtimid.osm.osmpoi.domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * A data class representing a single OSM tag.
  * 
  * @author Brett Henderson
  */
-public class Tag implements Comparable<Tag>, Parcelable {
+public class Tag implements Comparable<Tag>{
 
 	/**
 	 * The key identifying the tag.
@@ -20,6 +17,8 @@ public class Tag implements Comparable<Tag>, Parcelable {
 	 */
 	private String value;
 
+	protected Tag(){}
+	
 	/**
 	 * Creates a new instance.
 	 * 
@@ -33,13 +32,6 @@ public class Tag implements Comparable<Tag>, Parcelable {
 		this.value = value;
 	}
 
-	/**
-	 * @param source
-	 */
-	public Tag(Parcel source) {
-		this.key = source.readString();
-		this.value = source.readString();
-	}
 
 	/**
 	 * Compares this tag to the specified tag. The tag comparison is based on a
@@ -84,37 +76,4 @@ public class Tag implements Comparable<Tag>, Parcelable {
 		return "Tag('" + getKey() + "'='" + getValue() + "')";
 	}
 
-	public static final Parcelable.Creator<Tag> CREATOR = new Parcelable.Creator<Tag>() {
-
-		@Override
-		public Tag createFromParcel(Parcel source) {
-			return new Tag(source);
-		}
-
-		@Override
-		public Tag[] newArray(int size) {
-			return new Tag[size];
-		}
-	};
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(key);
-		dest.writeString(value);
-	}
 }

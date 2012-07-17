@@ -3,20 +3,21 @@ package il.yrtimid.osm.osmpoi.domain;
 
 import java.util.Collection;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 
 /**
  * A data class representing a single OSM node.
  * 
  * @author Brett Henderson
  */
-public class Node extends Entity implements Comparable<Node>, Parcelable {
+public class Node extends Entity implements Comparable<Node>{
 
-	private double latitude;
-	private double longitude;
+	protected double latitude;
+	protected double longitude;
 
+	protected Node(){
+		this(new CommonEntityData(), 0.0, 0.0);
+	}
+	
 	/**
 	 * Creates a new instance.
 	 * 
@@ -34,14 +35,6 @@ public class Node extends Entity implements Comparable<Node>, Parcelable {
 		this.longitude = longitude;
 	}
 
-	/**
-	 * @param source
-	 */
-	public Node(Parcel source) {
-		super(source);
-		this.latitude = source.readDouble();
-		this.longitude = source.readDouble();
-	}
 
 	public Node(long nodeId){
 		this(new CommonEntityData(nodeId, -1), 0L, 0L);
@@ -193,35 +186,5 @@ public class Node extends Entity implements Comparable<Node>, Parcelable {
 		return "Node(id=" + getId() + ", #tags=" + getTags().size() + ")";
 	}
 
-	public static final Parcelable.Creator<Node> CREATOR = new Parcelable.Creator<Node>() {
 
-		@Override
-		public Node createFromParcel(Parcel source) {
-			return new Node(source);
-		}
-
-		@Override
-		public Node[] newArray(int size) {
-			return new Node[size];
-		}
-		
-	};
-	
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeDouble(latitude);
-		dest.writeDouble(longitude);
-	}
 }

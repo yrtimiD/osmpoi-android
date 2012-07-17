@@ -149,14 +149,4 @@ public class Bound extends Entity {
 				+ ")";
     }
 
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-	
-	//TODO: implement parcelable if needed
 }

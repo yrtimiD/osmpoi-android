@@ -44,7 +44,7 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		setContentView(R.layout.result_item_full_view);
 
 		Bundle extras = getIntent().getExtras();
-		this.entity = (Entity) extras.getParcelable(ENTITY);
+		this.entity = ((ParcelableEntity) extras.getParcelable(ENTITY)).getEntity();
 		
 		setIcon();
 

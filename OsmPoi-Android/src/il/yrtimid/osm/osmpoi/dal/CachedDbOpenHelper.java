@@ -19,7 +19,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @author yrtimid
  *
  */
-public class CachedDbOpenHelper extends DbOpenHelper {
+public class CachedDbOpenHelper extends DbOpenHelper implements IDbCachedFiller {
 	private static int MAX_QUEUE_SIZE = 100;
 	
 	private Boolean flushing = false;
@@ -35,11 +35,19 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 		super(context, dbLocation);
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#beginAdd()
+	 */
+	@Override
 	public void beginAdd(){
 		SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 	}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#endAdd()
+	 */
+	@Override
 	public void endAdd(){
 		flushing = true;
 		addNodeIfBelongsToWay(null);
@@ -52,6 +60,10 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToWay(il.yrtimid.osm.osmpoi.domain.Node)
+	 */
+	@Override
 	public void addNodeIfBelongsToWay(Node node){
 		if (node != null){
 			addNodeIfBelongToWayQueue.add(node);
@@ -70,7 +82,7 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 			Cursor cur = null;
 			try{
 				Log.d("Checking nodes in ways: "+inClause);
-				cur = db.rawQuery("SELECT node_id FROM "+WAY_NODS_TABLE+" WHERE node_id in ("+inClause+")", null);
+				cur = db.rawQuery("SELECT node_id FROM "+Queries.WAY_NODS_TABLE+" WHERE node_id in ("+inClause+")", null);
 				if (cur.moveToFirst()){
 					do{
 						neededIds.add(cur.getLong(0));
@@ -92,6 +104,10 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToRelation(il.yrtimid.osm.osmpoi.domain.Node)
+	 */
+	@Override
 	public void addNodeIfBelongsToRelation(Node node){
 		if (node != null){
 			addNodeIfBelongToRelationQueue.add(node);
@@ -110,7 +126,7 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 			Cursor cur = null;
 			try{
 				Log.d("Checking nodes in relations: "+inClause);
-				cur = db.rawQuery("SELECT ref FROM "+MEMBERS_TABLE+" WHERE type='NODE' AND ref in ("+inClause+")", null);
+				cur = db.rawQuery("SELECT ref FROM "+Queries.MEMBERS_TABLE+" WHERE type='NODE' AND ref in ("+inClause+")", null);
 				if (cur.moveToFirst()){
 					do{
 						neededIds.add(cur.getLong(0));
@@ -132,6 +148,10 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addWayIfBelongsToRelation(il.yrtimid.osm.osmpoi.domain.Way)
+	 */
+	@Override
 	public void addWayIfBelongsToRelation(Way way){
 		if (way != null){
 			addWayIfBelongToRelationQueue.add(way);
@@ -150,7 +170,7 @@ public class CachedDbOpenHelper extends DbOpenHelper {
 			Cursor cur = null;
 			try{
 				Log.d("Checking ways in relations: "+inClause);
-				cur = db.rawQuery("SELECT ref FROM "+MEMBERS_TABLE+" WHERE type='WAY' AND ref in ("+inClause+")", null);
+				cur = db.rawQuery("SELECT ref FROM "+Queries.MEMBERS_TABLE+" WHERE type='WAY' AND ref in ("+inClause+")", null);
 				if (cur.moveToFirst()){
 					do{
 						neededIds.add(cur.getLong(0));

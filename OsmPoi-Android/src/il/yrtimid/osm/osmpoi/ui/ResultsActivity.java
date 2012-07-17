@@ -276,11 +276,11 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 
 		Intent intent = new Intent(this, ResultItemActivity.class);
 		if (entity instanceof Node)
-			intent.putExtra(ResultItemActivity.ENTITY, (Node) entity);
+			intent.putExtra(ResultItemActivity.ENTITY, new ParcelableNode((Node) entity));
 		else if (entity instanceof Way)
-			intent.putExtra(ResultItemActivity.ENTITY, (Way) entity);
+			intent.putExtra(ResultItemActivity.ENTITY, new ParcelableWay((Way) entity));
 		else if (entity instanceof Relation)
-			intent.putExtra(ResultItemActivity.ENTITY, (Relation) entity);
+			intent.putExtra(ResultItemActivity.ENTITY, new ParcelableRelation((Relation) entity));
 
 		startActivity(intent);
 
