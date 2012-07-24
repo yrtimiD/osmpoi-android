@@ -320,8 +320,8 @@ public final class R {
         public static final int search_again=0x7f0600d8;
         public static final int search_cancelled=0x7f0600da;
         public static final int search_finished=0x7f0600d9;
-        public static final int search_source=0x7f0600ce;
-        public static final int search_source_summary=0x7f0600d5;
+        public static final int search_mode=0x7f0600ce;
+        public static final int search_mode_summary=0x7f0600d5;
         public static final int second_hand=0x7f060067;
         public static final int select_pbf_file=0x7f0600e0;
         public static final int service_name=0x7f0600df;

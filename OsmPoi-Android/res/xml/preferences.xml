@@ -8,12 +8,12 @@
         android:title="@string/data_source" >
         <ListPreference
             android:defaultValue="NONE"
-            android:dialogTitle="@string/search_source"
+            android:dialogTitle="@string/search_mode"
             android:entries="@array/search_sources"
             android:entryValues="@array/search_sources_values"
             android:key="search_source"
-            android:summary="@string/search_source_summary"
-            android:title="@string/search_source" />
+            android:summary="@string/search_mode_summary"
+            android:title="@string/search_mode" />
 
         <PreferenceScreen
             android:summary="@string/offline_db_summary"

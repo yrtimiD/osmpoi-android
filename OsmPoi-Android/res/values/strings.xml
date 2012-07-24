@@ -15,14 +15,14 @@
 	<string name="Continue">Continue</string>
 	<string name="cancel">Cancel</string>
 	<string name="import_confirm">Importing will destroy previously imported data!</string>
-	<string name="search_source">Search source</string>
+	<string name="search_mode">Search mode</string>
 	<string name="data_source">Data source</string>
 	<string name="about">About</string>
 	<string name="cant_create_search_source">Search source can not be selected</string>
 	<string name="no_file_picker">No compatible file picker installed</string>
 	<string name="ui">Interface</string>
 	<string name="result_language">Preferred result language</string>
-	<string name="search_source_summary">Change source for searching</string>
+	<string name="search_mode_summary">Change mode used for searching</string>
 	<string name="stop_follow">Stop follow GPS</string>
 	<string name="clear">Clear</string>
 	<string name="search_again">Search again</string>
