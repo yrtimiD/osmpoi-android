@@ -28,7 +28,7 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDbFiller {
 
 	
 	
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	protected static final Map<EntityType, String> entityTypeToTableName = new HashMap<EntityType, String>();
 	protected static final Map<EntityType, String> entityTypeToTagsTableName = new HashMap<EntityType, String>();
 	
@@ -51,7 +51,6 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDbFiller {
 		entityTypeToTagsTableName.put(EntityType.Node, Queries.NODES_TAGS_TABLE);
 		entityTypeToTagsTableName.put(EntityType.Way, Queries.WAY_TAGS_TABLE);
 		entityTypeToTagsTableName.put(EntityType.Relation, Queries.RELATION_TAGS_TABLE);
-
 	}
 
 	/*
@@ -78,9 +77,15 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDbFiller {
 		if (oldVersion == 1 && newVersion > 1){
 			db.execSQL(Queries.SQL_CREATE_STARRED_TABLE);
 		}
+		
+		if (oldVersion == 2 && newVersion > 2){
+			db.execSQL(Queries.SQL_CREATE_BOUNDS_TABLE);
+		}
 	}
 	
 	private void createAllTables(SQLiteDatabase db){
+		db.execSQL(Queries.SQL_CREATE_BOUNDS_TABLE);
+		
 		db.execSQL(Queries.SQL_CREATE_NODE_TABLE);
 		db.execSQL(Queries.SQL_CREATE_NODE_TAGS_TABLE);
 		db.execSQL(Queries.SQL_NODE_TAGS_IDX);
@@ -124,6 +129,8 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDbFiller {
 			
 			db.execSQL("DROP TABLE IF EXISTS "+Queries.INLINE_RESULTS_TABLE);
 			db.execSQL("DROP TABLE IF EXISTS "+Queries.INLINE_QUERIES_TABLE);
+			
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.BOUNDS_TABLE);
 			
 			db.setTransactionSuccessful();
 		}catch(Exception e){
@@ -183,6 +190,26 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDbFiller {
 			addWay((Way) entity);
 		else if (entity instanceof Relation)
 			addRelation((Relation) entity);
+		else if (entity instanceof Bound)
+			addBound((Bound)entity);
+	}
+	
+	@Override
+	public void addBound(Bound bound) {
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			ContentValues values = new ContentValues();
+			values.put("top", bound.getTop());
+			values.put("bottom", bound.getBottom());
+			values.put("left", bound.getLeft());
+			values.put("right", bound.getRight());
+
+			long id = db.insert(Queries.BOUNDS_TABLE, null, values);
+			if (id == -1)
+				throw new SQLException("Bound was not inserted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/* (non-Javadoc)

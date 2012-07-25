@@ -409,6 +409,8 @@ public class FileProcessingService extends Service {
 							addressDbHelper.addNodeIfBelongsToRelation(n);
 						}
 					}
+				}else if (item.getType() == EntityType.Bound){
+					poiDbHelper.addEntity(item);
 				}
 			}
 		}, new ProgressNotifier() {

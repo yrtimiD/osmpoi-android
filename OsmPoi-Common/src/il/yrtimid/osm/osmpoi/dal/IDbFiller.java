@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
+import il.yrtimid.osm.osmpoi.domain.Bound;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
 import il.yrtimid.osm.osmpoi.domain.Relation;
@@ -24,6 +25,8 @@ public interface IDbFiller {
 
 	public abstract void addEntity(Entity entity);
 
+	public abstract void addBound(Bound bound);
+	
 	public abstract void addNode(Node node);
 
 	public abstract void addNodes(Collection<Node> nodes);

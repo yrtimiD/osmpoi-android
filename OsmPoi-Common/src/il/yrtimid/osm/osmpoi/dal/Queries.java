@@ -8,6 +8,8 @@ package il.yrtimid.osm.osmpoi.dal;
  *
  */
 public class Queries {
+	
+	public static final String BOUNDS_TABLE = "bounds";
 
 	public static final String NODES_TABLE = "nodes";
 	public static final String NODES_TAGS_TABLE = "node_tags";
@@ -26,6 +28,13 @@ public class Queries {
 	public static final String INLINE_RESULTS_TABLE = "inline_results";
 	
 	public static final String STARRED_TABLE = "starred";
+	
+	public static final String SQL_CREATE_BOUNDS_TABLE = "CREATE TABLE IF NOT EXISTS bounds ("+
+			"top REAL NOT NULL," +
+			"bottom REAL NOT NULL," +
+			"left REAL NOT NULL," +
+			"right REAL NOT NULL" +
+			")";
 	
 	public static final String SQL_CREATE_NODE_TABLE = "CREATE TABLE IF NOT EXISTS nodes ("
 			+"		id INTEGER NOT NULL PRIMARY KEY,"
