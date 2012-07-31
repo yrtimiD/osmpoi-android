@@ -16,12 +16,11 @@
             android:title="@string/search_mode" />
 
         <PreferenceScreen
-            android:summary="@string/offline_db_summary"
-            android:title="@string/offline_db" >
+            android:summary="@string/offline_search_summary"
+            android:title="@string/offline_search" >
             <Preference
                 android:key="preference_download"
-                android:summary="Select and download offline area data"
-                android:title="Download offline data..." />
+                android:title="@string/preference_online_download" android:summary="@string/preference_online_download_summary"/>
             <Preference
                 android:key="preference_import_pbf"
                 android:summary="@string/import_pbf_summary"
@@ -156,9 +155,9 @@
         </PreferenceScreen>
         <PreferenceScreen
             android:enabled="false"
-            android:selectable="true"
+            android:selectable="false"
             android:summary="TODO"
-            android:title="Online" >
+            android:title="Online search settings" >
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory

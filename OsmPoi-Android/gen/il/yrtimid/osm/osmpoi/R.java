@@ -286,8 +286,8 @@ public final class R {
         public static final int nightclub=0x7f0600a2;
         public static final int no_file_picker=0x7f0600d2;
         public static final int no_search_source_configured=0x7f0600c5;
-        public static final int offline_db=0x7f0600db;
-        public static final int offline_db_summary=0x7f0600dc;
+        public static final int offline_search=0x7f0600db;
+        public static final int offline_search_summary=0x7f0600dc;
         public static final int optician=0x7f06005f;
         public static final int organic=0x7f060060;
         public static final int other=0x7f0600b7;
@@ -308,6 +308,8 @@ public final class R {
         public static final int police=0x7f06001b;
         public static final int post_box=0x7f06001c;
         public static final int post_office=0x7f06001d;
+        public static final int preference_online_download=0x7f0600f9;
+        public static final int preference_online_download_summary=0x7f0600fa;
         public static final int pub=0x7f060083;
         public static final int radiotechnics=0x7f060065;
         public static final int railway_station=0x7f060009;
