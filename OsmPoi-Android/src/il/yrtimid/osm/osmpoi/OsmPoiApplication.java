@@ -35,6 +35,7 @@ public class OsmPoiApplication extends Application {
 	public static List<EntityFormatter> formatters;
 	private static final String POI_DATABASE_NAME = "poi.db";
 	private static final String ADDRESS_DATABASE_NAME = "address.db";
+	private static final String STARRED_DATABASE_NAME = "starred.db";
 	
 	
 	
@@ -98,6 +99,7 @@ public class OsmPoiApplication extends Application {
 					if (folder.canWrite()){
 						poiDbLocation = new File(folder, POI_DATABASE_NAME);
 						addressDbLocation = new File(folder, ADDRESS_DATABASE_NAME);
+						starredDbLocation = new File(folder, STARRED_DATABASE_NAME);
 					}
 				}catch(Exception e){
 					Log.wtf("Checking external storage DB", e);
@@ -105,6 +107,7 @@ public class OsmPoiApplication extends Application {
 			}else{
 				poiDbLocation = new File(POI_DATABASE_NAME);
 				addressDbLocation = new File(ADDRESS_DATABASE_NAME);
+				starredDbLocation = new File(STARRED_DATABASE_NAME);
 			}
 			
 			return (poiDbLocation!=null) && (addressDbLocation!=null);
@@ -114,6 +117,7 @@ public class OsmPoiApplication extends Application {
 		private static String resultLanguage;
 		private static File poiDbLocation;
 		private static File addressDbLocation;
+		private static File starredDbLocation;
 		
 		public static SearchSourceType getSearchSourceType() {
 			return searchSourceType;
@@ -129,7 +133,10 @@ public class OsmPoiApplication extends Application {
 		public static File getAddressDbLocation() {
 			return addressDbLocation;
 		}
-
+		
+		public static File getStarredDbLocation() {
+			return starredDbLocation;
+		}
 		
 		public static Boolean tryCreateSearchSource(Context context) {
 			return tryCreateSearchSource(context, searchSourceType);
@@ -178,7 +185,7 @@ public class OsmPoiApplication extends Application {
 		}
 		
 		public DbStarred getStarredDb(){
-			if (starred == null) starred = new DbStarred(context,  OsmPoiApplication.Config.getPoiDbLocation());
+			if (starred == null) starred = new DbStarred(context,  OsmPoiApplication.Config.getStarredDbLocation());
 			return starred;
 		}
 		

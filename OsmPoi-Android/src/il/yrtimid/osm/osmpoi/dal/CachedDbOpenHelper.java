@@ -19,7 +19,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @author yrtimid
  *
  */
-public class CachedDbOpenHelper extends DbOpenHelper implements IDbCachedFiller {
+public class CachedDbOpenHelper extends DbFiller implements IDbCachedFiller {
 	private static int MAX_QUEUE_SIZE = 100;
 	
 	private Boolean flushing = false;
