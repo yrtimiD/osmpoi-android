@@ -8,5 +8,5 @@ package il.yrtimid.osm.osmpoi.dal;
  *
  */
 public interface IDatabase {
-
+	void create() throws Exception;
 }

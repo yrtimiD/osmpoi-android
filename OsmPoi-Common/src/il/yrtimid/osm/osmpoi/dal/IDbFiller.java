@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author yrtimid
  *
  */
-public interface IDbFiller {
+public interface IDbFiller extends IDatabase{
 
 	public abstract void clearAll();
 
