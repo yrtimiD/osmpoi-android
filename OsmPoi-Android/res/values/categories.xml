@@ -174,7 +174,7 @@
     <string name="camp_site">Camp site</string>
     <string name="caravan_site">Caravan site</string>
     <string name="chalet">Chalet</string>
-    <string name="guest_house">guest_house</string>
+    <string name="guest_house">Guest house</string>
 <string name="hostel">Hostel</string>
 <string name="hotel">Hotel</string>
 <string name="information">Information</string>
@@ -192,4 +192,8 @@
   <string name="cafe_by_operator">Cafe operators</string>
   <string name="restaurant_by_operator">Restaurant operators</string>
   <string name="fast_food_by_operator">Fast food operators</string>
-</resources>
+  <string name="service_centre">Service Centre</string>
+  <string name="tailor">Tailor</string>
+  <string name="craft">Craft</string>
+  <string name="supermarket_by_operator">Supermarket operators</string>
+  </resources>

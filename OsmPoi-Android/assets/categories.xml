@@ -119,6 +119,7 @@
 		<search name="shoes" query="shop=shoes" />
 		<search name="sports" query="shop=sports" />
 		<search name="stationery" query="shop=stationery" />
+		<search name="tailor" query="shop=tailor | craft=tailor" />
 		<search name="tattoo" query="shop=tattoo" />
 		<search name="tobacco" query="shop=tobacco" />
 		<search name="toys" query="shop=toys" />
@@ -185,6 +186,7 @@
 		<search name="drinking_water" query="amenity=drinking_water" />
 		<search name="post_box" query="amenity=post_box" />
 		<search name="post_office" query="amenity=post_office" />
+		<search name="service_centre" query="amenity=service_centre" />
 		<search name="recycling" query="amenity=recycling" />
 		<search name="telephone" query="amenity=telephone" />
 		<search name="toilet" query="amenity=toilets" />
