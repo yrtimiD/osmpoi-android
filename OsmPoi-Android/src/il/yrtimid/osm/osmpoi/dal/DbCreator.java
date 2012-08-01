@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author yrtimiD
  * 
  */
-public class DbOpenHelper extends SQLiteOpenHelper {
+public class DbCreator extends SQLiteOpenHelper {
 	
 	private static final int DATABASE_VERSION = 3;
 	protected static final Map<EntityType, String> entityTypeToTableName = new HashMap<EntityType, String>();
@@ -38,7 +38,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	 * @param factory
 	 * @param version
 	 */
-	public DbOpenHelper(Context context, File dbLocation) {
+	public DbCreator(Context context, File dbLocation) {
 		super(context, dbLocation.getPath(), null, DATABASE_VERSION);
 		this.context = context;
 		

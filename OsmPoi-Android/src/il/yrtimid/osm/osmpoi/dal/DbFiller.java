@@ -28,7 +28,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @author yrtimid
  *
  */
-public class DbFiller extends DbOpenHelper implements IDbFiller {
+public class DbFiller extends DbCreator implements IDbFiller {
 	
 	/**
 	 * @param context

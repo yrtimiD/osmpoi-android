@@ -40,7 +40,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @author yrtimid
  * 
  */
-public class DbSearcher extends DbOpenHelper {
+public class DbSearcher extends DbCreator {
 
 	private static final int SEARCH_SIZE = 20;
 

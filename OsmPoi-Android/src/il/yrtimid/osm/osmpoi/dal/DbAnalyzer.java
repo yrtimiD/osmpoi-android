@@ -18,7 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @author yrtimid
  * 
  */
-public class DbAnalyzer extends DbOpenHelper {
+public class DbAnalyzer extends DbCreator {
 
 	/**
 	 * @param context
