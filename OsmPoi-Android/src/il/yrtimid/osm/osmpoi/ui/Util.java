@@ -79,11 +79,11 @@ public class Util {
 		if (bytes<1000)
 			return String.format("%dB", bytes);
 		else if (bytes<1000000)
-			return String.format("%dkB", bytes/1000);
+			return String.format("%.1fkB", bytes/1000.0);
 		else if (bytes<1000000000)
-			return String.format("%dMB", bytes/1000000);
+			return String.format("%.1fMB", bytes/1000000.0);
 		else 
-			return String.format("%dGB", bytes/1000000000);
+			return String.format("%.1fGB", bytes/1000000000.0);
 	}
 	
 	public static String getLocalName(Context context, String key){

@@ -14,6 +14,8 @@ import il.yrtimid.osm.osmpoi.pbf.OsmImporter;
 import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
 import il.yrtimid.osm.osmpoi.ui.SearchActivity;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
+import il.yrtimid.osm.osmpoi.ui.Util;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -494,16 +496,10 @@ public class FileProcessingService extends Service {
 	private String formatDownloadProgress(int downloadedSize, int totalSize) {
 		String ready = "";
 		String from = "";
-		if (downloadedSize<1024*1024)
-			ready = String.format("%dk", downloadedSize/1024);
-		else 
-			ready = String.format("%dM", downloadedSize/1024/1024);
+		ready = Util.formatSize(downloadedSize);
 		
 		if (totalSize > 0){
-			if (totalSize<1024*1024)
-				from = String.format("/%dk", totalSize/1024);
-			else 
-				from = String.format("/%dM", totalSize/1024/1024);
+			from = "/"+Util.formatSize(totalSize);
 		}
 		
 		return String.format("Downloading file %s%s", ready, from);
