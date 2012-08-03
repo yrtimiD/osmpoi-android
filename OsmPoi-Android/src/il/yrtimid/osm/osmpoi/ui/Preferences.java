@@ -4,17 +4,10 @@ import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
-import il.yrtimid.osm.osmpoi.SearchSourceType;
-import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-
 import com.kaloer.filepicker.FilePickerActivity;
 
 import android.app.ActivityManager;
@@ -29,7 +22,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.widget.Toast;
 
 //TODO: prevent executing more than one service task at a time
 public class Preferences extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener {
@@ -40,7 +32,10 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	public static final String RESULT_LANGUAGE = "result_language";
 	public static final String IS_DB_ON_SDCARD = "is_db_on_sdcard";
 	private static final String PREFERENCE_IMPORT_PBF = "preference_import_pbf";
-	private static final String PREFERENCE_CLEAR_DB = "preference_clear_db";
+	private static final String PREFERENCE_CLEAR_DB = "debug_clear_db";
+	private static final String PREFERENCE_BUILD_GRID = "debug_rebuild_grid";
+	private static final String PREFERENCE_DOWNLOAD = "preference_download";
+	private static final String PREFERENCE_DEBUG_SHOW = "debug_show_debug_preferences";
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -56,6 +51,9 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(PREFERENCE_CLEAR_DB).setOnPreferenceClickListener(this);
 		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
+		findPreference(PREFERENCE_BUILD_GRID).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_DEBUG_SHOW).setOnPreferenceChangeListener(this);
 	}
 
 	/*
@@ -101,6 +99,13 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 					runClearDbService();
 				}
 			});
+			return true;
+		} else if (PREFERENCE_BUILD_GRID.equals(key)){
+			runBuildGridService();
+			return true;
+		} else if (PREFERENCE_DOWNLOAD.equals(key)){
+			Intent intent = new Intent(this, DownloadActivity.class);
+			startActivity(intent);
 		}
 
 		return false;
@@ -124,17 +129,24 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		});
 	}
 
-	public void runPbfImportService(final File f) {
+	private void runPbfImportService(final File f) {
 		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
 		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.IMPORT_TO_DB.name());
 		serviceIntent.putExtra(FileProcessingService.EXTRA_FILE_PATH, f.getPath());
 		startService(serviceIntent);
 	}
 
-	public void runClearDbService() {
+	private void runClearDbService() {
 		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
 		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.CLEAR_DB.name());
 		startService(serviceIntent);
+	}
+
+	private void runBuildGridService(){
+		Intent serviceIntent = new Intent(Preferences.this, FileProcessingService.class);
+		serviceIntent.putExtra(FileProcessingService.EXTRA_OPERATION, FileProcessingService.Operation.BUILD_GRID.name());
+		startService(serviceIntent);
+	
 	}
 
 	/*
@@ -161,7 +173,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		}
 		return false;
 		*/
-
+		
 		return true;
 	}
 
@@ -256,15 +268,17 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		ImportSettings settings = new ImportSettings();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
-		settings.setBuildGrid(prefs.getBoolean("preference_import_build_grid", true));
-		settings.setClearBeforeImport(prefs.getBoolean("preference_clear_db_before_import", true));
+		settings.setBuildGrid(prefs.getBoolean("debug_import_build_grid", true));
+		settings.setClearBeforeImport(prefs.getBoolean("debug_import_cleardb", true));
 		
-		settings.setNodeKey("highway", prefs.getBoolean("include_nodes_highway", false));
-		settings.setNodeKey("*", prefs.getBoolean("include_nodes_other", true));
+		settings.setNodeKey("highway", prefs.getBoolean("include_node_highway", false));
+		settings.setNodeKey("building",prefs.getBoolean("include_node_building", false));
+		settings.setNodeKey("barrier", prefs.getBoolean("include_node_barrier", false));
+		settings.setNodeKey("*", prefs.getBoolean("include_node_other", true));
 		
-		settings.setWayKey("building",prefs.getBoolean("include_way_building", true));
-		settings.setWayKey("highway",prefs.getBoolean("include_way_highway", true));
-		settings.setWayKey("*", prefs.getBoolean("include_ways_other", false));
+		settings.setWayKey("building",prefs.getBoolean("include_way_building", false));
+		settings.setWayKey("highway",prefs.getBoolean("include_way_highway", false));
+		settings.setWayKey("*", prefs.getBoolean("include_way_other", false));
 		
 		
 		settings.setRelationKey("landuse",prefs.getBoolean("include_relation_landuse", false)); 
@@ -273,8 +287,32 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setRelationKey("boundary",prefs.getBoolean("include_relation_boundary", false)); 
 		settings.setRelationKey("area",prefs.getBoolean("include_relation_area", false)); 
 		settings.setRelationKey("waterway",prefs.getBoolean("include_relation_waterway", false)); 
- 		settings.setRelationKey("*",prefs.getBoolean("include_relations_other", true)); 
+ 		settings.setRelationKey("*",prefs.getBoolean("include_relation_other", true)); 
 		
+ 		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
+ 		
+ 		settings.setGridSize(Integer.parseInt(prefs.getString("grid_size", "1000")));
+ 		
 		return settings;
 	}
+	
+	/*private void checkFileSize(String url){
+		try {
+			URL u = new URL(url);
+			URLConnection conn;
+			conn = u.openConnection();
+			int totalSize = conn.getContentLength();
+			if (totalSize>200*1024*1024) {
+				ConfirmDialog.Confirm((Context) Preferences.this, getString(R.string.large_file_confirm), new ConfirmDialog.Action() {
+					@Override
+					public void PositiveAction() {
+						
+					}
+				});
+			}
+		} catch (IOException e) {
+			Log.wtf("checkFileSize", e);
+		}
+	}
+	*/
 }

@@ -1,6 +1,5 @@
 package il.yrtimid.osm.osmpoi.ui;
 
-import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
@@ -21,9 +20,11 @@ import android.widget.TwoLineListItem;
 public class ResultsAdapter extends BaseAdapter {
 	LayoutInflater inflater;
 	Location location;
+	float azimuth = 0.0f;
 	List<Entity> items;
 	Comparator<Entity> comparator;
 	List<EntityFormatter> formatters;
+	int radius;
 	
 	public ResultsAdapter(Context context, Location location, List<EntityFormatter> formatters) {
 		this.items = new ArrayList<Entity>();
@@ -41,7 +42,7 @@ public class ResultsAdapter extends BaseAdapter {
 	public void addItem(Entity entity) {
 		if (!items.contains(entity)) {
 			items.add(entity);
-			update();
+			updateAndSort();
 		}
 	}
 
@@ -51,7 +52,7 @@ public class ResultsAdapter extends BaseAdapter {
 				items.add(e);
 			}
 		}
-		update();
+		updateAndSort();
 	}
 
 	public Entity[] getAllItems(){
@@ -61,17 +62,26 @@ public class ResultsAdapter extends BaseAdapter {
 	public void setLocation(Location newLoc) {
 		this.location = newLoc;
 		this.comparator = new DistanceComparator(this.location);
-		update();
+		updateAndSort();
 	}
 
-	public void update() {
+	public void setAzimuth(float azimuth){
+		this.azimuth = azimuth;
+		notifyDataSetChanged();
+	}
+	
+	public void setRadius(int radius){
+		this.radius = radius;
+	}
+	
+	public void updateAndSort() {
 		Collections.sort(items, this.comparator);
 		notifyDataSetChanged();
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Entity item = items.get(position);
+		Entity item = (Entity)getItem(position);
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.results_view_row, parent, false);
 		}
@@ -88,8 +98,8 @@ public class ResultsAdapter extends BaseAdapter {
 				Location nl = new Location(this.location);
 				nl.setLatitude(node.getLatitude());
 				nl.setLongitude(node.getLongitude());
-				int bearing = (int) location.bearingTo(nl);
-				listItem.getText2().setText(String.format("%,dm %c (%d˚)", (int) location.distanceTo(nl), getDirectionChar(bearing), bearing));
+				int bearing = Util.normalizeBearing ((int) location.bearingTo(nl)-(int)azimuth);
+				listItem.getText2().setText(String.format("%s %c (%d˚)", Util.formatDistance((int) location.distanceTo(nl)), Util.getDirectionChar(bearing), bearing));
 			}
 		}
 
@@ -97,9 +107,7 @@ public class ResultsAdapter extends BaseAdapter {
 	}
 
 
-	private final String engPostfix = "en";
 	private CharSequence localPostfix = null;
-
 	public void setLocale(CharSequence locale) {
 		if (locale != null)
 			localPostfix = locale;
@@ -111,15 +119,7 @@ public class ResultsAdapter extends BaseAdapter {
 		return EntityFormatter.format(this.formatters, entity, localPostfix);
 	}
 
-	private char[] directionChars = new char[]{'↑','↗','→','↘','↓','↙','←','↖'};
-	private char getDirectionChar(int degree){
-		if (degree<0) degree+=360;
-		degree+=45/2;
-		int section = (int)(degree/45);
-		if (section == 8) section = 0;
-		return directionChars[section];
-	}
-	
+
 	@Override
 	public int getCount() {
 		return items.size();
@@ -136,6 +136,10 @@ public class ResultsAdapter extends BaseAdapter {
 	}
 	
 	public int getMaximumDistance(){
+		return radius;
+	}
+	
+/*	public int getMaximumDistance(){
 		Node n = null;
 		if (items.size()>0){
 			n = il.yrtimid.osm.osmpoi.Util.getFirstNode(items.get(items.size()-1));
@@ -149,6 +153,5 @@ public class ResultsAdapter extends BaseAdapter {
 		}else {
 			return 0;
 		}
-		
-	}
+	}*/
 }

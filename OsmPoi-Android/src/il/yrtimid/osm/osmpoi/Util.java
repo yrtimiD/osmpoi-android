@@ -4,7 +4,10 @@ import java.util.List;
 
 import il.yrtimid.osm.osmpoi.CircleArea;
 import il.yrtimid.osm.osmpoi.domain.Entity;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.domain.Node;
+import il.yrtimid.osm.osmpoi.domain.Relation;
+import il.yrtimid.osm.osmpoi.domain.RelationMember;
 import il.yrtimid.osm.osmpoi.domain.Way;
 
 import android.location.Location;
@@ -202,7 +205,14 @@ public class Util {
 			if (wayNodes.size()>0) node = wayNodes.get(0);
 			break;
 		case Relation:
-			//TODO:implement relation logic
+			//TODO: Implement returning nearest node from any relation level
+			List<RelationMember> members = ((Relation)entity).getMembers();
+			for(RelationMember rm : members){
+				if (rm.getMemberType() == EntityType.Node){
+					node = (Node)rm.getMember();
+					break;
+				}
+			}
 			break;
 		}
 		return node;

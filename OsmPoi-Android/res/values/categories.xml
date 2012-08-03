@@ -43,7 +43,7 @@
     <string name="beauty">Beauty</string>
     <string name="bed">Bed</string>
     <string name="beverage">Beverage</string>
-    <string name="bycicle">Bycicle</string>
+    <string name="bicycle">Bicycle</string>
     <string name="books">Books</string>
     <string name="boutique">Boutique</string>
     <string name="butcher">Butcher</string>
@@ -64,7 +64,7 @@
     <string name="doityourself">Do it yourself</string>
     <string name="drugstore">Drugstore</string>
     <string name="dry_cleaning">Dry cleaning</string>
-    <string name="electronics">Clectronics</string>
+    <string name="electronics">Electronics</string>
     <string name="erotic">Erotic</string>
     <string name="fabric">Fabric</string>
     <string name="farm">Farm</string>
@@ -119,6 +119,7 @@
     <string name="taxi">Taxi</string>
     <string name="bicycle_rental">Bicycle rental</string>
     <string name="bicycle_parking">Bicycle parking</string>
+    <string name="motorcycle_parking">Motorcycle parking</string>
     <string name="fuel_operator">Fuel operator</string>
     <string name="car_rental_operator">Car rental operator</string>
     <string name="bureau_de_change">Currency exchange</string>
@@ -173,7 +174,7 @@
     <string name="camp_site">Camp site</string>
     <string name="caravan_site">Caravan site</string>
     <string name="chalet">Chalet</string>
-    <string name="guest_house">guest_house</string>
+    <string name="guest_house">Guest house</string>
 <string name="hostel">Hostel</string>
 <string name="hotel">Hotel</string>
 <string name="information">Information</string>
@@ -184,5 +185,15 @@
 <string name="viewpoint">Viewpoint</string>
 <string name="zoo">Zoo</string>
 <string name="other">Other</string>
-
-</resources>
+  <string name="marketplace">Marketplace</string>
+  <string name="locksmith">Locksmith</string>
+  <string name="club">Club</string>
+  <string name="events_venue">Events Venue</string>
+  <string name="cafe_by_operator">Cafe operators</string>
+  <string name="restaurant_by_operator">Restaurant operators</string>
+  <string name="fast_food_by_operator">Fast food operators</string>
+  <string name="service_centre">Service Centre</string>
+  <string name="tailor">Tailor</string>
+  <string name="craft">Craft</string>
+  <string name="supermarket_by_operator">Supermarket operators</string>
+  </resources>

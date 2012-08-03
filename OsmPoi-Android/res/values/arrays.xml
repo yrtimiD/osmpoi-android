@@ -3,19 +3,12 @@
 
     <string-array name="search_sources">
         <item>None</item>
-        <item>DB</item>
+        <item>Offline</item>
+        <item>Online</item>
     </string-array>
     <string-array name="search_sources_values">
         <item>NONE</item>
         <item>DB</item>
-    </string-array>
-    <string-array name="result_limiting">
-        <item>By radius</item>
-    	<item>By count</item>    
-    </string-array>
-    <string-array name="result_limiting_values">
-        <item>RADIUS</item>
-        <item>COUNT</item>
     </string-array>
     <string-array name="languages">
         <item>Default</item>

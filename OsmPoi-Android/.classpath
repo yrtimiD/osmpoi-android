@@ -2,10 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/OsmPoi-Common"/>
 	<classpathentry kind="lib" path="libs/osmpbf.jar"/>
 	<classpathentry kind="lib" path="libs/protobuf-java-2.4.1.jar"/>
+	<classpathentry kind="lib" path="libs/OsmPoi-Common.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

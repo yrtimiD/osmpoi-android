@@ -46,6 +46,7 @@
             android:checked="false" />
 
         <LinearLayout
+            android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -67,6 +68,14 @@
                 android:text="Lon: 00.000000"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textDistanceAndDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/location"
+            android:text="distance and direction" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -81,7 +90,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dip" >
-
         <LinearLayout
             android:id="@+id/tagsLayout"
             android:layout_width="match_parent"

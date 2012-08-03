@@ -6,8 +6,11 @@ package il.yrtimid.osm.osmpoi;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication.Config;
 import il.yrtimid.osm.osmpoi.dal.DbSearcher;
 import il.yrtimid.osm.osmpoi.domain.Entity;
-import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
-import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 
 import android.content.Context;
 
@@ -17,10 +20,11 @@ import android.content.Context;
  */
 public class DBSearchSource implements ISearchSource {
 	//private Context context;
-	private DbSearcher db;
+	private DbSearcher poiDb;
+	private DbSearcher addressDb;
 	
 	public static ISearchSource create(Context context){
-		if (Config.getDbLocation() != null)
+		if (Config.getPoiDbLocation() != null && Config.getAddressDbLocation() != null)
 			return new DBSearchSource(context);
 		else
 			return null;
@@ -28,13 +32,35 @@ public class DBSearchSource implements ISearchSource {
 	
 	protected DBSearchSource(Context context){
 		//this.context = context;
-		db = new DbSearcher(context, OsmPoiApplication.Config.getDbLocation());
+		poiDb = OsmPoiApplication.databases.getPoiSearcherDb();
+		addressDb = OsmPoiApplication.databases.getAddressSearcherDb();
 	}
 
 	@Override
 	public void close(){
-		if (db != null)
-			db.close();
+		/*
+		if (poiDb != null)
+			poiDb.close();
+
+		if (addressDb != null)
+			addressDb.close();
+			*/
+	}
+
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.ISearchSource#search(il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter, il.yrtimid.osm.osmpoi.SearchPipe, il.yrtimid.osm.osmpoi.CancelFlag)
+	 */
+	@Override
+	public void search(BaseSearchParameter search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		if (search instanceof SearchByKeyValue){
+			getByDistanceAndKeyValue((SearchByKeyValue)search, newItemNotifier, cancel);
+		}else if (search instanceof SearchAround){
+			getByDistance((SearchAround)search, newItemNotifier, cancel);
+		}else if (search instanceof SearchByParentId){
+			getByParentId((SearchByParentId)search, newItemNotifier, cancel);
+		}else if (search instanceof SearchById){
+			getById((SearchById)search, newItemNotifier, cancel);
+		}
 	}
 	
 	/*
@@ -45,8 +71,8 @@ public class DBSearchSource implements ISearchSource {
 	 * .nodematchers.EntityMatcher, il.yrtimid.osm.osmpoi.NewItemNotifier)
 	 */
 	@Override
-	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		db.findAroundPlaceByTag(search.getCenter(), matcher, search.getMaxResults(), newItemNotifier, cancel);		
+	public void getByDistanceAndKeyValue(SearchByKeyValue search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		poiDb.findAroundPlaceByTag(search, newItemNotifier, cancel);		
 	}
 
 	/*
@@ -57,19 +83,37 @@ public class DBSearchSource implements ISearchSource {
 	 * .CircleArea, int, il.yrtimid.osm.osmpoi.NewItemNotifier)
 	 */
 	@Override
-	public void getByDistance(SearchParameters search, ItemPipe<Entity> newItemNotifier, CancelFlag cancel) {
-		db.findAroundPlace(search.getCenter(), search.getMaxResults(), newItemNotifier, cancel);
+	public void getByDistance(SearchAround search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		poiDb.findAroundPlace(search, newItemNotifier, cancel);
+	}
+
+//	/* (non-Javadoc)
+//	 * @see il.yrtimid.osm.osmpoi.SearchSource#getSupportsCancel()
+//	 */
+//	@Override
+//	public boolean isSupportsCancel() {
+//		return true;
+//	}
+
+	public String getName(){
+		return "Offline search";
 	}
 
 	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.SearchSource#getSupportsCancel()
+	 * @see il.yrtimid.osm.osmpoi.ISearchSource#getById(il.yrtimid.osm.osmpoi.searchparameters.SearchById, il.yrtimid.osm.osmpoi.SearchPipe, il.yrtimid.osm.osmpoi.CancelFlag)
 	 */
 	@Override
-	public boolean isSupportsCancel() {
-		return true;
+	public void getById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		poiDb.findById(search, newItemNotifier, cancel);
 	}
 
-	public String getName(){
-		return "DB search";
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.ISearchSource#getByParentId(il.yrtimid.osm.osmpoi.searchparameters.SearchById, il.yrtimid.osm.osmpoi.SearchPipe, il.yrtimid.osm.osmpoi.CancelFlag)
+	 */
+	@Override
+	public void getByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+		poiDb.findByParentId(search, newItemNotifier, cancel);
 	}
+
+
 }

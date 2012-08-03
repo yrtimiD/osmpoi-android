@@ -3,11 +3,8 @@
  */
 package il.yrtimid.osm.osmpoi;
 
-import android.content.Context;
 import il.yrtimid.osm.osmpoi.domain.*;
-import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
-import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
-
+import il.yrtimid.osm.osmpoi.searchparameters.*;
 
 
 /**
@@ -15,9 +12,12 @@ import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
  *
  */
 public interface ISearchSource {
-	public abstract boolean isSupportsCancel(); 
-	public void getByDistance(SearchParameters search, ItemPipe<Entity> newItemNotifier, CancelFlag cancel);
-	public void getByDistanceAndKeyValue(SearchParameters search, TagMatcher matcher, ItemPipe<Entity> newItemNotifier, CancelFlag cancel);
+	//public abstract boolean isSupportsCancel(); 
+	public void search(BaseSearchParameter search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
+	public void getByDistance(SearchAround search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
+	public void getByDistanceAndKeyValue(SearchByKeyValue search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
+	public void getById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
+	public void getByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
 	public abstract void close();
 	public abstract String getName();
 }

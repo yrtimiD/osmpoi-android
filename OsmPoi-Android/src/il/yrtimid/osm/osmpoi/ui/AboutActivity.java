@@ -3,8 +3,6 @@
  */
 package il.yrtimid.osm.osmpoi.ui;
 
-import org.w3c.dom.Text;
-
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
@@ -31,7 +29,8 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		public Long getCount();
 	}
 
-	DbAnalyzer db = null;
+	DbAnalyzer poiDb = null;
+	DbAnalyzer addrDb = null;
 	LayoutInflater inflater;
 
 	static final String APP = "app";
@@ -49,7 +48,8 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		inflater = LayoutInflater.from(this);
 		setContentView(R.layout.about);
 
-		db = new DbAnalyzer(this, OsmPoiApplication.Config.getDbLocation());
+		poiDb = OsmPoiApplication.databases.getPoiAnalizerDb();
+		addrDb = OsmPoiApplication.databases.getAddressAnalizerDb();
 		
 		TabHost host = getTabHost();
 		TabSpec spec;
@@ -103,9 +103,12 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 	@Override
 	protected void onStop() {
 		super.onStop();
-
-		if (db != null)
-			db.close();
+		/*
+		if (poiDb != null)
+			poiDb.close();
+		if (addrDb != null)
+			addrDb.close();
+		 */
 	}
 
 	/*
@@ -116,13 +119,14 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 	@Override
 	protected void onStart() {
 		super.onStart();
-
-
 	}
 
-	public void populateCount(View v, int textId, int progressId, final ItemsCounter counter) {
-		final TextView countText = (TextView) v.findViewById(textId);
-		final View countProgress = v.findViewById(progressId);
+	public void populateCount(View v, int dbStatsElementId, String name, final ItemsCounter counter) {
+		View dbStatsElement = v.findViewById(dbStatsElementId);
+		TextView nameText = (TextView) dbStatsElement.findViewById(R.id.textName);
+		nameText.setText(name);
+		final TextView countText = (TextView) dbStatsElement.findViewById(R.id.textCount);
+		final View countProgress = dbStatsElement.findViewById(R.id.progressCount);
 		countText.setVisibility(View.GONE);
 		countProgress.setVisibility(View.VISIBLE);
 
@@ -174,27 +178,60 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		TextView aboutMapIconsText = (TextView)view.findViewById(R.id.about_map_icons);
 		aboutMapIconsText.setMovementMethod(LinkMovementMethod.getInstance());
 		aboutMapIconsText.setText(Html.fromHtml(getString(R.string.about_map_icons)));
+		
+		TextView aboutMapIcons2Text = (TextView)view.findViewById(R.id.about_map_icons2);
+		aboutMapIcons2Text.setMovementMethod(LinkMovementMethod.getInstance());
+		aboutMapIcons2Text.setText(Html.fromHtml(getString(R.string.about_map_icons2)));
 	}
 	
 	private void populateDbStats(View v){
-		populateCount(v, R.id.textNodesCount, R.id.progressNodesCount, new ItemsCounter() {
+		populateCount(v, R.id.poi_nodes, "Nodes", new ItemsCounter() {
 			@Override
 			public Long getCount() {
-				return db.getNodesCount();
+				return poiDb.getNodesCount();
 			}
 		});
 
-		populateCount(v, R.id.textWaysCount, R.id.progressWaysCount, new ItemsCounter() {
+		populateCount(v, R.id.poi_ways, "Ways", new ItemsCounter() {
 			@Override
 			public Long getCount() {
-				return db.getWaysCount();
+				return poiDb.getWaysCount();
 			}
 		});
 
-		populateCount(v, R.id.textRelationsCount, R.id.progressRelationsCount, new ItemsCounter() {
+		populateCount(v, R.id.poi_relations, "Relations", new ItemsCounter() {
 			@Override
 			public Long getCount() {
-				return db.getRelationsCount();
+				return poiDb.getRelationsCount();
+			}
+		});
+
+		populateCount(v, R.id.poi_cells, "Cells", new ItemsCounter() {
+			@Override
+			public Long getCount() {
+				return poiDb.getCellsCount();
+			}
+		});
+
+		
+		populateCount(v, R.id.addr_nodes, "Nodes", new ItemsCounter() {
+			@Override
+			public Long getCount() {
+				return addrDb.getNodesCount();
+			}
+		});
+
+		populateCount(v, R.id.addr_ways, "Ways", new ItemsCounter() {
+			@Override
+			public Long getCount() {
+				return addrDb.getWaysCount();
+			}
+		});
+
+		populateCount(v, R.id.addr_relations, "Relations", new ItemsCounter() {
+			@Override
+			public Long getCount() {
+				return addrDb.getRelationsCount();
 			}
 		});
 	}

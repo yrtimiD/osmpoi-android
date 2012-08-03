@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import il.yrtimid.osm.osmpoi.Log;
-import il.yrtimid.osm.osmpoi.Point;
-import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,7 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @author yrtimid
  * 
  */
-public class DbAnalyzer extends DbOpenHelper {
+public class DbAnalyzer extends DbCreator {
 
 	/**
 	 * @param context
@@ -30,15 +28,19 @@ public class DbAnalyzer extends DbOpenHelper {
 	}
 
 	public long getNodesCount() {
-		return getRowsCount(NODES_TABLE);
+		return getRowsCount(Queries.NODES_TABLE);
 	}
 
 	public long getWaysCount() {
-		return getRowsCount(WAYS_TABLE);
+		return getRowsCount(Queries.WAYS_TABLE);
 	}
 
 	public long getRelationsCount() {
-		return getRowsCount(RELATIONS_TABLE);
+		return getRowsCount(Queries.RELATIONS_TABLE);
+	}
+
+	public long getCellsCount() {
+		return getRowsCount(Queries.GRID_TABLE);
 	}
 
 	
@@ -67,7 +69,7 @@ public class DbAnalyzer extends DbOpenHelper {
 		Cursor cur = null;
 		try {
 			db = getReadableDatabase();
-			cur = db.rawQuery("select id from "+INLINE_QUERIES_TABLE+" where query=? and [select]=?", new String[]{query, select});
+			cur = db.rawQuery("select id from "+Queries.INLINE_QUERIES_TABLE+" where query=? and [select]=?", new String[]{query, select});
 			if (cur.moveToFirst()){
 				long id = cur.getLong(0);
 				if (id>0) return id;
@@ -90,7 +92,7 @@ public class DbAnalyzer extends DbOpenHelper {
 			ContentValues cv = new ContentValues();
 			cv.put("query", query);
 			cv.put("[select]", select);
-			Long id = db.insert(INLINE_QUERIES_TABLE, null, cv);
+			Long id = db.insert(Queries.INLINE_QUERIES_TABLE, null, cv);
 			
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM node_tags WHERE (%s) AND node_tags.node_id=nt.node_id)");
 //TODO: add ways and relations
@@ -117,7 +119,7 @@ public class DbAnalyzer extends DbOpenHelper {
 		Collection<String> result = new ArrayList<String>();
 		try {
 			db = getReadableDatabase();
-			cur = db.rawQuery("select value from "+INLINE_RESULTS_TABLE+" where query_id=?", new String[]{id.toString()});
+			cur = db.rawQuery("select value from "+Queries.INLINE_RESULTS_TABLE+" where query_id=?", new String[]{id.toString()});
 			if (cur.moveToFirst()){
 				do{
 					result.add(cur.getString(0));

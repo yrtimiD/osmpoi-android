@@ -4,8 +4,7 @@
     <string name="search">Search</string>
     <string name="Settings">Settings</string>
     <string name="Templates">Templates</string>
-    <string name="Less">Less</string>
-    <string name="More">Give me more</string>
+    <string name="more">Give me more</string>
 	<string name="file_location">File location</string>
 	<string name="no_search_source_configured">No search source configured</string>
 	<string name="Accuracy">Accuracy:</string>
@@ -16,21 +15,21 @@
 	<string name="Continue">Continue</string>
 	<string name="cancel">Cancel</string>
 	<string name="import_confirm">Importing will destroy previously imported data!</string>
-	<string name="search_source">Search source</string>
+	<string name="search_mode">Search mode</string>
 	<string name="data_source">Data source</string>
 	<string name="about">About</string>
 	<string name="cant_create_search_source">Search source can not be selected</string>
 	<string name="no_file_picker">No compatible file picker installed</string>
 	<string name="ui">Interface</string>
 	<string name="result_language">Preferred result language</string>
-	<string name="search_source_summary">Change source for searching</string>
+	<string name="search_mode_summary">Change mode used for searching</string>
 	<string name="stop_follow">Stop follow GPS</string>
 	<string name="clear">Clear</string>
 	<string name="search_again">Search again</string>
 	<string name="search_finished">Search finished</string>
 	<string name="search_cancelled">Search has been cancelled</string>
-	<string name="imported_db">Imported DB</string>
-	<string name="imported_db_summary">Search in local database created by importing OSM-extract file</string>
+	<string name="offline_search">Offline search settings</string>
+	<string name="offline_search_summary">Settings for offline search mode</string>
 	<string name="pbf_file_summary">Local OSM extract file in PBF format</string>
 	<string name="compact">Compact</string>
 	<string name="service_name">OsmPoi file import service</string>
@@ -47,16 +46,22 @@
 	<string name="title">Title</string>
 	<string name="place">Place</string>
     <plurals name="results_within" >
-	    <item quantity="one">One result within %2$dm</item>
-	    <item quantity="other">%1$d results within %2$dm</item>
+	    <item quantity="one">One result within %2$s</item>
+	    <item quantity="other">%1$d results within %2$s</item>
 	</plurals>
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
+    <string name="about_map_icons2">Map icons CC-0 from &lt;a href=\'http://www.sjjb.co.uk/mapicons\'&gt;SJJB Management&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
-	<string name="db_on_sdcard">Store DB on sdcard</string>
+	<string name="db_on_sdcard">Store database on sdcard</string>
 	<string name="db_on_sdcard_true">Database file will be stored on external storage</string>
 	<string name="db_on_sdcard_false">Database file will be stored on internal storage</string>
 	<string name="import_settings">Import Settings…</string>
 	<string name="import_settings_summary">Customization of import process</string>
-	<string name="import_pbf">Import PBF…</string>
-	<string name="import_pbf_summary">Imports selected PBF file into local database</string>
+	<string name="import_pbf">Import local file…</string>
+	<string name="import_pbf_summary">Select and import local PBF file</string>
+	<string name="large_file_confirm">Selected file is too large. Do you want to continue?</string>
+	<string name="confirm_download_and_import">Selected file %1$s (%2$s) created on %3$s will be downloaded and then imported.</string>
+	<string name="file_unavailable">Selected file %1$s isn\'t available right now.</string>
+	<string name="preference_online_download">Download offline data...</string>
+	<string name="preference_online_download_summary">Select, download and import offline area data</string>
 </resources>

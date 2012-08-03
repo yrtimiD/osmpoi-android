@@ -1,17 +1,22 @@
 package il.yrtimid.osm.osmpoi.ui;
 
-import java.util.Collection;
-
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.SearchType;
 import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+
+import java.util.Collection;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -25,15 +30,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener {
 
 	private static final String EXTRA_CATEGORY = "CATEGORY";
-
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -108,8 +113,8 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (OsmPoiApplication.searchSource != null)
-			OsmPoiApplication.searchSource.close();
+		//if (OsmPoiApplication.searchSource != null)
+			//OsmPoiApplication.searchSource.close();
 		// The activity is no longer visible (it is now "stopped")
 	}
 
@@ -156,10 +161,16 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		}
 	}
 
-	private void search() {
+	private void search(BaseSearchParameter search) {
 		Intent intent = new Intent(this, ResultsActivity.class);
-		//intent.putExtra(ResultsActivity.LOCATION, currentLocation);
-		//intent.putExtra(ResultsActivity.SEARCH, currentSearch);
+		
+		//intent.putExtra(ResultsActivity.SEARCH_TYPE, searchType);
+		if (search instanceof SearchByKeyValue){
+			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchByKeyValue)search);
+		}else if (search instanceof SearchById){
+			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchById)search);
+		} 
+		
 		startActivity(intent);
 	}
 
@@ -174,9 +185,8 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			showCategory(cat);
 			break;
 		case STARRED:
-			DbStarred dbStarredHelper = new DbStarred(this, OsmPoiApplication.Config.getDbLocation());
+			DbStarred dbStarredHelper = OsmPoiApplication.databases.getStarredDb();
 			Collection<Category> starred = dbStarredHelper.getAllStarred();
-			dbStarredHelper.close();
 			cat.getSubCategories().clear();
 			cat.getSubCategories().addAll(starred);
 			showCategory(cat);
@@ -189,19 +199,17 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
             	.setView(textEntryView)
             	.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-        			OsmPoiApplication.currentSearch.setExpression(textEntryView.getText().toString());
-        			search();
+        			search(new SearchByKeyValue(textEntryView.getText().toString()));
                 }
             })
             .create()
             .show();
 			break;
 		case SEARCH:
-			OsmPoiApplication.currentSearch.setExpression(cat.getQuery());
-			search();
+			search(cat.getSearchParameter());
 			break;
 		case INLINE_SEARCH:
-			if (cat.getSubCategoriesCount()>0){
+			if (cat.isSubCategoriesFetched()){
 				showCategory(cat);
 			}else {
 				AsyncTask<Category, Void, Category> asyncLoad = new AsyncTask<Category, Void, Category>(){

@@ -1,14 +1,18 @@
 package il.yrtimid.osm.osmpoi.ui;
 
+import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
+import il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,11 +29,13 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ResultItemActivity extends Activity implements OnCheckedChangeListener {
+public class ResultItemActivity extends Activity implements OnCheckedChangeListener, LocationChangeListener, OrientationChangeListener {
 	public static final String ENTITY = "ENTITY";
-	private DbStarred dbHelper = new DbStarred(this, OsmPoiApplication.Config.getDbLocation());
+	private DbStarred dbHelper;
 	private Entity entity;
-
+	private Location location;
+	private float azimuth = 0.0f;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,10 +44,12 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		setContentView(R.layout.result_item_full_view);
 
 		Bundle extras = getIntent().getExtras();
-		this.entity = (Entity) extras.getParcelable(ENTITY);
+		this.entity = ((ParcelableEntity) extras.getParcelable(ENTITY)).getEntity();
 		
 		setIcon();
 
+		dbHelper = OsmPoiApplication.databases.getStarredDb();
+		
 		((TextView)findViewById(R.id.itemViewID)).setText(getString(R.string.ID)+": "+entity.getId());
 		CheckBox star = ((CheckBox)findViewById(R.id.star));
 		star.setChecked(dbHelper.isStarred(entity));
@@ -68,6 +76,28 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		OsmPoiApplication.locationManager.setLocationChangeListener(this);
+		OsmPoiApplication.orientationManager.setOrientationChangeListener(this);
+		
+		updateDistanceAndDirection();
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		OsmPoiApplication.locationManager.setLocationChangeListener(null);
+		OsmPoiApplication.orientationManager.setOrientationChangeListener(null);
+	}
+	
 	private void setIcon() {
 		ImageView imageType = ((ImageView)findViewById(R.id.imageType));
 		switch (entity.getType()) {
@@ -82,6 +112,24 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 			break;
 		default:
 			break;
+		}
+	}
+	
+	private void updateDistanceAndDirection(){
+		TextView tv = (TextView)findViewById(R.id.textDistanceAndDirection);
+		Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(entity);
+
+		if (node != null && this.location != null){
+			
+			Location nl = new Location(this.location);
+			nl.setLatitude(node.getLatitude());
+			nl.setLongitude(node.getLongitude());
+			int bearing = Util.normalizeBearing(((int) location.bearingTo(nl)-(int)azimuth));
+			String distance = Util.formatDistance((int) location.distanceTo(nl));
+			tv.setText(String.format("%s %c (%d˚)", distance, Util.getDirectionChar(bearing), bearing));
+		}
+		else {	
+			tv.setText("");
 		}
 	}
 
@@ -102,8 +150,11 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 				Intent pref = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
 				startActivity(pref);
 			}
-
 			return true;
+		case R.id.mnu_find_associated:
+			Intent intent = new Intent(this, ResultsActivity.class);
+			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, new SearchByParentId(entity.getType(), entity.getId()));
+			startActivity(intent);
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -113,7 +164,7 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 	 * @see android.widget.CompoundButton.OnCheckedChangeListener#onCheckedChanged(android.widget.CompoundButton, boolean)
 	 */
 	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
 		
 		setProgressBarIndeterminateVisibility(true);
 		if (buttonView.isChecked()){
@@ -129,7 +180,12 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 					dbHelper.addStarred(entity, textEntryView.getText().toString());	     			
 			     }
 			 })
-			 .setNegativeButton(android.R.string.cancel, null)
+			 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					buttonView.setChecked(false);
+				}
+			 })
 	         .create()
 	         .show();
 		}else {
@@ -138,4 +194,21 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		setProgressBarIndeterminateVisibility(false);
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener#OnLocationChanged(android.location.Location)
+	 */
+	@Override
+	public void OnLocationChanged(Location loc) {
+		this.location = loc;
+		updateDistanceAndDirection();
+	}
+
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener#OnOrientationChanged(float)
+	 */
+	@Override
+	public void OnOrientationChanged(float azimuth) {
+		this.azimuth = azimuth;
+		updateDistanceAndDirection();
+	}
 }

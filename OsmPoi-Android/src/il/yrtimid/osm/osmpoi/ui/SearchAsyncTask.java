@@ -2,11 +2,16 @@ package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.CancelFlag;
 import il.yrtimid.osm.osmpoi.Log;
-import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.ResultItem;
+import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
-import il.yrtimid.osm.osmpoi.parcelables.SearchParameters;
+import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import android.content.Context;
@@ -14,7 +19,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 
-public class SearchAsyncTask extends AsyncTask<SearchParameters, Entity, Boolean> {
+public class SearchAsyncTask extends AsyncTask<BaseSearchParameter, ResultItem, Boolean> {
 	
 	public class AsyncTaskCancelFlag extends CancelFlag{
 		AsyncTask<?,?,?> task;
@@ -49,13 +54,13 @@ public class SearchAsyncTask extends AsyncTask<SearchParameters, Entity, Boolean
 		}
 	}
 	
-	ItemPipe<Entity> newItemNotifier;
+	SearchPipe<Entity> newItemNotifier;
 	Action onFinish;
 	Action onCancel;
 	CancelFlag cancelFlag;
 	Context context;
 	
-	public SearchAsyncTask(Context context, ItemPipe<Entity> newItemNotifier, Action onFinish, Action onCancel) {
+	public SearchAsyncTask(Context context, SearchPipe<Entity> newItemNotifier, Action onFinish, Action onCancel) {
 		this.context = context;
 		this.newItemNotifier = newItemNotifier;
 		this.onFinish = onFinish;
@@ -63,25 +68,28 @@ public class SearchAsyncTask extends AsyncTask<SearchParameters, Entity, Boolean
 	}
 
 	@Override
-	protected Boolean doInBackground(SearchParameters... task) {
+	protected Boolean doInBackground(BaseSearchParameter... task) {
 		this.cancelFlag = new AsyncTaskCancelFlag(this);
 		if (OsmPoiApplication.searchSource == null) return false;
 		try{
-			ItemPipe<Entity> notifier = new ItemPipe<Entity>() {
+			SearchPipe<Entity> notifier = new SearchPipe<Entity>() {
 				@Override
 				public void pushItem(Entity item) {
-					SearchAsyncTask.this.publishProgress(item);
+					SearchAsyncTask.this.publishProgress(new ResultItem(item, null));
 				}
+
+				@Override
+				public void pushRadius(int radius) {
+					SearchAsyncTask.this.publishProgress(new ResultItem(null, radius));
+					
+				}
+				
 			};
 	
 			if (this.isCancelled()) return false;
 			Log.d("Search task started");
-			if (task[0].hasExpression()){
-				TagMatcher matcher = TagMatcher.parse(task[0].getExpression());
-				OsmPoiApplication.searchSource.getByDistanceAndKeyValue(task[0], matcher, notifier, this.cancelFlag);
-			}else {
-				OsmPoiApplication.searchSource.getByDistance(task[0], notifier, this.cancelFlag);
-			}
+			OsmPoiApplication.searchSource.search(task[0], notifier, this.cancelFlag);
+
 			return true;
 		}catch(Exception e){
 			Log.wtf("doInBackground", e);
@@ -90,10 +98,14 @@ public class SearchAsyncTask extends AsyncTask<SearchParameters, Entity, Boolean
 	}
 
 	@Override
-	protected void onProgressUpdate(Entity... values) {
+	protected void onProgressUpdate(ResultItem... values) {
 		super.onProgressUpdate(values);
-		for (Entity e: values){
-			this.newItemNotifier.pushItem(e);
+		for (ResultItem ri: values){
+			if (ri.entity != null)
+				this.newItemNotifier.pushItem(ri.entity);
+			
+			if (ri.radius != null)
+				this.newItemNotifier.pushRadius(ri.radius);
 		}
 	}
 

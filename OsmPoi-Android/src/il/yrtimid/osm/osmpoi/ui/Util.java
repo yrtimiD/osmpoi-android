@@ -50,4 +50,50 @@ public class Util {
 			progressDialog = null;
 		}
 	}
+	
+	private static char[] directionChars = new char[]{'↑','↗','→','↘','↓','↙','←','↖'};
+	public static char getDirectionChar(int degree){
+		if (degree>=360) degree = degree % 360;
+		if (degree<0) degree+=360;
+		degree+=45/2;
+		int section = (int)(degree/45);
+		if (section == 8) section = 0;
+		return directionChars[section];
+	}
+	
+	public static int normalizeBearing(int bearing){
+		bearing = bearing % 360;
+		if (bearing < -180) bearing = bearing + 360;
+		if (bearing > 180) bearing = bearing - 360;
+		return bearing;
+	}
+	
+	public static String formatDistance(int meters){
+		if (meters<1000)
+			return String.format("%,dm", meters);
+		else
+			return String.format("%,dkm", meters/1000);
+	}
+	
+	public static String formatSize(int bytes){
+		if (bytes<1000)
+			return String.format("%dB", bytes);
+		else if (bytes<1000000)
+			return String.format("%dkB", bytes/1000);
+		else if (bytes<1000000000)
+			return String.format("%dMB", bytes/1000000);
+		else 
+			return String.format("%dGB", bytes/1000000000);
+	}
+	
+	public static String getLocalName(Context context, String key){
+		if (key == null || key.length()==0) return key;
+		if (false == Character.isLetter(key.charAt(0))) return key; //getIdentifier internally tries to convert name to integer, so if key=="10" we'll not get it resolved to real ID
+		
+		int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
+		if (resId == 0)
+			return key;
+		else 
+			return context.getResources().getString(resId);
+	}
 }

@@ -7,6 +7,7 @@ import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.categories.Category.Type;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,8 +81,10 @@ public class CategoriesLoader {
 			cat = new Category(Type.NONE);
 		}else if (elementName.equals("search")){
 			cat = new Category(Type.SEARCH);
+			cat.setSearchParameter(new SearchByKeyValue(query));
 		}else if (elementName.equals("inline")){
 			cat = new Category(Type.INLINE_SEARCH);
+			cat.setQuery(query);
 		}else if (elementName.equals("starred")){
 			cat = new Category(Type.STARRED);
 		}else if (elementName.equals("custom")){
@@ -96,7 +99,7 @@ public class CategoriesLoader {
 		cat.setLocalizable(true);
 		cat.setName(name);
 		cat.setIcon(icon);
-		cat.setQuery(query);
+
 		cat.setSelect(select);
 		
 		NodeList nodes = root.getChildNodes();
@@ -112,11 +115,11 @@ public class CategoriesLoader {
 	}
 
 	public static void loadInlineCategories(Context context, Category cat){
-		if (cat.getSubCategoriesCount()>0) return;
+		if (cat.isSubCategoriesFetched()) return;
 		if (cat.getType() != Category.Type.INLINE_SEARCH) return;
 		DbAnalyzer dbHelper = null;
 		try{
-			dbHelper = new DbAnalyzer(context, OsmPoiApplication.Config.getDbLocation());
+			dbHelper = OsmPoiApplication.databases.getPoiAnalizerDb();
 			Long id = dbHelper.getInlineResultsId(cat.getQuery(), cat.getSelect());
 			if (id == 0L){
 				id = dbHelper.createInlineResults(cat.getQuery(), cat.getSelect());
@@ -126,13 +129,15 @@ public class CategoriesLoader {
 				Category subCat = new Category(Type.SEARCH);
 				subCat.setName(inlineCat);
 				subCat.setIcon(inlineCat);
-				subCat.setQuery(String.format("%s=%s", cat.getSelect(), inlineCat));
+				subCat.setSearchParameter(new SearchByKeyValue(String.format("%s=%s", cat.getSelect(), inlineCat)));
+				//subCat.setQuery(String.format("%s=%s", cat.getSelect(), inlineCat));
 				cat.getSubCategories().add(subCat);
 			}
+			cat.setSubCategoriesFetched();
 		}catch(Exception e){
 			Log.wtf("loadInlineCategories", e);
 		}finally{
-			if (dbHelper != null) dbHelper.close();
+			//if (dbHelper != null) dbHelper.close();
 		}
 		return;
 	}
