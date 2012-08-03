@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.domain.Tag;
@@ -48,6 +49,41 @@ public class ImportSettings {
 		addressTags.get(EntityType.Relation).add(TagMatcher.parse("place=*"));
 	}
 
+	/**
+	 * Creates settings instance with default configuration
+	 * @return
+	 */
+	public static ImportSettings getDefault(){
+		ImportSettings settings = new ImportSettings();
+		
+		settings.setBuildGrid(true);
+		settings.setClearBeforeImport(true);
+		
+		settings.setNodeKey("highway", false);
+		settings.setNodeKey("building",false);
+		settings.setNodeKey("barrier", false);
+		settings.setNodeKey("*", true);
+		
+		settings.setWayKey("building",false);
+		settings.setWayKey("highway",false);
+		settings.setWayKey("*", false);
+		
+		
+		settings.setRelationKey("landuse",false); 
+		settings.setRelationKey("natural",false); 
+		settings.setRelationKey("leisure",false); 
+		settings.setRelationKey("boundary",false); 
+		settings.setRelationKey("area",false); 
+		settings.setRelationKey("waterway",false); 
+ 		settings.setRelationKey("*",true); 
+		
+ 		settings.setImportAddresses(false);
+ 		
+ 		settings.setGridSize(1000);
+ 		
+		return settings;
+	}
+	
 	public boolean isImportNodes(){
 		return tags.get(EntityType.Node).containsValue(true);
 	}
