@@ -39,6 +39,15 @@ public class DbFiller extends DbCreator implements IDbFiller {
 	}
 
 	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.dal.IDatabase#create()
+	 */
+	@Override
+	public void create() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#clearAll()
 	 */
 	@Override
