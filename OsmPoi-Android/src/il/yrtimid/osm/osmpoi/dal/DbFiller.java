@@ -4,6 +4,7 @@
 package il.yrtimid.osm.osmpoi.dal;
 
 import il.yrtimid.osm.osmpoi.Log;
+import il.yrtimid.osm.osmpoi.Pair;
 import il.yrtimid.osm.osmpoi.domain.Bound;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
@@ -76,7 +77,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 		Log.d(sql_generate_grid);
 		db.execSQL(sql_generate_grid);
 		
-		String updateNodesGrid = "UPDATE nodes SET grid_id = 1";
+		String updateNodesGrid = "UPDATE nodes SET grid_id = 1 WHERE grid_id <> 1";
 		Log.d(updateNodesGrid);
 		db.execSQL(updateNodesGrid);
 	}
@@ -126,6 +127,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 			values.put("timestamp", node.getTimestamp());
 			values.put("lat", node.getLatitude());
 			values.put("lon", node.getLongitude());
+			values.put("grid_id", 1);
 
 			long id = db.insert(Queries.NODES_TABLE, null, values);
 			if (id == -1)
@@ -156,6 +158,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 			final int timestampCol = insert.getColumnIndex("timestamp");
 			final int latCol = insert.getColumnIndex("lat");
 			final int lonCol = insert.getColumnIndex("lon");
+			final int gridCol = insert.getColumnIndex("grid_id");
 			
 			for(Node node : nodes){
 				insert.prepareForInsert();
@@ -163,6 +166,8 @@ public class DbFiller extends DbCreator implements IDbFiller {
 				insert.bind(timestampCol, node.getTimestamp());
 				insert.bind(latCol, node.getLatitude());
 				insert.bind(lonCol, node.getLongitude());
+				insert.bind(gridCol, 1);
+				
 				long id = insert.execute();
 				if (id == -1)
 					throw new SQLException("Node was not inserted");
@@ -400,13 +405,14 @@ public class DbFiller extends DbCreator implements IDbFiller {
 	 */
 	@Override
 	public void optimizeGrid(Integer maxItems){
-		Collection<Integer> cells = null;
+		Collection<Pair<Integer,Integer>> cells = null;
 		do{
 			cells = getBigCells(maxItems);
 			Log.d("OptimizeGrid: "+cells.size()+" cells needs optimization for "+maxItems+" items");
 			if (cells.size() == 0) break;
-			for(Integer cellId : cells){
-				splitGridCell(cellId);
+			for(Pair<Integer,Integer> cell : cells){
+				Log.d("OptimizeGrid: cell_id="+cell.getA()+", cell size="+cell.getB());
+				splitGridCell(cell.getA());
 			}
 			
 		}while(true);
@@ -417,16 +423,18 @@ public class DbFiller extends DbCreator implements IDbFiller {
 	 * @param minItems
 	 * @return
 	 */
-	private Collection<Integer> getBigCells(Integer minItems){
+	private Collection<Pair<Integer,Integer>> getBigCells(Integer minItems){
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cur = null;
-		Collection<Integer> gridIds = new ArrayList<Integer>();
+		Collection<Pair<Integer,Integer>> gridIds = new ArrayList<Pair<Integer,Integer>>();
 		try{
 			
-			cur = db.rawQuery("SELECT grid_id FROM "+Queries.NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString(), null);
+			cur = db.rawQuery("SELECT grid_id, count(id) [count] FROM "+Queries.NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString(), null);
 			if (cur.moveToFirst()){
 				do{
-					gridIds.add(cur.getInt(0));
+					Integer id = cur.getInt(cur.getColumnIndex("grid_id"));
+					Integer count = cur.getInt(cur.getColumnIndex("count"));
+					gridIds.add(new Pair<Integer, Integer>(id, count));
 				}while(cur.moveToNext());
 			}
 		}catch (Exception e) {
