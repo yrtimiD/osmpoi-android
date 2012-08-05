@@ -27,11 +27,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbCreator extends SQLiteOpenHelper {
 	
 	private static final int DATABASE_VERSION = 3;
+	private File dbLocation;
+	
 	protected static final Map<EntityType, String> entityTypeToTableName = new HashMap<EntityType, String>();
 	protected static final Map<EntityType, String> entityTypeToTagsTableName = new HashMap<EntityType, String>();
 	
 	protected Context context;
-
+	
 	/**
 	 * @param context
 	 * @param name
@@ -41,6 +43,7 @@ public class DbCreator extends SQLiteOpenHelper {
 	public DbCreator(Context context, File dbLocation) {
 		super(context, dbLocation.getPath(), null, DATABASE_VERSION);
 		this.context = context;
+		this.dbLocation = dbLocation;
 		
 		entityTypeToTableName.put(EntityType.Node, Queries.NODES_TABLE);
 		entityTypeToTableName.put(EntityType.Way, Queries.WAYS_TABLE);
@@ -138,9 +141,9 @@ public class DbCreator extends SQLiteOpenHelper {
 		db.execSQL("VACUUM");
 	}
 
-	//public void dropDB(){
-	//	context.deleteDatabase(DATABASE_NAME);
-	//}
+	public void dropDB(){
+		context.deleteDatabase(this.dbLocation.getPath());
+	}
 	
 
 }

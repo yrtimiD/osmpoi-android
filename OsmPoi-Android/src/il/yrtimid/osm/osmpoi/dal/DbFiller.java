@@ -52,9 +52,10 @@ public class DbFiller extends DbCreator implements IDbFiller {
 	 */
 	@Override
 	public void clearAll() {
+		dropDB();
 		SQLiteDatabase db = getWritableDatabase();
 		db.setLockingEnabled(false);
-		dropAllTables(db);
+		//dropAllTables(db);
 		createAllTables(db);
 		db.setLockingEnabled(true);
 	}

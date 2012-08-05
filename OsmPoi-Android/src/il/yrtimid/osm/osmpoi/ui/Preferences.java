@@ -89,7 +89,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 
 		if (PREFERENCE_IMPORT_PBF.equals(key)) {
 			Intent intent = new Intent(this, FilePickerActivity.class);
-			intent.putExtra(FilePickerActivity.EXTRA_FILE_PATH, Environment.getExternalStorageDirectory().getPath());
+			intent.putExtra(FilePickerActivity.EXTRA_FILE_PATH, getHomeFolder(this).getPath());
 			startActivityForResult(intent, INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT);
 			return true;
 		} else if (PREFERENCE_CLEAR_DB.equals(key)) {
