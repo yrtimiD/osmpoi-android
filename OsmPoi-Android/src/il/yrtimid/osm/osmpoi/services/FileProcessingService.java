@@ -315,6 +315,15 @@ public class FileProcessingService extends Service {
 
 		} catch (Exception ex) {
 			Log.wtf("Exception while importing PBF into DB", ex);
+			try{
+				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
+				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+				finalNotif.setLatestEventInfo(context, "PBF Import", "Import failed. "+ex.getMessage(), contentIntent);
+				notificationManager.notify(IMPORT_TO_DB, finalNotif);
+			}
+			catch(Exception ex2){
+				Log.wtf("Exception while importing PBF into DB", ex2);
+			}
 		}
 	}
 
