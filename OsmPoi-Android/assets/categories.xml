@@ -20,9 +20,11 @@
 		<search name="parking" query="amenity=parking | amenity=parking_entrance" />
 		<search name="fuel" query="amenity=fuel" />
 		<inline name="fuel_operator" query="amenity=fuel" select="operator*" />
+		<inline name="fuel_brand" query="amenity=fuel" select="brand*" />
 		<search name="car_wash" query="amenity=car_wash" />
 		<search name="car_rental" query="amenity=car_rental" />
 		<inline name="car_rental_operator" query="amenity=car_rental &amp; operator=*" select="operator*" />
+		<inline name="car_rental_brand" query="amenity=car_rental &amp; brand=*" select="brand*" />
 		<search name="compressed_air" query="amenity=compressed_air" />
 		<search name="taxi" query="amenity=taxi" />
 		<search name="motorcycle_parking" query="amenity=motorcycle_parking" />
@@ -37,6 +39,7 @@
 	<category name="shopping" icon="supermarket">
 		<search name="all_in_this_category" query="shop=*" />
 		<inline name="supermarket_by_operator" query="shop=supermarket" select="operator*" />
+		<inline name="supermarket_by_brand" query="shop=supermarket" select="brand*" />
 		<search name="supermarket" query="shop=supermarket" />
 		<search name="mall" query="shop=mall" />
 		<search name="pharmacy" query="amenity=pharmacy" />
@@ -128,6 +131,7 @@
 		<search name="video" query="shop=video" />
 
 		<inline name="shop_operator" query="shop=*" select="operator*" />
+		<inline name="shop_brand" query="shop=*" select="brand*" />
 		<inline name="other_shop_type" query="shop=*" select="shop" />
 	</category>
 	<category name="craft">
@@ -195,11 +199,14 @@
 	<category name="food" icon="fastfood">
 		<search name="cafe" query="amenity=cafe" />
 		<inline name="cafe_by_operator" query="amenity=cafe" select="operator"/>
+		<inline name="cafe_by_brand" query="amenity=cafe" select="brand"/>
 		<search name="restaurant" query="amenity=restaurant" />
 		<inline name="restaurant_by_operator" query="amenity=restaurant" select="operator"/>
+		<inline name="restaurant_by_brand" query="amenity=restaurant" select="brand"/>
 		<inline name="cuisine" query="cuisine=*" select="cuisine" />
 		<search name="fast_food" query="amenity=fast_food" />
 		<inline name="fast_food_by_operator" query="amenity=fast_food" select="operator"/>
+		<inline name="fast_food_by_brand" query="amenity=fast_food" select="brand"/>
 		<search name="pub" query="amenity=pub" />
 		<search name="bar" query="amenity=bar" />
 		<search name="ice_cream" query="amenity=ice_cream" />

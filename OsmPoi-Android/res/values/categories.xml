@@ -121,11 +121,14 @@
     <string name="bicycle_parking">Bicycle parking</string>
     <string name="motorcycle_parking">Motorcycle parking</string>
     <string name="fuel_operator">Fuel operator</string>
+    <string name="fuel_brand">Fuel brand</string>
     <string name="car_rental_operator">Car rental operator</string>
+    <string name="car_rental_brand">Car rental brand</string>
     <string name="bureau_de_change">Currency exchange</string>
     <string name="photo">Photo</string>
     <string name="other_shop_type">Other shop type</string>
     <string name="shop_operator">Shop operator</string>
+    <string name="shop_brand">Shop brand</string>
     <string name="drinking_water">Drinking water</string>
     <string name="recycling">Recycling</string>
     <string name="waste_basket">Waste basket</string>
@@ -190,10 +193,14 @@
   <string name="club">Club</string>
   <string name="events_venue">Events Venue</string>
   <string name="cafe_by_operator">Cafe operators</string>
+  <string name="cafe_by_brand">Cafe brand</string>
   <string name="restaurant_by_operator">Restaurant operators</string>
+  <string name="restaurant_by_brand">Restaurant brand</string>
   <string name="fast_food_by_operator">Fast food operators</string>
+  <string name="fast_food_by_brand">Fast food operators</string>
   <string name="service_centre">Service Centre</string>
   <string name="tailor">Tailor</string>
   <string name="craft">Craft</string>
   <string name="supermarket_by_operator">Supermarket operators</string>
+  <string name="supermarket_by_brand">Supermarket brand</string>
   </resources>
