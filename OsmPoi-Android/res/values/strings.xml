@@ -55,13 +55,13 @@
 	<string name="db_on_sdcard">Store database on sdcard</string>
 	<string name="db_on_sdcard_true">Database file will be stored on external storage</string>
 	<string name="db_on_sdcard_false">Database file will be stored on internal storage</string>
-	<string name="import_settings">Import Settings…</string>
+	<string name="import_settings">Import Settings</string>
 	<string name="import_settings_summary">Customization of import process</string>
-	<string name="import_pbf">Import local file…</string>
+	<string name="import_pbf">Import local file</string>
 	<string name="import_pbf_summary">Select and import local PBF file</string>
 	<string name="large_file_confirm">Selected file is too large. Do you want to continue?</string>
 	<string name="confirm_download_and_import">Selected file %1$s (%2$s) created on %3$s will be downloaded and then imported.</string>
 	<string name="file_unavailable">Selected file %1$s isn\'t available right now.</string>
-	<string name="preference_online_download">Download offline data...</string>
+	<string name="preference_online_download">Download offline data</string>
 	<string name="preference_online_download_summary">Select, download and import offline area data</string>
 </resources>

@@ -29,7 +29,7 @@
             <PreferenceScreen
                 android:summary="@string/import_settings_summary"
                 android:title="@string/import_settings" >
-                <PreferenceScreen android:title="Import nodes…" >
+                <PreferenceScreen android:title="Import nodes" >
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="include_node_highway"
@@ -48,7 +48,7 @@
                         android:key="include_node_other"
                         android:title="All other" />
                 </PreferenceScreen>
-                <PreferenceScreen android:title="Import ways…" >
+                <PreferenceScreen android:title="Import ways" >
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="include_way_building"
@@ -67,7 +67,7 @@
                         android:persistent="false"
                         android:title="All other" />
                 </PreferenceScreen>
-                <PreferenceScreen android:title="Import relations…" >
+                <PreferenceScreen android:title="Import relations" >
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="include_relation_landuse"
@@ -93,7 +93,24 @@
                         android:key="include_relation_waterway"
                         android:title="Waterways" />
                     <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_restriction"
+                        android:title="restrictions" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="include_relation_enforcement"
+                        android:title="enforcement" />
+                    <CheckBoxPreference
                         android:defaultValue="true"
+                        android:key="include_relation_network"
+                        android:title="networks" />
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="include_relation_operator"
+                        android:title="operators" />
+                    
+                    <CheckBoxPreference
+                        android:defaultValue="false"
                         android:key="include_relation_other"
                         android:title="All other" />
                 </PreferenceScreen>

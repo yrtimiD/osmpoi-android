@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
@@ -18,7 +19,8 @@ import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
  * 
  */
 public class ImportSettings {
-	HashMap<EntityType, HashMap<String, Boolean>> tags = new HashMap<EntityType, HashMap<String,Boolean>>();// allowed/forbidden tags by entity 
+	HashMap<EntityType, List<TagMatcher>> tagsInclude = new HashMap<EntityType, List<TagMatcher>>();// allowed tags by entity 
+	HashMap<EntityType, List<TagMatcher>> tagsExclude = new HashMap<EntityType, List<TagMatcher>>();// forbidden tags by entity
 	HashMap<EntityType, HashSet<TagMatcher>> addressTags = new HashMap<EntityType, HashSet<TagMatcher>>();// matchers collection to check if entity may be used for address search
 	HashSet<String> excludedKeys = new HashSet<String>(); // these keys will not be imported
 //	boolean onlyWithTags = false; // if entity have no tags - it will be excluded
@@ -30,15 +32,20 @@ public class ImportSettings {
 	public ImportSettings() {
 		excludedKeys.add("created_by");
 		excludedKeys.add("source");
-		tags.put(EntityType.Bound, new HashMap<String, Boolean>());
-		tags.put(EntityType.Node, new HashMap<String, Boolean>());
-		tags.put(EntityType.Way, new HashMap<String, Boolean>());
-		tags.put(EntityType.Relation, new HashMap<String, Boolean>());
 		
-		addressTags.put(EntityType.Bound, new HashSet<TagMatcher>());
+		tagsInclude.put(EntityType.Node, new ArrayList<TagMatcher>());
+		tagsInclude.put(EntityType.Way, new ArrayList<TagMatcher>());
+		tagsInclude.put(EntityType.Relation, new ArrayList<TagMatcher>());
+
+		tagsExclude.put(EntityType.Node, new ArrayList<TagMatcher>());
+		tagsExclude.put(EntityType.Way, new ArrayList<TagMatcher>());
+		tagsExclude.put(EntityType.Relation, new ArrayList<TagMatcher>());
+
+		
 		addressTags.put(EntityType.Node, new HashSet<TagMatcher>());
 		addressTags.put(EntityType.Way, new HashSet<TagMatcher>());
 		addressTags.put(EntityType.Relation, new HashSet<TagMatcher>());
+		
 		addressTags.get(EntityType.Node).add(TagMatcher.parse("addr:*=*"));
 		addressTags.get(EntityType.Node).add(TagMatcher.parse("place=*"));
 		addressTags.get(EntityType.Way).add(TagMatcher.parse("addr:*=*"));
@@ -59,24 +66,44 @@ public class ImportSettings {
 		settings.setBuildGrid(true);
 		settings.setClearBeforeImport(true);
 		
-		settings.setNodeKey("highway", false);
-		settings.setNodeKey("building",false);
-		settings.setNodeKey("barrier", false);
-		settings.setNodeKey("*", true);
+		settings.setKey(EntityType.Node, "name*", true);
+		settings.setKey(EntityType.Node, "highway", false);
+		settings.setKey(EntityType.Node, "building",false);
+		settings.setKey(EntityType.Node, "barrier", false);
+		settings.setKey(EntityType.Node, "*", true);
 		
-		settings.setWayKey("building",false);
-		settings.setWayKey("highway",false);
-		settings.setWayKey("*", false);
+		settings.setKey(EntityType.Way, "name*", true);
+		settings.setKey(EntityType.Way, "building",true);
+		settings.setKey(EntityType.Way, "highway",false);
+		settings.setKey(EntityType.Way, "*", false);
 		
 		
-		settings.setRelationKey("landuse",false); 
-		settings.setRelationKey("natural",false); 
-		settings.setRelationKey("leisure",false); 
-		settings.setRelationKey("boundary",false); 
-		settings.setRelationKey("area",false); 
-		settings.setRelationKey("waterway",false); 
- 		settings.setRelationKey("*",true); 
+		//settings.setKey(EntityType.Relation, "name*", true);
+		settings.setKeyValue(EntityType.Relation, "type","associatedStreet", false);
+		settings.setKey(EntityType.Relation, "boundary",false); 
+		settings.setKeyValue(EntityType.Relation, "type","bridge", true);
+		settings.setKeyValue(EntityType.Relation, "type","destination_sign", false);
+		settings.setKeyValue(EntityType.Relation, "type", "enforcement", false);
+		settings.setKeyValue(EntityType.Relation, "type", "multipolygon", false);
+		settings.setKeyValue(EntityType.Relation, "type", "public_transport", true);
+		settings.setKeyValue(EntityType.Relation, "type", "relatedStreet", false);
+		settings.setKeyValue(EntityType.Relation, "type", "restriction", false);
 		
+		settings.setKeyValue(EntityType.Relation, "type", "network", true);
+		settings.setKeyValue(EntityType.Relation, "type", "operators", true);
+		settings.setKeyValue(EntityType.Relation, "type", "health", true);
+		
+		settings.setKey(EntityType.Relation, "landuse",false); 
+		settings.setKey(EntityType.Relation, "natural",false); 
+		settings.setKey(EntityType.Relation, "leisure",false); 
+		
+		settings.setKey(EntityType.Relation, "area",false); 
+		settings.setKey(EntityType.Relation, "waterway",false);
+		settings.setKey(EntityType.Relation, "type", false);
+		
+		settings.setKey(EntityType.Relation, "*",false); 
+ 		 		
+ 		
  		settings.setImportAddresses(false);
  		
  		settings.setGridSize(1000);
@@ -85,15 +112,15 @@ public class ImportSettings {
 	}
 	
 	public boolean isImportNodes(){
-		return tags.get(EntityType.Node).containsValue(true);
+		return !tagsInclude.get(EntityType.Node).isEmpty();
 	}
 	
 	public boolean isImportWays(){
-		return tags.get(EntityType.Way).containsValue(true);
+		return !tagsInclude.get(EntityType.Way).isEmpty();
 	}
 	
 	public boolean isImportRelations(){
-		return tags.get(EntityType.Relation).containsValue(true);
+		return !tagsInclude.get(EntityType.Relation).isEmpty();
 	}
 	
 	public void setBuildGrid(boolean isCreateGrid){
@@ -112,18 +139,26 @@ public class ImportSettings {
 		return isClearBeforeImport;
 	}
 	
-	public void setNodeKey(String key, Boolean include){
-		tags.get(EntityType.Node).put(key, include);
+	public void setKey(EntityType type, String key, Boolean include){
+		TagMatcher matcher = TagMatcher.parse(key+"=*");
+		tagsInclude.get(type).remove(matcher);
+		tagsExclude.get(type).remove(matcher);
+		
+		if (include){
+			tagsInclude.get(type).add(matcher);
+		}else{
+			tagsExclude.get(type).add(matcher);
+		}
+	}
+
+	public void setKeyValue(EntityType type, String key, String value, Boolean include){
+		TagMatcher matcher = TagMatcher.parse(key+"="+value);
+		if (include)
+			tagsInclude.get(type).add(matcher);
+		else
+			tagsExclude.get(type).add(matcher);
 	}
 	
-	public void setWayKey(String key, Boolean include){
-		tags.get(EntityType.Way).put(key, include);
-	}
-
-	public void setRelationKey(String key, Boolean include){
-		tags.get(EntityType.Relation).put(key, include);
-	}
-
 	public void setImportAddresses(boolean importAddresses) {
 		this.importAddresses = importAddresses;
 	}
@@ -152,20 +187,32 @@ public class ImportSettings {
 	}
 	
 	public Boolean isPoi(Entity entity){
-		for (Tag t : entity.getTags()) {
-			if (t.getKey().startsWith("name"))
-				return true;
-			
-			Boolean include = tags.get(entity.getType()).get(t.getKey());
-			if (include != null){
-				return include;
+		Boolean include=false;
+		Boolean exclude=false;
+
+		for(TagMatcher matcher : tagsExclude.get(entity.getType())){
+			Boolean match = matcher.isMatch(entity);
+			if (match){
+				exclude = true;
+				break;
 			}
 		}
-		
-		if (entity.getTags().size() == 0)
+		if (exclude) 
 			return false;
-
-		return (tags.get(entity.getType()).get("*") == true);
+		
+		
+		for(TagMatcher matcher : tagsInclude.get(entity.getType())){
+			Boolean match = matcher.isMatch(entity);
+			if (match){
+				include = true;
+				break;
+			}
+		}
+		if (include) 
+			return true;
+		
+		
+		return false;
 	}
 	
 	public Boolean isAddress(Entity entity){

@@ -4,6 +4,7 @@ import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 
 import java.io.File;
@@ -271,23 +272,30 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setBuildGrid(prefs.getBoolean("debug_import_build_grid", true));
 		settings.setClearBeforeImport(prefs.getBoolean("debug_import_cleardb", true));
 		
-		settings.setNodeKey("highway", prefs.getBoolean("include_node_highway", false));
-		settings.setNodeKey("building",prefs.getBoolean("include_node_building", false));
-		settings.setNodeKey("barrier", prefs.getBoolean("include_node_barrier", false));
-		settings.setNodeKey("*", prefs.getBoolean("include_node_other", true));
+		settings.setKey(EntityType.Node, "name*", true);
+		settings.setKey(EntityType.Node, "highway", prefs.getBoolean("include_node_highway", false));
+		settings.setKey(EntityType.Node, "building",prefs.getBoolean("include_node_building", false));
+		settings.setKey(EntityType.Node, "barrier", prefs.getBoolean("include_node_barrier", false));
+		settings.setKey(EntityType.Node, "*", prefs.getBoolean("include_node_other", true));
 		
-		settings.setWayKey("building",prefs.getBoolean("include_way_building", false));
-		settings.setWayKey("highway",prefs.getBoolean("include_way_highway", false));
-		settings.setWayKey("*", prefs.getBoolean("include_way_other", false));
+		settings.setKey(EntityType.Way, "name*", true);
+		settings.setKey(EntityType.Way, "building",prefs.getBoolean("include_way_building", false));
+		settings.setKey(EntityType.Way, "highway",prefs.getBoolean("include_way_highway", false));
+		settings.setKey(EntityType.Way, "*", prefs.getBoolean("include_way_other", false));
 		
 		
-		settings.setRelationKey("landuse",prefs.getBoolean("include_relation_landuse", false)); 
-		settings.setRelationKey("natural",prefs.getBoolean("include_relation_natural", false)); 
-		settings.setRelationKey("leisure",prefs.getBoolean("include_relation_leisure", false)); 
-		settings.setRelationKey("boundary",prefs.getBoolean("include_relation_boundary", false)); 
-		settings.setRelationKey("area",prefs.getBoolean("include_relation_area", false)); 
-		settings.setRelationKey("waterway",prefs.getBoolean("include_relation_waterway", false)); 
- 		settings.setRelationKey("*",prefs.getBoolean("include_relation_other", true)); 
+		//settings.setKey(EntityType.Relation, "name*", true);
+		settings.setKey(EntityType.Relation, "landuse",prefs.getBoolean("include_relation_landuse", false)); 
+		settings.setKey(EntityType.Relation, "natural",prefs.getBoolean("include_relation_natural", false)); 
+		settings.setKey(EntityType.Relation, "leisure",prefs.getBoolean("include_relation_leisure", false)); 
+		settings.setKey(EntityType.Relation, "boundary",prefs.getBoolean("include_relation_boundary", false)); 
+		settings.setKey(EntityType.Relation, "area",prefs.getBoolean("include_relation_area", false)); 
+		settings.setKey(EntityType.Relation, "waterway",prefs.getBoolean("include_relation_waterway", false)); 
+		settings.setKeyValue(EntityType.Relation, "type", "restriction", prefs.getBoolean("include_relation_restriction", false));
+		settings.setKeyValue(EntityType.Relation, "type", "enforcement", prefs.getBoolean("include_relation_enforcement", false));
+		settings.setKeyValue(EntityType.Relation, "type", "network", prefs.getBoolean("include_relation_network", true));
+		settings.setKeyValue(EntityType.Relation, "type", "operator", prefs.getBoolean("include_relation_operator", true));
+		settings.setKey(EntityType.Relation, "*",prefs.getBoolean("include_relation_other", false)); 
 		
  		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
  		

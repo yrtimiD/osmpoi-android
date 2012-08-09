@@ -98,5 +98,12 @@ public class KeyValueMatcher extends TagMatcher {
 		}
 		return false;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "key:"+k+"=value:"+v;
+	}
 }
