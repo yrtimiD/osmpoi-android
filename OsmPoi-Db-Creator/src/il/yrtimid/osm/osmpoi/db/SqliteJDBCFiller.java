@@ -3,9 +3,13 @@
  */
 package il.yrtimid.osm.osmpoi.db;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 
 import il.yrtimid.osm.osmpoi.dal.IDbFiller;
+import il.yrtimid.osm.osmpoi.dal.Queries;
 import il.yrtimid.osm.osmpoi.domain.Bound;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
@@ -52,8 +56,14 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	 */
 	@Override
 	public void addEntity(Entity entity) {
-		// TODO Auto-generated method stub
-
+		if (entity instanceof Node)
+			addNode((Node) entity);
+		else if (entity instanceof Way)
+			addWay((Way) entity);
+		else if (entity instanceof Relation)
+			addRelation((Relation) entity);
+		else if (entity instanceof Bound)
+			addBound((Bound)entity);
 	}
 
 	/* (non-Javadoc)
@@ -61,8 +71,26 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	 */
 	@Override
 	public void addBound(Bound bound) {
-		// TODO Auto-generated method stub
-
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.BOUNDS_TABLE+" (top, bottom, left, right) VALUES(?,?,?,?)");
+			statement.setDouble(1, bound.getTop());
+			statement.setDouble(2, bound.getBottom());
+			statement.setDouble(3, bound.getLeft());
+			statement.setDouble(4, bound.getRight());
+			long id = statement.executeUpdate();
+			if (id == -1)
+				throw new SQLException("Bound was not inserted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (statement != null)
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -70,8 +98,35 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	 */
 	@Override
 	public void addNode(Node node) {
-		// TODO Auto-generated method stub
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.NODES_TABLE+" (id, timestamp, lat, lon, grid_id) VALUES(?,?,?,?,?)");
+			
+			statement.setLong(1, node.getId());
+			statement.setLong(2, node.getTimestamp());
+			statement.setDouble(3,  node.getLatitude());
+			statement.setDouble(4,  node.getLongitude());
+			statement.setInt(5, 1);
 
+			long id = statement.executeUpdate();
+			if (id == -1)
+				throw new SQLException("Node was not inserted");
+
+			Collection<Tag> tags = node.getTags();
+			long nodeId = node.getId();
+			for (Tag tag : tags) {
+				addNodeTag(nodeId, tag);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (statement != null)
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
 	}
 
 	/* (non-Javadoc)

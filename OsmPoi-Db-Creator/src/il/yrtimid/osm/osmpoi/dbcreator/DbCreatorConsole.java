@@ -28,6 +28,18 @@ public class DbCreatorConsole {
 		String poiDbName = "poi.db";
 		String addrDbName = "addr.db";
 		
+		File poiDbFile = new File(poiDbName);
+		File addrDbFile = new File(addrDbName);
+		if (poiDbFile.exists()){
+			System.out.println("Deleting old poi db");
+			poiDbFile.delete();
+		}
+		
+		if (addrDbFile.exists()){
+			System.out.println("Deleting old addr db");
+			addrDbFile.delete();
+		}
+			
 		String sourceFilePath = args[0];
 		System.out.println("Processing file "+sourceFilePath);
 		

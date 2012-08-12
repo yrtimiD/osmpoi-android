@@ -15,7 +15,7 @@ import java.sql.*;
  */
 public class SqliteJDBCCreator implements IDatabase {
 
-	Connection conn;
+	protected Connection conn;
 	String filePath;
 	
 	/**
@@ -47,7 +47,10 @@ public class SqliteJDBCCreator implements IDatabase {
 		}
 	}
 	
+	
 	private void createAllTables(){
+		execSQL(Queries.SQL_CREATE_BOUNDS_TABLE);
+		
 		execSQL(Queries.SQL_CREATE_NODE_TABLE);
 		execSQL(Queries.SQL_CREATE_NODE_TAGS_TABLE);
 		execSQL(Queries.SQL_NODE_TAGS_IDX);

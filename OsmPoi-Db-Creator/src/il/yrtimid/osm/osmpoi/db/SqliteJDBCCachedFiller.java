@@ -3,7 +3,10 @@
  */
 package il.yrtimid.osm.osmpoi.db;
 
+import java.sql.SQLException;
+
 import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
+import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
 import il.yrtimid.osm.osmpoi.domain.Way;
 
@@ -12,7 +15,9 @@ import il.yrtimid.osm.osmpoi.domain.Way;
  *
  */
 public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCachedFiller {
-
+	private static final int MAX_UNCOMMITTED_ITEMS = 1000;
+	int uncommittedItems = 0;
+	
 	/**
 	 * @param filePath
 	 * @throws Exception
@@ -26,8 +31,11 @@ public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCache
 	 */
 	@Override
 	public void beginAdd() {
-		// TODO Auto-generated method stub
-		
+		try {
+			conn.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -35,10 +43,30 @@ public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCache
 	 */
 	@Override
 	public void endAdd() {
-		// TODO Auto-generated method stub
-		
+		try {
+			conn.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.db.SqliteJDBCFiller#addEntity(il.yrtimid.osm.osmpoi.domain.Entity)
+	 */
+	@Override
+	public void addEntity(Entity entity) {
+		super.addEntity(entity);
+		uncommittedItems++;
+		if (uncommittedItems>=MAX_UNCOMMITTED_ITEMS){
+			try {
+				conn.commit();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			uncommittedItems = 0;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToWay(il.yrtimid.osm.osmpoi.domain.Node)
 	 */
