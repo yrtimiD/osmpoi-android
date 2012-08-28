@@ -60,6 +60,7 @@
 		<search name="boutique" query="shop=boutique" />
 		<search name="butcher" query="shop=butcher" />
 		<search name="car" query="shop=car" />
+		<search name="car_parts" query="shop=car_parts" />
 		<search name="car_repair" query="shop=car_repair" />
 		<search name="carpet" query="shop=carpet" />
 		<search name="charity" query="shop=charity" />
@@ -195,6 +196,8 @@
 		<search name="telephone" query="amenity=telephone" />
 		<search name="toilet" query="amenity=toilets" />
 		<search name="waste_basket" query="amenity=waste_basket" />
+		<search name="car_repair" query="shop=car_repair" />
+		<search name="wheel_repair" query="*=wheel_repair" />
 	</category>
 	<category name="food" icon="fastfood">
 		<search name="cafe" query="amenity=cafe" />
