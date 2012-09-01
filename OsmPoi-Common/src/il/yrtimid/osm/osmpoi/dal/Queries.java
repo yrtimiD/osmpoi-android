@@ -50,29 +50,27 @@ public class Queries {
 			+"	    k TEXT,"
 			+"	    v TEXT"
 			+")";
-	    
-    public static final String SQL_NODE_TAGS_IDX = "CREATE INDEX IF NOT EXISTS node_tags_node_id_idx ON node_tags(node_id)";
+    public static final String SQL_NODE_TAGS_IDX = "CREATE UNIQUE INDEX IF NOT EXISTS node_tags_node_id_k_idx ON node_tags(node_id,k)";
     
     public static final String SQL_CREATE_WAYS_TABLE = "CREATE TABLE IF NOT EXISTS ways ("
 	    	+"	        id INTEGER NOT NULL PRIMARY KEY,"
 	    	+"	        timestamp TEXT"
 	    	+")";
 
+    
     public static final String SQL_CREATE_WAY_TAGS_TABLE = "CREATE TABLE IF NOT EXISTS way_tags ("
     		+"	way_id INTEGER NOT NULL,"
     		+"	k TEXT,"
     		+"	v TEXT"
     		+")";
-    
-	public static final String SQL_WAY_TAGS_IDX = "CREATE INDEX IF NOT EXISTS way_tags_way_id_idx ON way_tags(way_id)";
+	public static final String SQL_WAY_TAGS_IDX = "CREATE UNIQUE INDEX IF NOT EXISTS way_tags_way_id_k_idx ON way_tags(way_id,k)";
 	
 	public static final String SQL_CREATE_WAY_NODES_TABLE = "CREATE TABLE IF NOT EXISTS way_nodes ("
 			+"	        way_id INTEGER NOT NULL,"
 			+"	        node_id INTEGER NOT NULL"
 			+")";
-	    
+	public static final String SQL_WAY_NODES_WAY_NODE_IDX = "CREATE UNIQUE INDEX IF NOT EXISTS way_nodes_way_id_node_id_idx ON way_nodes(way_id,node_id)";
 	public static final String SQL_WAY_NODES_WAY_IDX = "CREATE INDEX IF NOT EXISTS way_nodes_way_id_idx ON way_nodes(way_id ASC)";
-	
 	public static final String SQL_WAY_NODES_NODE_IDX = "CREATE INDEX IF NOT EXISTS way_nodes_node_id_idx ON way_nodes(node_id ASC)";
 	
 	public static final String SQL_CREATE_RELATIONS_TABLE = "CREATE TABLE IF NOT EXISTS relations ("
@@ -85,19 +83,17 @@ public class Queries {
 	        +"	k TEXT,"
 	        +"	v TEXT"
 	        +")";
+	public static final String SQL_RELATION_TAGS_IDX = "CREATE UNIQUE INDEX IF NOT EXISTS relation_tags_rel_id_k_idx ON relation_tags(relation_id,k)";
 	    
-	    public static final String SQL_RELATION_TAGS_IDX = "CREATE INDEX IF NOT EXISTS relation_tags_rel_id_idx ON relation_tags(relation_id)";
-	    
-	    public static final String SQL_CREATE_MEMBERS_TABLE = "CREATE TABLE IF NOT EXISTS members ("
+	public static final String SQL_CREATE_MEMBERS_TABLE = "CREATE TABLE IF NOT EXISTS members ("
 	        +"	relation_id INTEGER NOT NULL,"
 	        +"	type TEXT,"
 	        +"	ref INTEGER NOT NULL,"
 	        +"	role TEXT"
 	        +")";
+    public static final String SQL_RELATION_MEMBERS_IDX = "CREATE UNIQUE INDEX IF NOT EXISTS relation_members_rel_id_type_ref_role_idx ON members(relation_id,type,ref,role)";
 	    
-	    public static final String SQL_RELATION_MEMBERS_IDX = "CREATE INDEX IF NOT EXISTS relation_members_rel_id_idx ON members(relation_id)";
-	    
-	    public static final String SQL_CREATE_GRID_TABLE = "CREATE TABLE IF NOT EXISTS grid ("
+    public static final String SQL_CREATE_GRID_TABLE = "CREATE TABLE IF NOT EXISTS grid ("
     		+"	id INTEGER PRIMARY KEY AUTOINCREMENT,"
     		+"	minLat REAL NOT NULL,"
     		+"	minLon REAL NOT NULL,"
@@ -105,10 +101,10 @@ public class Queries {
     		+"	maxLon REAL NOT NULL"
     		+")";
 	    
-	    public static final String SQL_CREATE_INLINE_QUERIES_TABLE = "CREATE TABLE IF NOT EXISTS inline_queries (id INTEGER PRIMARY KEY AUTOINCREMENT, query TEXT NOT NULL, [select] TEXT NOT NULL)";
+    public static final String SQL_CREATE_INLINE_QUERIES_TABLE = "CREATE TABLE IF NOT EXISTS inline_queries (id INTEGER PRIMARY KEY AUTOINCREMENT, query TEXT NOT NULL, [select] TEXT NOT NULL)";
 	    
-	    public static final String SQL_CREATE_INLINE_RESULTS_TABLE = "CREATE TABLE IF NOT EXISTS inline_results (query_id INTEGER NOT NULL, value TEXT)";
+    public static final String SQL_CREATE_INLINE_RESULTS_TABLE = "CREATE TABLE IF NOT EXISTS inline_results (query_id INTEGER NOT NULL, value TEXT)";
 	    
-	    public static final String SQL_CREATE_STARRED_TABLE = "CREATE TABLE IF NOT EXISTS starred (type TEXT NOT NULL, id INTEGER NOT NULL, title TEXT NOT NULL)";
+    public static final String SQL_CREATE_STARRED_TABLE = "CREATE TABLE IF NOT EXISTS starred (type TEXT NOT NULL, id INTEGER NOT NULL, title TEXT NOT NULL)";
 
 }

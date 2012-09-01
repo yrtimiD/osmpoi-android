@@ -125,9 +125,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 			values.put("lon", node.getLongitude());
 			values.put("grid_id", 1);
 
-			long id = db.insert(Queries.NODES_TABLE, null, values);
-			if (id == -1)
-				throw new SQLException("Node was not inserted");
+			db.insertWithOnConflict(Queries.NODES_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
 			addNodeTags(node);
 		} finally{
@@ -147,9 +145,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 				values.put("k", tag.getKey());
 				values.put("v", tag.getValue());
 	
-				long id = db.insert(Queries.NODES_TAGS_TABLE, null, values);
-				if (id == -1)
-					throw new SQLException("Node tag was not inserted");
+				db.insertWithOnConflict(Queries.NODES_TAGS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 		} finally{
 		}
@@ -188,9 +184,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 				values.put("k", tag.getKey());
 				values.put("v", tag.getValue());
 
-				long id = db.insert(Queries.WAY_TAGS_TABLE, null, values);
-				if (id == -1)
-					throw new SQLException("Way tag was not inserted");
+				db.insertWithOnConflict(Queries.WAY_TAGS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 		} finally{
 		}
@@ -208,9 +202,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 				values.put("way_id", way.getId());
 				values.put("node_id", node.getId());
 	
-				long id = db.insert(Queries.WAY_NODES_TABLE, null, values);
-				if (id == -1)
-					throw new SQLException("Way node was not inserted");
+				db.insertWithOnConflict(Queries.WAY_NODES_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 		} finally{
 		}
@@ -248,9 +240,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 				values.put("k", tag.getKey());
 				values.put("v", tag.getValue());
 	
-				long id = db.insert(Queries.RELATION_TAGS_TABLE, null, values);
-				if (id == -1)
-					throw new SQLException("Relation tag was not inserted");
+				db.insertWithOnConflict(Queries.RELATION_TAGS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 		}finally{
 		}
@@ -270,9 +260,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 				values.put("ref", mem.getMemberId());
 				values.put("role", mem.getMemberRole());
 	
-				long id = db.insert(Queries.MEMBERS_TABLE, null, values);
-				if (id == -1)
-					throw new SQLException("Relation member was not inserted");
+				db.insertWithOnConflict(Queries.MEMBERS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 		}finally{
 		}

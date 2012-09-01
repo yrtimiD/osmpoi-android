@@ -114,7 +114,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	public void addNodeTags(Node node) throws SQLException {
 		PreparedStatement statement = null;
 		try {
-			statement = conn.prepareStatement("INSERT INTO "+Queries.NODES_TAGS_TABLE+" (node_id, k, v) VALUES(?,?,?)");
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.NODES_TAGS_TABLE+" (node_id, k, v) VALUES(?,?,?)");
 
 			final long id = node.getId();
 			statement.setLong(1, id);
@@ -123,9 +123,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 				statement.setString(2, tag.getKey());
 				statement.setString(3, tag.getValue());
 
-				int res = statement.executeUpdate();
-				if (res != 1)
-					throw new SQLException("Node tag was not inserted");
+				statement.executeUpdate();
 			}
 		}finally{
 			if (statement != null)
@@ -157,7 +155,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	public void addWayTags(Way way) throws SQLException {
 		PreparedStatement statement = null;
 		try {
-			statement = conn.prepareStatement("INSERT INTO "+Queries.WAY_TAGS_TABLE+" (way_id, k, v) VALUES(?,?,?)");
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.WAY_TAGS_TABLE+" (way_id, k, v) VALUES(?,?,?)");
 
 			statement.setLong(1, way.getId());
 
@@ -165,9 +163,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 				statement.setString(2, tag.getKey());
 				statement.setString(3, tag.getValue());
 
-				int res = statement.executeUpdate();
-				if (res != 1)
-					throw new SQLException("Way tag was not inserted");
+				statement.executeUpdate();
 			}
 		}finally{
 			if (statement != null)
@@ -179,15 +175,13 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	public void addWayNodes(Way way) throws SQLException {
 		PreparedStatement statement = null;
 		try {
-			statement = conn.prepareStatement("INSERT INTO "+Queries.WAY_NODES_TABLE+" (way_id, node_id) VALUES(?,?)");
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.WAY_NODES_TABLE+" (way_id, node_id) VALUES(?,?)");
 
 			statement.setLong(1, way.getId());
 			for(Node node : way.getWayNodes()){
 				statement.setLong(2, node.getId());
 				
-				int res = statement.executeUpdate();
-				if (res != 1)
-					throw new SQLException("Way node was not inserted");
+				statement.executeUpdate();
 			}
 		}finally{
 			if (statement != null)
@@ -219,7 +213,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	public void addRelationTags(Relation rel) throws SQLException {
 		PreparedStatement statement = null;
 		try {
-			statement = conn.prepareStatement("INSERT INTO "+Queries.RELATION_TAGS_TABLE+" (relation_id, k, v) VALUES(?,?,?)");
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.RELATION_TAGS_TABLE+" (relation_id, k, v) VALUES(?,?,?)");
 
 			final long id = rel.getId();
 			statement.setLong(1, id);
@@ -228,9 +222,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 				statement.setString(2, tag.getKey());
 				statement.setString(3, tag.getValue());
 
-				int res = statement.executeUpdate();
-				if (res != 1)
-					throw new SQLException("Relation tag was not inserted");
+				statement.executeUpdate();
 			}
 		}finally{
 			if (statement != null)
@@ -242,7 +234,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 	public void addRelationMembers(Relation rel) throws SQLException {
 		PreparedStatement statement = null;
 		try {
-			statement = conn.prepareStatement("INSERT INTO "+Queries.MEMBERS_TABLE+" (relation_id, type, ref, role) VALUES(?,?,?,?)");
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.MEMBERS_TABLE+" (relation_id, type, ref, role) VALUES(?,?,?,?)");
 			statement.setLong(1, rel.getId());
 			
 			for(RelationMember mem : rel.getMembers()){
@@ -250,9 +242,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 				statement.setLong(3, mem.getMemberId());
 				statement.setString(4, mem.getMemberRole());
 
-				int res = statement.executeUpdate();
-				if (res != 1)
-					throw new SQLException("Relation member was not inserted");
+				statement.executeUpdate();
 			}
 		}finally{
 			if (statement != null)

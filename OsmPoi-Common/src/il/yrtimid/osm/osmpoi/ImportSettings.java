@@ -106,7 +106,7 @@ public class ImportSettings {
  		
  		settings.setImportAddresses(false);
  		
- 		settings.setGridSize(1000);
+ 		settings.setGridSize(1000000);
  		
 		return settings;
 	}
