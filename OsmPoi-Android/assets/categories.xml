@@ -128,6 +128,7 @@
 		<search name="tobacco" query="shop=tobacco" />
 		<search name="toys" query="shop=toys" />
 		<search name="trade" query="shop=trade" />
+		<search name="tyres" query="shop=tyres" />
 		<search name="vacuum_cleaner" query="shop=vacuum_cleaner" />
 		<search name="video" query="shop=video" />
 
@@ -197,7 +198,7 @@
 		<search name="toilet" query="amenity=toilets" />
 		<search name="waste_basket" query="amenity=waste_basket" />
 		<search name="car_repair" query="shop=car_repair" />
-		<search name="wheel_repair" query="*=wheel_repair" />
+		<search name="wheel_repair" query="car_repair=wheel_repair | service=tyres | shop=tyres" />
 	</category>
 	<category name="food" icon="fastfood">
 		<search name="cafe" query="amenity=cafe" />
