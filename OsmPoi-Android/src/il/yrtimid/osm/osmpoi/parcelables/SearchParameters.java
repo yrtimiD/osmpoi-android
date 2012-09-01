@@ -1,7 +1,6 @@
 package il.yrtimid.osm.osmpoi.parcelables;
 
 import il.yrtimid.osm.osmpoi.Point;
-import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import android.os.Parcel;
 import android.os.Parcelable;
 

@@ -8,12 +8,6 @@ import il.yrtimid.osm.osmpoi.ResultItem;
 import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
-import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
-import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
-import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
-import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
-import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;

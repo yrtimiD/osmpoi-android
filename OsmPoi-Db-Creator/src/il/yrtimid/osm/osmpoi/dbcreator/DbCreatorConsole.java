@@ -5,6 +5,7 @@ import java.io.File;
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.db.SqliteJDBCCachedFiller;
 import il.yrtimid.osm.osmpoi.dbcreator.DbCreator;
+import il.yrtimid.osm.osmpoi.domain.EntityType;
 
 /**
  * 
@@ -44,6 +45,13 @@ public class DbCreatorConsole {
 		System.out.println("Processing file "+sourceFilePath);
 		
 		ImportSettings settings = ImportSettings.getDefault();
+		settings.setImportAddresses(false);
+		settings.reset(EntityType.Node);
+		settings.reset(EntityType.Way);
+		settings.reset(EntityType.Relation);
+		settings.setKey(EntityType.Node, "*", true);
+		settings.setKey(EntityType.Way, "*", true);
+		settings.setKey(EntityType.Relation, "*", true);
 		
 		System.out.println(new File(".").getAbsolutePath());
 		

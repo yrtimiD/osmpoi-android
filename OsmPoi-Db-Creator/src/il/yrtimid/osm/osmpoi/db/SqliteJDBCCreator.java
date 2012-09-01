@@ -7,6 +7,7 @@ import il.yrtimid.osm.osmpoi.dal.IDatabase;
 import il.yrtimid.osm.osmpoi.dal.Queries;
 
 
+import java.io.File;
 import java.sql.*;
 
 /**
@@ -37,18 +38,19 @@ public class SqliteJDBCCreator implements IDatabase {
 		createAllTables();
 	}
 	
-	private void execSQL(String query){
-		Statement statement;
+	protected void execSQL(String query) throws SQLException{
+		Statement statement = null;
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(query);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		}finally{
+			if (statement!=null)
+				statement.close();
 		}
 	}
 	
 	
-	private void createAllTables(){
+	private void createAllTables() throws SQLException{
 		execSQL(Queries.SQL_CREATE_BOUNDS_TABLE);
 		
 		execSQL(Queries.SQL_CREATE_NODE_TABLE);
@@ -74,4 +76,8 @@ public class SqliteJDBCCreator implements IDatabase {
 		execSQL(Queries.SQL_CREATE_INLINE_RESULTS_TABLE);
 	}
 
+	@Override
+	public void drop() {
+		new File(filePath).delete();
+	}
 }

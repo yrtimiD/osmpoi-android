@@ -31,7 +31,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.webkit.URLUtil;
 
@@ -334,12 +333,16 @@ public class FileProcessingService extends Service {
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
-				if (item.getType() == EntityType.Relation){
-					settings.cleanTags(item);
-					if (settings.isPoi(item))
-						poiDbHelper.addEntity(item);
-					else if (settings.isAddress(item))
-						addressDbHelper.addEntity(item);
+				try{
+					if (item.getType() == EntityType.Relation){
+						settings.cleanTags(item);
+						if (settings.isPoi(item))
+							poiDbHelper.addEntity(item);
+						else if (settings.isAddress(item))
+							addressDbHelper.addEntity(item);
+					}
+				}catch(Exception e){
+					Log.wtf("pushItem failed: "+item.toString(), e);
 				}
 			}
 		}, new ProgressNotifier() {
@@ -366,17 +369,21 @@ public class FileProcessingService extends Service {
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
-				if (item.getType() == EntityType.Way){
-					settings.cleanTags(item);
-					if (settings.isPoi(item))
-						poiDbHelper.addEntity(item);
-					else if (settings.isAddress(item))
-						addressDbHelper.addEntity(item);
-					else if (settings.isImportRelations()){
-						Way w = (Way)item;
-						poiDbHelper.addWayIfBelongsToRelation(w);
-						addressDbHelper.addWayIfBelongsToRelation(w);
+				try{
+					if (item.getType() == EntityType.Way){
+						settings.cleanTags(item);
+						if (settings.isPoi(item))
+							poiDbHelper.addEntity(item);
+						else if (settings.isAddress(item))
+							addressDbHelper.addEntity(item);
+						else if (settings.isImportRelations()){
+							Way w = (Way)item;
+							poiDbHelper.addWayIfBelongsToRelation(w);
+							addressDbHelper.addWayIfBelongsToRelation(w);
+						}
 					}
+				}catch(Exception e){
+					Log.wtf("pushItem failed: "+item.toString(), e);
 				}
 			}
 		}, new ProgressNotifier() {
@@ -402,26 +409,30 @@ public class FileProcessingService extends Service {
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
-				if (item.getType() == EntityType.Node){
-					
-					settings.cleanTags(item);
-					if (settings.isPoi(item))
+				try{
+					if (item.getType() == EntityType.Node){
+						
+						settings.cleanTags(item);
+						if (settings.isPoi(item))
+							poiDbHelper.addEntity(item);
+						else if (settings.isAddress(item))
+							addressDbHelper.addEntity(item);
+						else {
+							Node n = (Node)item;
+							if (settings.isImportWays()){
+								poiDbHelper.addNodeIfBelongsToWay(n);
+								addressDbHelper.addNodeIfBelongsToWay(n);
+							}
+							if (settings.isImportRelations()){
+								poiDbHelper.addNodeIfBelongsToRelation(n);
+								addressDbHelper.addNodeIfBelongsToRelation(n);
+							}
+						}
+					}else if (item.getType() == EntityType.Bound){
 						poiDbHelper.addEntity(item);
-					else if (settings.isAddress(item))
-						addressDbHelper.addEntity(item);
-					else {
-						Node n = (Node)item;
-						if (settings.isImportWays()){
-							poiDbHelper.addNodeIfBelongsToWay(n);
-							addressDbHelper.addNodeIfBelongsToWay(n);
-						}
-						if (settings.isImportRelations()){
-							poiDbHelper.addNodeIfBelongsToRelation(n);
-							addressDbHelper.addNodeIfBelongsToRelation(n);
-						}
 					}
-				}else if (item.getType() == EntityType.Bound){
-					poiDbHelper.addEntity(item);
+				}catch(Exception e){
+					Log.wtf("pushItem failed: "+item.toString(), e);
 				}
 			}
 		}, new ProgressNotifier() {

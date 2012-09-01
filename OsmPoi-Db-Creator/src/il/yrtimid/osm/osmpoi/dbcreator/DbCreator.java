@@ -11,7 +11,6 @@ import java.io.InputStream;
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
-import il.yrtimid.osm.osmpoi.dal.IDbFiller;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
 import il.yrtimid.osm.osmpoi.domain.Node;
@@ -132,34 +131,43 @@ public class DbCreator {
 	
 
 	protected Long importRelations(final InputStream input, final Notification notif, final ImportSettings settings) {
-		poiDbHelper.beginAdd();
-		addressDbHelper.beginAdd();
-		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
-			@Override
-			public void pushItem(Entity item) {
-				if (item.getType() == EntityType.Relation){
-					settings.cleanTags(item);
-					if (settings.isPoi(item))
-						poiDbHelper.addEntity(item);
-					else if (settings.isAddress(item))
-						addressDbHelper.addEntity(item);
+		Long count = 0L;
+		try{
+			poiDbHelper.beginAdd();
+			addressDbHelper.beginAdd();
+			count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
+				@Override
+				public void pushItem(Entity item) {
+					try{
+						if (item.getType() == EntityType.Relation){
+							settings.cleanTags(item);
+							if (settings.isPoi(item))
+								poiDbHelper.addEntity(item);
+							else if (settings.isAddress(item))
+								addressDbHelper.addEntity(item);
+						}
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
+			}, new ProgressNotifier() {
+				@Override
+				public void onProgressChange(Progress progress) {
+					notif.setLatestEventInfo("PBF Import", "Importing relations: " + progress.toString());
+					notificationManager.notify(IMPORT_TO_DB, notif);
+				}
+			});
+			
+			if (count == -1L){
+				notif.setLatestEventInfo("PBF Import", "Relations import failed");
 			}
-		}, new ProgressNotifier() {
-			@Override
-			public void onProgressChange(Progress progress) {
-				notif.setLatestEventInfo("PBF Import", "Importing relations: " + progress.toString());
-				notificationManager.notify(IMPORT_TO_DB, notif);
-			}
-		});
+			
+			poiDbHelper.endAdd();
+			addressDbHelper.endAdd();
 		
-		if (count == -1L){
-			notif.setLatestEventInfo("PBF Import", "Relations import failed");
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
-		
-		poiDbHelper.endAdd();
-		addressDbHelper.endAdd();
-		
 		return count;
 	}
 	
@@ -169,17 +177,21 @@ public class DbCreator {
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
-				if (item.getType() == EntityType.Way){
-					settings.cleanTags(item);
-					if (settings.isPoi(item))
-						poiDbHelper.addEntity(item);
-					else if (settings.isAddress(item))
-						addressDbHelper.addEntity(item);
-					else if (settings.isImportRelations()){
-						Way w = (Way)item;
-						poiDbHelper.addWayIfBelongsToRelation(w);
-						addressDbHelper.addWayIfBelongsToRelation(w);
+				try{
+					if (item.getType() == EntityType.Way){
+						settings.cleanTags(item);
+						if (settings.isPoi(item))
+							poiDbHelper.addEntity(item);
+						else if (settings.isAddress(item))
+							addressDbHelper.addEntity(item);
+						else if (settings.isImportRelations()){
+							Way w = (Way)item;
+							poiDbHelper.addWayIfBelongsToRelation(w);
+							addressDbHelper.addWayIfBelongsToRelation(w);
+						}
 					}
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 			}
 		}, new ProgressNotifier() {
@@ -202,29 +214,42 @@ public class DbCreator {
 	
 	protected Long importNodes(final InputStream input, final Notification notif, final ImportSettings settings) {
 		poiDbHelper.beginAdd();
+		addressDbHelper.beginAdd();
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
 			@Override
 			public void pushItem(Entity item) {
-				if (item.getType() == EntityType.Node){
-					
-					settings.cleanTags(item);
-					if (settings.isPoi(item))
+				try{
+					if (item.getType() == EntityType.Node){
+						
+						settings.cleanTags(item);
+						if (settings.isAddress(item))
+							addressDbHelper.addEntity(item);
+						else {
+							Node n = (Node)item;
+							if (settings.isImportWays()){
+								addressDbHelper.addNodeIfBelongsToWay(n);
+							}
+							if (settings.isImportRelations()){
+								addressDbHelper.addNodeIfBelongsToRelation(n);
+							}
+						}
+
+						if (settings.isPoi(item))
+							poiDbHelper.addEntity(item);
+						else {
+							Node n = (Node)item;
+							if (settings.isImportWays()){
+								poiDbHelper.addNodeIfBelongsToWay(n);
+							}
+							if (settings.isImportRelations()){
+								poiDbHelper.addNodeIfBelongsToRelation(n);
+							}
+						}
+					}else if (item.getType() == EntityType.Bound){
 						poiDbHelper.addEntity(item);
-					else if (settings.isAddress(item))
-						addressDbHelper.addEntity(item);
-					else {
-						Node n = (Node)item;
-						if (settings.isImportWays()){
-							poiDbHelper.addNodeIfBelongsToWay(n);
-							addressDbHelper.addNodeIfBelongsToWay(n);
-						}
-						if (settings.isImportRelations()){
-							poiDbHelper.addNodeIfBelongsToRelation(n);
-							addressDbHelper.addNodeIfBelongsToRelation(n);
-						}
 					}
-				}else if (item.getType() == EntityType.Bound){
-					poiDbHelper.addEntity(item);
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 			}
 		}, new ProgressNotifier() {
@@ -239,6 +264,7 @@ public class DbCreator {
 			notif.setLatestEventInfo("PBF Import", "Nodes import failed");
 		}
 		
+		addressDbHelper.endAdd();
 		poiDbHelper.endAdd();
 		return count;
 	}

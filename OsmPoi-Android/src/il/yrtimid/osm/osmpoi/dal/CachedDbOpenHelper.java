@@ -8,6 +8,7 @@ import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.*;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,14 +50,18 @@ public class CachedDbOpenHelper extends DbFiller implements IDbCachedFiller {
 	 */
 	@Override
 	public void endAdd(){
-		flushing = true;
-		addNodeIfBelongsToWay(null);
-		addNodeIfBelongsToRelation(null);
-		addWayIfBelongsToRelation(null);
-		flushing = false;
-		SQLiteDatabase db = getWritableDatabase();
-		db.setTransactionSuccessful();
-		db.endTransaction();
+		try{
+			flushing = true;
+			addNodeIfBelongsToWay(null);
+			addNodeIfBelongsToRelation(null);
+			addWayIfBelongsToRelation(null);
+			flushing = false;
+			SQLiteDatabase db = getWritableDatabase();
+			db.setTransactionSuccessful();
+			db.endTransaction();
+		}catch(Exception ex){
+			Log.wtf("endAdd failed", ex);
+		}
 	}
 	
 
@@ -64,7 +69,7 @@ public class CachedDbOpenHelper extends DbFiller implements IDbCachedFiller {
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToWay(il.yrtimid.osm.osmpoi.domain.Node)
 	 */
 	@Override
-	public void addNodeIfBelongsToWay(Node node){
+	public void addNodeIfBelongsToWay(Node node) throws SQLException{
 		if (node != null){
 			addNodeIfBelongToWayQueue.add(node);
 		}
@@ -82,7 +87,7 @@ public class CachedDbOpenHelper extends DbFiller implements IDbCachedFiller {
 			Cursor cur = null;
 			try{
 				Log.d("Checking nodes in ways: "+inClause);
-				cur = db.rawQuery("SELECT node_id FROM "+Queries.WAY_NODS_TABLE+" WHERE node_id in ("+inClause+")", null);
+				cur = db.rawQuery("SELECT node_id FROM "+Queries.WAY_NODES_TABLE+" WHERE node_id in ("+inClause+")", null);
 				if (cur.moveToFirst()){
 					do{
 						neededIds.add(cur.getLong(0));
@@ -108,7 +113,7 @@ public class CachedDbOpenHelper extends DbFiller implements IDbCachedFiller {
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToRelation(il.yrtimid.osm.osmpoi.domain.Node)
 	 */
 	@Override
-	public void addNodeIfBelongsToRelation(Node node){
+	public void addNodeIfBelongsToRelation(Node node) throws SQLException{
 		if (node != null){
 			addNodeIfBelongToRelationQueue.add(node);
 		}
@@ -152,7 +157,7 @@ public class CachedDbOpenHelper extends DbFiller implements IDbCachedFiller {
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addWayIfBelongsToRelation(il.yrtimid.osm.osmpoi.domain.Way)
 	 */
 	@Override
-	public void addWayIfBelongsToRelation(Way way){
+	public void addWayIfBelongsToRelation(Way way) throws SQLException{
 		if (way != null){
 			addWayIfBelongToRelationQueue.add(way);
 		}

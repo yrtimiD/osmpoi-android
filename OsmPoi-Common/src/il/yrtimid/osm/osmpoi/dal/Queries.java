@@ -16,7 +16,7 @@ public class Queries {
 
 	public static final String WAYS_TABLE = "ways";
 	public static final String WAY_TAGS_TABLE = "way_tags";
-	public static final String WAY_NODS_TABLE = "way_nodes";
+	public static final String WAY_NODES_TABLE = "way_nodes";
 
 	public static final String RELATIONS_TABLE = "relations";
 	public static final String RELATION_TAGS_TABLE = "relation_tags";

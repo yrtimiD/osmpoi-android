@@ -4,12 +4,16 @@
 package il.yrtimid.osm.osmpoi.db;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import il.yrtimid.osm.osmpoi.Pair;
 import il.yrtimid.osm.osmpoi.dal.IDbFiller;
 import il.yrtimid.osm.osmpoi.dal.Queries;
+import il.yrtimid.osm.osmpoi.dbcreator.Log;
 import il.yrtimid.osm.osmpoi.domain.Bound;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
@@ -25,37 +29,37 @@ import il.yrtimid.osm.osmpoi.domain.Way;
 public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 
 	
-	/**
-	 * @throws Exception 
-	 * 
-	 */
 	public SqliteJDBCFiller(String filePath) throws Exception {
 		super(filePath);
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#clearAll()
-	 */
 	@Override
-	public void clearAll() {
-		// TODO Auto-generated method stub
+	public void clearAll() throws Exception {
+		drop();
 
+		//dropAllTables(db);
+		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#initGrid()
-	 */
 	@Override
-	public void initGrid() {
-		// TODO Auto-generated method stub
-
+	public void initGrid() throws SQLException{
+		//db.execSQL("UPDATE "+NODES_TABLE+" SET grid_id=1");
+		execSQL("DROP TABLE IF EXISTS "+Queries.GRID_TABLE);
+		execSQL(Queries.SQL_CREATE_GRID_TABLE);
+		
+		String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
+								+" SELECT min(lat) minLat, min(lon) minLon, max(lat) maxLat, max(lon) maxLon"
+								+" FROM nodes";	
+		Log.d(sql_generate_grid);
+		execSQL(sql_generate_grid);
+		
+		String updateNodesGrid = "UPDATE nodes SET grid_id = 1 WHERE grid_id <> 1";
+		Log.d(updateNodesGrid);
+		execSQL(updateNodesGrid);
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addEntity(il.yrtimid.osm.osmpoi.domain.Entity)
-	 */
 	@Override
-	public void addEntity(Entity entity) {
+	public void addEntity(Entity entity) throws SQLException {
 		if (entity instanceof Node)
 			addNode((Node) entity);
 		else if (entity instanceof Way)
@@ -66,11 +70,8 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 			addBound((Bound)entity);
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addBound(il.yrtimid.osm.osmpoi.domain.Bound)
-	 */
 	@Override
-	public void addBound(Bound bound) {
+	public void addBound(Bound bound) throws SQLException {
 		PreparedStatement statement = null;
 		try {
 			statement = conn.prepareStatement("INSERT INTO "+Queries.BOUNDS_TABLE+" (top, bottom, left, right) VALUES(?,?,?,?)");
@@ -78,29 +79,20 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 			statement.setDouble(2, bound.getBottom());
 			statement.setDouble(3, bound.getLeft());
 			statement.setDouble(4, bound.getRight());
-			long id = statement.executeUpdate();
-			if (id == -1)
+			int res = statement.executeUpdate();
+			if (res != 1)
 				throw new SQLException("Bound was not inserted");
-		} catch (Exception e) {
-			e.printStackTrace();
 		}finally{
 			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				statement.close();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNode(il.yrtimid.osm.osmpoi.domain.Node)
-	 */
 	@Override
-	public void addNode(Node node) {
+	public void addNode(Node node) throws SQLException {
 		PreparedStatement statement = null;
 		try {
-			statement = conn.prepareStatement("INSERT INTO "+Queries.NODES_TABLE+" (id, timestamp, lat, lon, grid_id) VALUES(?,?,?,?,?)");
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.NODES_TABLE+" (id, timestamp, lat, lon, grid_id) VALUES(?,?,?,?,?)");
 			
 			statement.setLong(1, node.getId());
 			statement.setLong(2, node.getTimestamp());
@@ -108,115 +100,269 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 			statement.setDouble(4,  node.getLongitude());
 			statement.setInt(5, 1);
 
-			long id = statement.executeUpdate();
-			if (id == -1)
-				throw new SQLException("Node was not inserted");
+			statement.executeUpdate();
 
-			Collection<Tag> tags = node.getTags();
-			long nodeId = node.getId();
-			for (Tag tag : tags) {
-				addNodeTag(nodeId, tag);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			addNodeTags(node);
+			
 		}finally{
 			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				statement.close();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNodes(java.util.Collection)
-	 */
 	@Override
-	public void addNodes(Collection<Node> nodes) {
-		// TODO Auto-generated method stub
+	public void addNodeTags(Node node) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.NODES_TAGS_TABLE+" (node_id, k, v) VALUES(?,?,?)");
 
+			final long id = node.getId();
+			statement.setLong(1, id);
+
+			for(Tag tag:node.getTags()){
+				statement.setString(2, tag.getKey());
+				statement.setString(3, tag.getValue());
+
+				int res = statement.executeUpdate();
+				if (res != 1)
+					throw new SQLException("Node tag was not inserted");
+			}
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNodeTag(long, il.yrtimid.osm.osmpoi.domain.Tag)
-	 */
 	@Override
-	public void addNodeTag(long nodeId, Tag tag) {
-		// TODO Auto-generated method stub
+	public void addWay(Way way) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.WAYS_TABLE+" (id, timestamp) VALUES(?,?)");
+			
+			statement.setLong(1, way.getId());
+			statement.setLong(2, way.getTimestamp());
 
+			statement.executeUpdate();
+
+			addWayTags(way);
+			addWayNodes(way);
+			
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addNodesTags(java.util.Collection)
-	 */
 	@Override
-	public void addNodesTags(Collection<Node> nodes) {
-		// TODO Auto-generated method stub
+	public void addWayTags(Way way) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.WAY_TAGS_TABLE+" (way_id, k, v) VALUES(?,?,?)");
 
+			statement.setLong(1, way.getId());
+
+			for(Tag tag : way.getTags()){
+				statement.setString(2, tag.getKey());
+				statement.setString(3, tag.getValue());
+
+				int res = statement.executeUpdate();
+				if (res != 1)
+					throw new SQLException("Way tag was not inserted");
+			}
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addWay(il.yrtimid.osm.osmpoi.domain.Way)
-	 */
 	@Override
-	public void addWay(Way way) {
-		// TODO Auto-generated method stub
+	public void addWayNodes(Way way) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.WAY_NODES_TABLE+" (way_id, node_id) VALUES(?,?)");
 
+			statement.setLong(1, way.getId());
+			for(Node node : way.getWayNodes()){
+				statement.setLong(2, node.getId());
+				
+				int res = statement.executeUpdate();
+				if (res != 1)
+					throw new SQLException("Way node was not inserted");
+			}
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addWayTag(long, il.yrtimid.osm.osmpoi.domain.Tag)
-	 */
 	@Override
-	public void addWayTag(long wayId, Tag tag) {
-		// TODO Auto-generated method stub
+	public void addRelation(Relation rel) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.RELATIONS_TABLE+" (id, timestamp) VALUES(?,?)");
 
+			statement.setLong(1, rel.getId());
+			statement.setLong(2, rel.getTimestamp());
+
+			statement.executeUpdate();
+
+			addRelationTags(rel);
+			addRelationMembers(rel);
+			
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addWayNode(long, int, il.yrtimid.osm.osmpoi.domain.Node)
-	 */
 	@Override
-	public void addWayNode(long wayId, int index, Node wayNode) {
-		// TODO Auto-generated method stub
+	public void addRelationTags(Relation rel) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.RELATION_TAGS_TABLE+" (relation_id, k, v) VALUES(?,?,?)");
 
+			final long id = rel.getId();
+			statement.setLong(1, id);
+
+			for(Tag tag : rel.getTags()){
+				statement.setString(2, tag.getKey());
+				statement.setString(3, tag.getValue());
+
+				int res = statement.executeUpdate();
+				if (res != 1)
+					throw new SQLException("Relation tag was not inserted");
+			}
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addRelation(il.yrtimid.osm.osmpoi.domain.Relation)
-	 */
 	@Override
-	public void addRelation(Relation rel) {
-		// TODO Auto-generated method stub
+	public void addRelationMembers(Relation rel) throws SQLException {
+		PreparedStatement statement = null;
+		try {
+			statement = conn.prepareStatement("INSERT INTO "+Queries.MEMBERS_TABLE+" (relation_id, type, ref, role) VALUES(?,?,?,?)");
+			statement.setLong(1, rel.getId());
+			
+			for(RelationMember mem : rel.getMembers()){
+				statement.setString(2, mem.getMemberType().name());
+				statement.setLong(3, mem.getMemberId());
+				statement.setString(4, mem.getMemberRole());
 
+				int res = statement.executeUpdate();
+				if (res != 1)
+					throw new SQLException("Relation member was not inserted");
+			}
+		}finally{
+			if (statement != null)
+				statement.close();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addRelationTag(long, il.yrtimid.osm.osmpoi.domain.Tag)
-	 */
 	@Override
-	public void addRelationTag(long relId, Tag tag) {
-		// TODO Auto-generated method stub
-
+	public void optimizeGrid(Integer maxItems) throws SQLException {
+		Collection<Pair<Integer,Integer>> cells = null;
+		conn.setAutoCommit(false);
+		do{
+			cells = getBigCells(maxItems);
+			Log.d("OptimizeGrid: "+cells.size()+" cells needs optimization for "+maxItems+" items");
+			for(Pair<Integer,Integer> cell : cells){
+				Log.d("OptimizeGrid: cell_id="+cell.getA()+", cell size="+cell.getB());
+				splitGridCell(cell.getA());
+				conn.commit();
+			}
+		}while(cells.size() > 0);
 	}
-
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#addRelationMember(long, int, il.yrtimid.osm.osmpoi.domain.RelationMember)
+	
+	/**
+	 * finds cells which have nodes count greater than minItems
+	 * @param minItems
+	 * @return
+	 * @throws SQLException 
 	 */
-	@Override
-	public void addRelationMember(long relId, int index, RelationMember mem) {
-		// TODO Auto-generated method stub
-
+	private Collection<Pair<Integer,Integer>> getBigCells(Integer minItems) throws SQLException{
+		Statement statement = null;
+		Collection<Pair<Integer,Integer>> gridIds = new ArrayList<Pair<Integer,Integer>>();
+		ResultSet cur = null;
+		try{
+			statement = conn.createStatement();
+			String sql = "SELECT grid_id, count(id) [count] FROM "+Queries.NODES_TABLE+" GROUP BY grid_id HAVING count(id)>"+minItems.toString();
+			cur = statement.executeQuery(sql);
+			while(cur.next()){
+				Integer id = cur.getInt("grid_id");
+				Integer count = cur.getInt("count");
+				
+				gridIds.add(new Pair<Integer, Integer>(id, count));
+			}
+		}finally{
+			if (cur != null) 
+				cur.close();
+			if (statement != null) 
+				statement.close();
+		}
+		return gridIds;
 	}
-
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.dal.IDbFiller#optimizeGrid(java.lang.Integer)
+	
+	/**
+	 * Splits cell into 4 pieces and updates theirs nodes with the new split
+	 * @param id ID of the cell to split
+	 * @throws SQLException 
 	 */
-	@Override
-	public void optimizeGrid(Integer maxItems) {
-		// TODO Auto-generated method stub
+	private void splitGridCell(Integer id) throws SQLException{
+		Statement statement = null;
+		PreparedStatement prepStatement = null;
+		ResultSet cur = null;
+		try {
+			statement = conn.createStatement();
 
+			Log.d("splitGridCell id:"+id);
+			//calc new cell size to be 1/2 of the old one
+			String sql = "SELECT round((maxLat-minLat)/2,7) from "+Queries.GRID_TABLE+" WHERE id="+id.toString();
+			cur = statement.executeQuery(sql);
+			cur.next();
+			Double newCellSize = cur.getDouble(1);
+			cur.close();
+			statement.close();
+			
+			
+			//create new grid cells from all nodes in old cell
+			String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
+					+" SELECT minLat, minLon, minLat+? maxLat, minLon+? maxLon FROM ("
+					+" SELECT DISTINCT CAST(lat/? as INT)*? minLat, CAST(lon/? as INT)*? minLon FROM nodes WHERE grid_id=?"
+					+" );";	
+			Log.d(sql_generate_grid);
+			Log.d("newCellSize="+newCellSize);
+			prepStatement = conn.prepareStatement(sql_generate_grid);
+			prepStatement.setDouble(1, newCellSize);
+			prepStatement.setDouble(2, newCellSize);
+			prepStatement.setDouble(3, newCellSize);
+			prepStatement.setDouble(4, newCellSize);
+			prepStatement.setDouble(5, newCellSize);
+			prepStatement.setDouble(6, newCellSize);
+			prepStatement.setInt(7, id);
+
+			prepStatement.executeUpdate();
+			prepStatement.close();
+			
+			//delete old cell
+			statement = conn.createStatement();
+			statement.executeUpdate("DELETE FROM "+Queries.GRID_TABLE+" WHERE id="+id.toString());
+			statement.close();
+			
+			//update nodes to use new cells
+			statement = conn.createStatement();
+			String update_nodes = "UPDATE nodes SET grid_id = (SELECT g.id FROM "+Queries.GRID_TABLE+" g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id="+id.toString();
+			Log.d(update_nodes);
+			statement.executeUpdate(update_nodes);
+		}finally{
+			if (cur != null)
+				cur.close();
+			if (statement != null)
+				statement.close();
+			if (prepStatement != null)
+				prepStatement.close();
+		}
 	}
 
 }

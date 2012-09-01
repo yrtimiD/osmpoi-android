@@ -4,27 +4,20 @@
 package il.yrtimid.osm.osmpoi.dal;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.domain.*;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
-import java.sql.SQLException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * @author yrtimiD
  * 
  */
-public class DbCreator extends SQLiteOpenHelper {
+public class DbCreator extends SQLiteOpenHelper /*implements IDatabase*/{
 	
 	private static final int DATABASE_VERSION = 3;
 	private File dbLocation;
@@ -117,7 +110,7 @@ public class DbCreator extends SQLiteOpenHelper {
 			db.execSQL("DROP TABLE IF EXISTS "+Queries.RELATION_TAGS_TABLE);
 			db.execSQL("DROP TABLE IF EXISTS "+Queries.RELATIONS_TABLE);
 	
-			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAY_NODS_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAY_NODES_TABLE);
 			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAY_TAGS_TABLE);
 			db.execSQL("DROP TABLE IF EXISTS "+Queries.WAYS_TABLE);
 	
@@ -141,11 +134,9 @@ public class DbCreator extends SQLiteOpenHelper {
 		db.execSQL("VACUUM");
 	}
 
-	public void dropDB(){
+	public void drop(){
 		context.deleteDatabase(this.dbLocation.getPath());
 	}
-	
-
 }
 
 	

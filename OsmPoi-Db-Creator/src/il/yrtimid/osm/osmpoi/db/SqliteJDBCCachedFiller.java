@@ -15,7 +15,7 @@ import il.yrtimid.osm.osmpoi.domain.Way;
  *
  */
 public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCachedFiller {
-	private static final int MAX_UNCOMMITTED_ITEMS = 1000;
+	private static int MAX_UNCOMMITTED_ITEMS = 10000;
 	int uncommittedItems = 0;
 	
 	/**
@@ -45,6 +45,7 @@ public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCache
 	public void endAdd() {
 		try {
 			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -54,7 +55,7 @@ public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCache
 	 * @see il.yrtimid.osm.osmpoi.db.SqliteJDBCFiller#addEntity(il.yrtimid.osm.osmpoi.domain.Entity)
 	 */
 	@Override
-	public void addEntity(Entity entity) {
+	public void addEntity(Entity entity) throws SQLException {
 		super.addEntity(entity);
 		uncommittedItems++;
 		if (uncommittedItems>=MAX_UNCOMMITTED_ITEMS){
@@ -71,27 +72,27 @@ public class SqliteJDBCCachedFiller extends SqliteJDBCFiller implements IDbCache
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToWay(il.yrtimid.osm.osmpoi.domain.Node)
 	 */
 	@Override
-	public void addNodeIfBelongsToWay(Node node) {
+	public void addNodeIfBelongsToWay(Node node) throws SQLException {
 		// TODO Auto-generated method stub
-		
+		addEntity(node);
 	}
 
 	/* (non-Javadoc)
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addNodeIfBelongsToRelation(il.yrtimid.osm.osmpoi.domain.Node)
 	 */
 	@Override
-	public void addNodeIfBelongsToRelation(Node node) {
+	public void addNodeIfBelongsToRelation(Node node) throws SQLException {
 		// TODO Auto-generated method stub
-		
+		addEntity(node);
 	}
 
 	/* (non-Javadoc)
 	 * @see il.yrtimid.osm.osmpoi.dal.IDbCachedFiller#addWayIfBelongsToRelation(il.yrtimid.osm.osmpoi.domain.Way)
 	 */
 	@Override
-	public void addWayIfBelongsToRelation(Way way) {
+	public void addWayIfBelongsToRelation(Way way) throws SQLException {
 		// TODO Auto-generated method stub
-		
+		addEntity(way);
 	}
 
 }

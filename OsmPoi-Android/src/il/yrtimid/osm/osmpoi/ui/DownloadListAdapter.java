@@ -3,7 +3,6 @@
  */
 package il.yrtimid.osm.osmpoi.ui;
 
-import il.yrtimid.osm.osmpoi.R;
 import java.util.List;
 
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.TwoLineListItem;
 
 /**
  * @author yrtimid

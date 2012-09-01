@@ -3,17 +3,12 @@
  */
 package il.yrtimid.osm.osmpoi.ui;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +19,6 @@ import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 import il.yrtimid.osm.osmpoi.ui.DownloadItem.ItemType;
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -34,9 +28,7 @@ import android.view.View;
 import android.view.Window;
 import android.webkit.URLUtil;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * @author yrtimid

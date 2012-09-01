@@ -21,17 +21,12 @@ import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
-import il.yrtimid.osm.osmpoi.tagmatchers.AssociatedMatcher;
-import il.yrtimid.osm.osmpoi.tagmatchers.IdMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -471,7 +466,7 @@ public class DbSearcher extends DbCreator {
 		try {
 			SQLiteDatabase db = getReadableDatabase();
 
-			String sql = "SELECT n.* FROM " + Queries.NODES_TABLE + " n INNER JOIN " + Queries.WAY_NODS_TABLE + " w ON n.id=w.node_id WHERE w.way_id=?";
+			String sql = "SELECT n.* FROM " + Queries.NODES_TABLE + " n INNER JOIN " + Queries.WAY_NODES_TABLE + " w ON n.id=w.node_id WHERE w.way_id=?";
 			String[] args;
 			if (search.getMaxResults() > 0) {
 				sql += " order by (abs(lat-?)+abs(lon-?)) limit ?";

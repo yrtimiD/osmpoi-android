@@ -139,6 +139,11 @@ public class ImportSettings {
 		return isClearBeforeImport;
 	}
 	
+	public void reset(EntityType type){
+		tagsInclude.get(type).clear();
+		tagsExclude.get(type).clear();
+	}
+	
 	public void setKey(EntityType type, String key, Boolean include){
 		TagMatcher matcher = TagMatcher.parse(key+"=*");
 		tagsInclude.get(type).remove(matcher);
