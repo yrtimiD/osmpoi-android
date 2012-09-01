@@ -85,11 +85,12 @@ public class DbCreator extends SQLiteOpenHelper /*implements IDatabase*/{
 		db.execSQL(Queries.SQL_NODE_TAGS_IDX);
 		
 		db.execSQL(Queries.SQL_CREATE_WAYS_TABLE);
-		db.execSQL(Queries.SQL_CREATE_WAY_NODES_TABLE);
-		db.execSQL(Queries.SQL_WAY_NODES_WAY_IDX);
-		db.execSQL(Queries.SQL_WAY_NODES_NODE_IDX);
 		db.execSQL(Queries.SQL_CREATE_WAY_TAGS_TABLE);
 		db.execSQL(Queries.SQL_WAY_TAGS_IDX);
+		db.execSQL(Queries.SQL_CREATE_WAY_NODES_TABLE);
+		db.execSQL(Queries.SQL_WAY_NODES_WAY_NODE_IDX);
+		db.execSQL(Queries.SQL_WAY_NODES_WAY_IDX);
+		db.execSQL(Queries.SQL_WAY_NODES_NODE_IDX);
 		
 		db.execSQL(Queries.SQL_CREATE_RELATIONS_TABLE);
 		db.execSQL(Queries.SQL_CREATE_RELATION_TAGS_TABLE);
