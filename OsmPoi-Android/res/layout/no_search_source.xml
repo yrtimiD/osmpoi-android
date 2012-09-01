@@ -6,26 +6,12 @@
     android:visibility="gone" >
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="How to start with offline search"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
         android:id="@+id/textView1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_vertical"
         android:autoLink="all"
-        android:text="* Go to http://download.geofabrik.de/osm and download PBF file for needed region\n
-* Open Settings > Imported DB > Import PBF...\n
-* Select downloaded file and confirm import\n
-* Importing process will start in background, you can control progress in notification area. The process may take some time, dependently of PBF size\n
-* After import finishes, you can select &apos;DB&apos; in Settings > Search source and start using the app\n
-Thats all."
+        android:text="@string/no_search_source_explanation"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 

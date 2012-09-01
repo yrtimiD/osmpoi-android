@@ -39,7 +39,7 @@
 	<string name="cant_parse">Query can not be recognized</string>
 	<string name="help">Help</string>
 	<string name="copyrights">Copyrights</string>
-	<string name="how_to_start">Download PBF file of your area from one of the following sites, and then perform import operation from the Settings menu.</string>
+	<string name="how_to_start">In Settings screen go to Offline search settings, and proceed with \'Download offline data\' to download and import data for your region. When import finishes select \'Offline\' under \'Search mode\' in settings screen.</string>
 	<string name="loading">Loading…</string>
 	<string name="category">Category</string>
 	<string name="error">Error occurred</string>
@@ -64,4 +64,5 @@
 	<string name="file_unavailable">Selected file %1$s isn\'t available right now.</string>
 	<string name="preference_online_download">Download offline data</string>
 	<string name="preference_online_download_summary">Select, download and import offline area data</string>
+	<string name="no_search_source_explanation">Please see About > Help for How To Start</string>
 </resources>
