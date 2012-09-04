@@ -8,10 +8,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-/**
- * @author yrtimid
- *
- */
 public class SortedProperties extends Properties {
 	  /**
 	   * Overrides, called by the store method.
