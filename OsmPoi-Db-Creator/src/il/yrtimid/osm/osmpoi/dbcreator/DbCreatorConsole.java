@@ -3,13 +3,10 @@ package il.yrtimid.osm.osmpoi.dbcreator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Properties;
-
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.SortedProperties;
 import il.yrtimid.osm.osmpoi.db.SqliteJDBCCachedFiller;
 import il.yrtimid.osm.osmpoi.dbcreator.DbCreator;
-import il.yrtimid.osm.osmpoi.domain.EntityType;
 
 /**
  * 
@@ -29,7 +26,7 @@ public class DbCreatorConsole {
 	public static void main(String[] args) {
 		createSettings();
 		
-		args = new String[0]; ////////////// DEBUG /////////////////////
+		//args = new String[0]; ////////////// DEBUG /////////////////////
 		
 		if (args.length == 0){
 			printHelp();
@@ -88,6 +85,7 @@ public class DbCreatorConsole {
 				settings = ImportSettings.getDefault();
 				settings.writeToProperties(props);
 				props.store(new FileOutputStream(propsFile),"OsmPoi-Db-Creator default settings");
+				System.out.print("New "+PROPERTIES_FILE_NAME+" file created with default settings");
 				
 			}
 		}catch(Exception e){
