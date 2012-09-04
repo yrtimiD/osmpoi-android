@@ -1,8 +1,12 @@
 package il.yrtimid.osm.osmpoi.dbcreator;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
 
 import il.yrtimid.osm.osmpoi.ImportSettings;
+import il.yrtimid.osm.osmpoi.SortedProperties;
 import il.yrtimid.osm.osmpoi.db.SqliteJDBCCachedFiller;
 import il.yrtimid.osm.osmpoi.dbcreator.DbCreator;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
@@ -16,11 +20,17 @@ import il.yrtimid.osm.osmpoi.domain.EntityType;
  *
  */
 public class DbCreatorConsole {
-
+	private static final String PROPERTIES_FILE_NAME = "dbcreator.properties"; 
+	private static ImportSettings settings = null;
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		createSettings();
+		
+		args = new String[0]; ////////////// DEBUG /////////////////////
+		
 		if (args.length == 0){
 			printHelp();
 			return;
@@ -44,15 +54,6 @@ public class DbCreatorConsole {
 		String sourceFilePath = args[0];
 		System.out.println("Processing file "+sourceFilePath);
 		
-		ImportSettings settings = ImportSettings.getDefault();
-		settings.setImportAddresses(false);
-		settings.reset(EntityType.Node);
-		settings.reset(EntityType.Way);
-		settings.reset(EntityType.Relation);
-		settings.setKey(EntityType.Node, "*", true);
-		settings.setKey(EntityType.Way, "*", true);
-		settings.setKey(EntityType.Relation, "*", true);
-		
 		System.out.println(new File(".").getAbsolutePath());
 		
 		DbCreator creator;
@@ -73,6 +74,25 @@ public class DbCreatorConsole {
 	 */
 	private static void printHelp() {
 		
+	}
+	
+	private static void createSettings(){
+		try{
+			File propsFile = new File(PROPERTIES_FILE_NAME);
+			SortedProperties props = new SortedProperties();
+			
+			if (propsFile.exists()){
+				props.load(new FileInputStream(propsFile));
+				settings = ImportSettings.createFromProperties(props);
+			}else{
+				settings = ImportSettings.getDefault();
+				settings.writeToProperties(props);
+				props.store(new FileOutputStream(propsFile),"OsmPoi-Db-Creator default settings");
+				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }
