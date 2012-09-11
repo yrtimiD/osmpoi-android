@@ -5,33 +5,43 @@
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/about_map_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
-        android:autoLink="all"
         android:singleLine="false"
-        android:text="Osmosis\nhttp://wiki.openstreetmap.org/wiki/Osmosis"
+        android:text="map data"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <TextView
+        android:id="@+id/about_osmosis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginLeft="5dip"
+        android:singleLine="false"
+        android:text="osmosis"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
+        android:id="@+id/about_osm_binary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
-        android:autoLink="all"
         android:singleLine="false"
-        android:text="OSM-binary by S. Crosby\nhttps://github.com/scrosby/OSM-binary"
+        android:text="OSM-binary"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
+        android:id="@+id/about_file_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
         android:layout_marginLeft="5dip"
-        android:autoLink="all"
         android:singleLine="false"
-        android:text="File Picker\nCopyright 2011 Anders Kalør\nhttp://www.kaloer.com/android-file-picker-activity"
+        android:text="file picker"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -43,6 +53,7 @@
         android:singleLine="false"
         android:text="map icons"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+    
     <TextView
         android:id="@+id/about_map_icons2"
         android:layout_width="wrap_content"

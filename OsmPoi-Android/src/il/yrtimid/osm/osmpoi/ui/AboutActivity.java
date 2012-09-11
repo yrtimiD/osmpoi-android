@@ -175,13 +175,19 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 	}
 	
 	private void populateCopyrightTexts(View view){
-		TextView aboutMapIconsText = (TextView)view.findViewById(R.id.about_map_icons);
-		aboutMapIconsText.setMovementMethod(LinkMovementMethod.getInstance());
-		aboutMapIconsText.setText(Html.fromHtml(getString(R.string.about_map_icons)));
-		
-		TextView aboutMapIcons2Text = (TextView)view.findViewById(R.id.about_map_icons2);
-		aboutMapIcons2Text.setMovementMethod(LinkMovementMethod.getInstance());
-		aboutMapIcons2Text.setText(Html.fromHtml(getString(R.string.about_map_icons2)));
+		populateTextFromHtml(view, R.id.about_map_data, R.string.about_map_data);
+		populateTextFromHtml(view, R.id.about_osmosis, R.string.about_osmosis);
+		populateTextFromHtml(view, R.id.about_osm_binary, R.string.about_osm_binary);
+		populateTextFromHtml(view, R.id.about_file_picker, R.string.about_file_picker);
+		populateTextFromHtml(view, R.id.about_map_icons, R.string.about_map_icons);
+		populateTextFromHtml(view, R.id.about_map_icons2, R.string.about_map_icons2);
+
+	}
+	
+	private void populateTextFromHtml(View containerView, int textViewId, int resourceId){
+		TextView text = (TextView)containerView.findViewById(textViewId);
+		text.setMovementMethod(LinkMovementMethod.getInstance());
+		text.setText(Html.fromHtml(getString(resourceId)));
 	}
 	
 	private void populateDbStats(View v){

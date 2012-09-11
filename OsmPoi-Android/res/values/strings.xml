@@ -49,6 +49,10 @@
 	    <item quantity="one">One result within %2$s</item>
 	    <item quantity="other">%1$d results within %2$s</item>
 	</plurals>
+	<string name="about_map_data">Map data © &lt;a href=\'http://www.openstreetmap.org/\'&gt;OpenStreetMap&lt;/a&gt; contributors, &lt;a href=\'http://creativecommons.org/licenses/by-sa/2.0/\'&gt;CC BY-SA&lt;/a&gt;</string>
+	<string name="about_osmosis">&lt;a href=\'http://wiki.openstreetmap.org/wiki/Osmosis\'&gt;Osmosis&lt;/a&gt;</string>
+	<string name="about_file_picker">&lt;a href=\'http://www.kaloer.com/android-file-picker-activity\'&gt;File Picker&lt;/a&gt; Copyright 2011 Anders Kalør</string>
+	<string name="about_osm_binary">&lt;a href=\'https://github.com/scrosby/OSM-binary\'&gt;OSM-binary&lt;/a&gt; by S. Crosby</string>
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
     <string name="about_map_icons2">Map icons CC-0 from &lt;a href=\'http://www.sjjb.co.uk/mapicons\'&gt;SJJB Management&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
