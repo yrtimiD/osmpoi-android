@@ -89,6 +89,7 @@ public class ImportSettings {
 		settings.setKeyValue(EntityType.Relation, "type", "multipolygon", false);
 		settings.setKeyValue(EntityType.Relation, "type", "public_transport", true);
 		settings.setKeyValue(EntityType.Relation, "type", "relatedStreet", false);
+		settings.setKeyValue(EntityType.Relation, "type", "associatedStreet", false);
 		settings.setKeyValue(EntityType.Relation, "type", "restriction", false);
 		
 		settings.setKeyValue(EntityType.Relation, "type", "network", true);

@@ -319,7 +319,13 @@ public class DbSearcher extends DbCreator {
 			db = getReadableDatabase();
 			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
 
-			String query = "select ways.id as id, nodes.id as node_id, ways.timestamp, lat, lon" + " from ways" + " inner join way_nodes on ways.id=way_nodes.way_id" + " inner join nodes on way_nodes.node_id=nodes.id" + " where " + inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
+			String query = "select ways.id as id, nodes.id as node_id, ways.timestamp, lat, lon" 
+					+ " from ways" 
+						+ " inner join way_nodes on ways.id=way_nodes.way_id" 
+						+ " inner join nodes on way_nodes.node_id=nodes.id" 
+					+ " where " + inClause 
+					+ " order by (abs(lat-?)+abs(lon-?))" 
+					+ " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
 			Log.d(Util.join(", ", (Object[]) args));
@@ -337,17 +343,33 @@ public class DbSearcher extends DbCreator {
 		try {
 			db = getReadableDatabase();
 			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
-			/*
-			 * String queryRelByWays = "select relations.id as id, relations.timestamp" + " from relations" + " inner join members on relations.id=members.relation_id" + " inner join way_nodes on members.type='WAY' AND members.ref=way_nodes.way_id" + " inner join nodes on way_nodes.node_id=nodes.id" + " where "+inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
-			 * 
-			 * String queryRelByNodes = "select relations.id as id, relations.timestamp" + " from relations" + " inner join members on relations.id=members.relation_id" + " inner join way_nodes on members.type='WAY' AND members.ref=way_nodes.way_id" + " inner join nodes on way_nodes.node_id=nodes.id" + " where "+inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
-			 */
-			String query = "select relations.id as id, relations.timestamp from relations where 1=2";
+			String query ="select relations.id as id, relations.timestamp"
+					+ " from relations"
+					+ " 	inner join members on relations.id = members.relation_id"
+					+ " 	inner join nodes on members.ref = nodes.id and members.type = 'Node'"
+					+ " where " + inClause 
+					+ " order by (abs(lat-?) + abs(lon-?))" 
+					
+					+ " union all"
+					
+					+ " select relations.id as id, relations.timestamp"
+					+ " from relations"
+					+ " 	inner join members on relations.id = members.relation_id"
+					+ " 	inner join ways on members.ref = ways.id and members.type = 'Way'"
+					+ " 	inner join way_nodes on ways.id = way_nodes.way_id"
+					+ " 	inner join nodes on way_nodes.node_id = nodes.id"
+					+ " where " + inClause 
+					+ " order by (abs(lat-?) + abs(lon-?))";
+			
+			String outerQuery = "select * from ("+query+")v"
+					+ " limit ? offset ?";
 
-			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
-			Log.d(query);
+			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(),
+					point.getLatitude().toString(), point.getLongitude().toString(),
+					limit.toString(), offset.toString() };
+			Log.d(outerQuery);
 			Log.d(Util.join(", ", (Object[]) args));
-			Cursor cur = db.rawQuery(query, args);
+			Cursor cur = db.rawQuery(outerQuery, args);
 			return cur;
 		} catch (Exception e) {
 			Log.wtf("getRelationsAroundPlace", e);
@@ -362,7 +384,10 @@ public class DbSearcher extends DbCreator {
 			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM node_tags WHERE (%s) AND node_tags.node_id=nodes.id)");
 
-			String query = "select distinct nodes.id, timestamp, lat, lon from nodes" + " where " + inClause + " AND ( " + where.where + " )" + " order by (abs(lat-?) + abs(lon-?))" + " limit ? offset ?";
+			String query = "select distinct nodes.id, timestamp, lat, lon from nodes" 
+					+ " where " + inClause + " AND ( " + where.where + " )" 
+					+ " order by (abs(lat-?) + abs(lon-?))" 
+					+ " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
 			Log.d(Util.join(", ", (Object[]) args));
@@ -383,7 +408,13 @@ public class DbSearcher extends DbCreator {
 			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
 			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM way_tags WHERE (%s) AND way_tags.way_id=ways.id)");
 
-			String query = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways" + " inner join way_nodes on ways.id = way_nodes.way_id" + " inner join nodes on way_nodes.node_id = nodes.id" + " where " + inClause + " AND (" + where.where + ")" + " group by ways.id" + " order by (abs(lat-?) + abs(lon-?))" + " limit ? offset ?";
+			String query = "select distinct ways.id as id, nodes.id as node_id, ways.timestamp, nodes.lat, nodes.lon from ways" 
+						+ " inner join way_nodes on ways.id = way_nodes.way_id" 
+						+ " inner join nodes on way_nodes.node_id = nodes.id" 
+					+ " where " + inClause + " AND (" + where.where + ")" 
+					+ " group by ways.id" 
+					+ " order by (abs(lat-?) + abs(lon-?))" 
+					+ " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
 			Log.d(Util.join(", ", (Object[]) args));
@@ -410,15 +441,35 @@ public class DbSearcher extends DbCreator {
 		SQLiteDatabase db;
 		try {
 			db = getReadableDatabase();
-			// String inClause = "grid_id in ("+Util.join(",",
-			// (Object[])gridIds) +")";
-			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM relation_tags WHERE (%s) AND relation_tags.relation_id=relations.id)");
+			TagMatcherFormatter.WhereClause where = TagMatcherFormatter.format(matcher, "EXISTS (SELECT 1 FROM relation_tags WHERE (%s) AND relation_tags.relation_id=relations.id)");			
+			String inClause = "grid_id in (" + Util.join(",", (Object[]) gridIds) + ")";
+			String query ="select relations.id as id, relations.timestamp, nodes.lat, nodes.lon"
+					+ " from relations"
+					+ " 	inner join members on relations.id = members.relation_id"
+					+ " 	inner join nodes on members.ref = nodes.id and members.type = 'Node'"
+					+ " where " + inClause + " AND ("+where.where+")"
 
-			String query = "select distinct relations.id, relations.timestamp from relations" + " where (" + where.where + ")" + " group by relations.id" + " limit ? offset ?";
-			String[] args = new String[] { limit.toString(), offset.toString() };
-			Log.d(query);
+					+ " union all"
+					
+					+ " select relations.id as id, relations.timestamp, nodes.lat, nodes.lon"
+					+ " from relations"
+					+ " 	inner join members on relations.id = members.relation_id"
+					+ " 	inner join ways on members.ref = ways.id and members.type = 'Way'"
+					+ " 	inner join way_nodes on ways.id = way_nodes.way_id"
+					+ " 	inner join nodes on way_nodes.node_id = nodes.id"
+					+ " where " + inClause + " AND ("+where.where+")"; 
+					
+			
+			String outerQuery = "select id, timestamp from ("+query+")v"
+					+ " order by (abs(lat-?) + abs(lon-?))"
+					+ " limit ? offset ?";
+
+			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(),
+					limit.toString(), offset.toString() };
+			
+			Log.d(outerQuery);
 			Log.d(Util.join(", ", (Object[]) args));
-			Cursor cur = db.rawQuery(query, args);
+			Cursor cur = db.rawQuery(outerQuery, args);
 
 			return cur;
 		} catch (Exception e) {
