@@ -143,7 +143,8 @@ public class DbCreator {
 							settings.cleanTags(item);
 							if (settings.isPoi(item))
 								poiDbHelper.addEntity(item);
-							else if (settings.isAddress(item))
+							
+							if (settings.isImportAddresses() && settings.isAddress(item))
 								addressDbHelper.addEntity(item);
 						}
 					}catch(Exception e){
@@ -182,12 +183,18 @@ public class DbCreator {
 						settings.cleanTags(item);
 						if (settings.isPoi(item))
 							poiDbHelper.addEntity(item);
-						else if (settings.isAddress(item))
-							addressDbHelper.addEntity(item);
 						else if (settings.isImportRelations()){
 							Way w = (Way)item;
 							poiDbHelper.addWayIfBelongsToRelation(w);
-							addressDbHelper.addWayIfBelongsToRelation(w);
+						} 
+							
+						if (settings.isImportAddresses()){
+							if (settings.isAddress(item))
+								addressDbHelper.addEntity(item);
+							else if (settings.isImportRelations()){
+								Way w = (Way)item;
+								addressDbHelper.addWayIfBelongsToRelation(w);
+							}
 						}
 					}
 				}catch(Exception e){
@@ -222,18 +229,20 @@ public class DbCreator {
 					if (item.getType() == EntityType.Node){
 						
 						settings.cleanTags(item);
-						if (settings.isAddress(item))
-							addressDbHelper.addEntity(item);
-						else {
-							Node n = (Node)item;
-							if (settings.isImportWays()){
-								addressDbHelper.addNodeIfBelongsToWay(n);
-							}
-							if (settings.isImportRelations()){
-								addressDbHelper.addNodeIfBelongsToRelation(n);
+						if (settings.isImportAddresses()){
+							if (settings.isAddress(item))
+								addressDbHelper.addEntity(item);
+							else {
+								Node n = (Node)item;
+								if (settings.isImportWays()){
+									addressDbHelper.addNodeIfBelongsToWay(n);
+								}
+								if (settings.isImportRelations()){
+									addressDbHelper.addNodeIfBelongsToRelation(n);
+								}
 							}
 						}
-
+						
 						if (settings.isPoi(item))
 							poiDbHelper.addEntity(item);
 						else {

@@ -72,7 +72,7 @@ public class ImportSettings {
 		settings.setKey(EntityType.Node, "highway", false);
 		settings.setKey(EntityType.Node, "building",false);
 		settings.setKey(EntityType.Node, "barrier", false);
-		settings.setKey(EntityType.Node, "*", true);
+		settings.setKey(EntityType.Node, "*", false);
 		
 		settings.setKey(EntityType.Way, "name*", true);
 		settings.setKey(EntityType.Way, "building",true);
@@ -140,6 +140,10 @@ public class ImportSettings {
 	
 	public boolean isClearBeforeImport() {
 		return isClearBeforeImport;
+	}
+	
+	public Boolean isImportAddresses() {
+		return importAddresses;
 	}
 	
 	public void reset(EntityType type){
@@ -224,11 +228,9 @@ public class ImportSettings {
 	}
 	
 	public Boolean isAddress(Entity entity){
-		if (importAddresses){
-			for(TagMatcher check:addressTags.get(entity.getType())){
-				if (check.isMatch(entity))
-					return true;
-			}
+		for(TagMatcher check:addressTags.get(entity.getType())){
+			if (check.isMatch(entity))
+				return true;
 		}
 		
 		return false;
