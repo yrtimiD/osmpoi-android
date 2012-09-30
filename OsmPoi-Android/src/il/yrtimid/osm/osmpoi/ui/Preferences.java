@@ -276,12 +276,20 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setKey(EntityType.Node, "highway", prefs.getBoolean("include_node_highway", false));
 		settings.setKey(EntityType.Node, "building",prefs.getBoolean("include_node_building", false));
 		settings.setKey(EntityType.Node, "barrier", prefs.getBoolean("include_node_barrier", false));
-		settings.setKey(EntityType.Node, "*", prefs.getBoolean("include_node_other", true));
+		if (prefs.getBoolean("include_node_other", true) == true){
+			settings.setKey(EntityType.Node, "*", true);
+		}else {
+			settings.resetKey(EntityType.Node, "*");
+		}
 		
 		settings.setKey(EntityType.Way, "name*", true);
 		settings.setKey(EntityType.Way, "building",prefs.getBoolean("include_way_building", false));
 		settings.setKey(EntityType.Way, "highway",prefs.getBoolean("include_way_highway", false));
-		settings.setKey(EntityType.Way, "*", prefs.getBoolean("include_way_other", false));
+		if (prefs.getBoolean("include_way_other", false) == true){
+			settings.setKey(EntityType.Way, "*", true);
+		}else {
+			settings.resetKey(EntityType.Way, "*");
+		}
 		
 		
 		//settings.setKey(EntityType.Relation, "name*", true);
@@ -295,7 +303,11 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setKeyValue(EntityType.Relation, "type", "enforcement", prefs.getBoolean("include_relation_enforcement", false));
 		settings.setKeyValue(EntityType.Relation, "type", "network", prefs.getBoolean("include_relation_network", true));
 		settings.setKeyValue(EntityType.Relation, "type", "operator", prefs.getBoolean("include_relation_operator", true));
-		settings.setKey(EntityType.Relation, "*",prefs.getBoolean("include_relation_other", false)); 
+		if (prefs.getBoolean("include_relation_other", false) == true){
+			settings.setKey(EntityType.Relation, "*", true);
+		}else{
+			settings.resetKey(EntityType.Relation, "*");
+		}
 		
  		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
  		

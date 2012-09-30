@@ -72,12 +72,12 @@ public class ImportSettings {
 		settings.setKey(EntityType.Node, "highway", false);
 		settings.setKey(EntityType.Node, "building",false);
 		settings.setKey(EntityType.Node, "barrier", false);
-		settings.setKey(EntityType.Node, "*", false);
+		//settings.setKey(EntityType.Node, "*", false);//excluding * will exclude all items of this type
 		
 		settings.setKey(EntityType.Way, "name*", true);
 		settings.setKey(EntityType.Way, "building",true);
 		settings.setKey(EntityType.Way, "highway",false);
-		settings.setKey(EntityType.Way, "*", false);
+		//settings.setKey(EntityType.Way, "*", false);//excluding * will exclude all items of this type
 		
 		
 		//settings.setKey(EntityType.Relation, "name*", true);
@@ -104,7 +104,7 @@ public class ImportSettings {
 		settings.setKey(EntityType.Relation, "waterway",false);
 		settings.setKey(EntityType.Relation, "type", false);
 		
-		settings.setKey(EntityType.Relation, "*",false); 
+		//settings.setKey(EntityType.Relation, "*",false);//excluding * will exclude all items of this type 
  		 		
  		
  		settings.setImportAddresses(false);
@@ -151,11 +151,28 @@ public class ImportSettings {
 		tagsExclude.get(type).clear();
 	}
 	
-	public void setKey(EntityType type, String key, Boolean include){
+	/*
+	 * Removes key both from include and exclude lists
+	 */
+	public void resetKey(EntityType type, String key){
 		KeyValueMatcher matcher = new KeyValueMatcher(key,"*");
 		tagsInclude.get(type).remove(matcher);
 		tagsExclude.get(type).remove(matcher);
+	}
+
+	/*
+	 * Removes key-value both from include and exclude lists
+	 */
+	public void resetKeyValue(EntityType type, String key, String value){
+		KeyValueMatcher matcher = new KeyValueMatcher(key, value);
+		tagsInclude.get(type).remove(matcher);
+		tagsExclude.get(type).remove(matcher);
+	}
+	
+	public void setKey(EntityType type, String key, Boolean include){
+		resetKey(type, key);
 		
+		KeyValueMatcher matcher = new KeyValueMatcher(key,"*");
 		if (include){
 			tagsInclude.get(type).add(matcher);
 		}else{
@@ -164,6 +181,8 @@ public class ImportSettings {
 	}
 
 	public void setKeyValue(EntityType type, String key, String value, Boolean include){
+		resetKeyValue(type, key, value);
+		
 		KeyValueMatcher matcher = new KeyValueMatcher(key, value);
 		if (include)
 			tagsInclude.get(type).add(matcher);

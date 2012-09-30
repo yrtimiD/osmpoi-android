@@ -85,7 +85,7 @@ public class DbCreatorConsole {
 				settings = ImportSettings.getDefault();
 				settings.writeToProperties(props);
 				props.store(new FileOutputStream(propsFile),"OsmPoi-Db-Creator default settings");
-				System.out.print("New "+PROPERTIES_FILE_NAME+" file created with default settings");
+				System.out.println("New "+PROPERTIES_FILE_NAME+" file created with default settings");
 				
 			}
 		}catch(Exception e){
