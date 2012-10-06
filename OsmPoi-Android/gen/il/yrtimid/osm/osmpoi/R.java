@@ -146,6 +146,7 @@ public final class R {
         public static final int anime=0x7f060005;
         public static final int app_name=0x7f0600cc;
         public static final int appliance=0x7f060006;
+        public static final int around_me=0x7f06010d;
         public static final int art=0x7f060007;
         public static final int arts_centre=0x7f060008;
         public static final int artwork=0x7f060009;

@@ -69,4 +69,5 @@
 	<string name="preference_online_download">Download offline data</string>
 	<string name="preference_online_download_summary">Select, download and import offline area data</string>
 	<string name="no_search_source_explanation">Please see About > Help for How To Start</string>
+	<string name="around_me">Around me</string> 
 </resources>

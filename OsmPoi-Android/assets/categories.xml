@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="categories.xsd">
 	<custom name="custom_search" />
+	<search name="around_me" query="*=*" />
 	<starred name="starred" icon="star_big_on" />
 	<category name="emergency" icon="caution">
 		<search name="hospital" query="amenity=hospital" />

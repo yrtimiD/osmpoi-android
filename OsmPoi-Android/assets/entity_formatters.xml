@@ -3,6 +3,8 @@
 	<formatter match="amenity=atm" select_pattern="ATM {operator}" ></formatter>
 	<formatter match="shop=*" select_pattern="{name} ({shop})" ></formatter>
 	<formatter match="operator*=* &amp; name*=*" select_pattern="{name} ({operator})"/>
+	<formatter match="amenity=* &amp; name*=*" select_pattern="{name} ({amenity})"/>
+	<formatter match="leisure=* &amp; name*=*" select_pattern="{name} ({leisure})"/>
 	<formatter match="name*=*" select_pattern="{name}"/>
 	<formatter match="amenity=*" select_pattern="{amenity}"/>
 	<formatter match="highway=*" select_pattern="{highway}"/>
