@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.SortedProperties;
 import il.yrtimid.osm.osmpoi.db.SqliteJDBCCachedFiller;
-import il.yrtimid.osm.osmpoi.dbcreator.DbCreator;
+import il.yrtimid.osm.osmpoi.dbcreator.common.*;
 
 /**
  * 

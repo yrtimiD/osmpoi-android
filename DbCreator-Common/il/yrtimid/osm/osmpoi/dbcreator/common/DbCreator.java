@@ -1,7 +1,7 @@
 /**
  * 
  */
-package il.yrtimid.osm.osmpoi.dbcreator;
+package il.yrtimid.osm.osmpoi.dbcreator.common;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.ItemPipe;
+import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
@@ -61,7 +62,7 @@ public class DbCreator {
 			if ((sourceFile.exists() && sourceFile.canRead())){
 
 				long startTime = System.currentTimeMillis();
-				final Notification notif = new Notification("Importing file into DB");
+				final Notification2 notif = new Notification2("Importing file into DB", System.currentTimeMillis());
 				//notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
 
 			
@@ -113,12 +114,12 @@ public class DbCreator {
 				long endTime = System.currentTimeMillis();
 				int workTime = Math.round((endTime-startTime)/1000/60);
 
-				Notification finalNotif = new Notification("Importing file into DB");
+				Notification2 finalNotif = new Notification2("Importing file into DB", System.currentTimeMillis());
 				//finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
 				finalNotif.setLatestEventInfo("PBF Import", "Import done successfully. ("+workTime+"min.)");
 				notificationManager.notify(IMPORT_TO_DB, finalNotif);
 			}else {
-				Notification finalNotif = new Notification("Importing file into DB");
+				Notification2 finalNotif = new Notification2("Importing file into DB", System.currentTimeMillis());
 				//finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
 				finalNotif.setLatestEventInfo("PBF Import", "Import failed. File not found.");
 				notificationManager.notify(IMPORT_TO_DB, finalNotif);
@@ -130,7 +131,7 @@ public class DbCreator {
 	}
 	
 
-	protected Long importRelations(final InputStream input, final Notification notif, final ImportSettings settings) {
+	protected Long importRelations(final InputStream input, final Notification2 notif, final ImportSettings settings) {
 		Long count = 0L;
 		try{
 			poiDbHelper.beginAdd();
@@ -172,7 +173,7 @@ public class DbCreator {
 		return count;
 	}
 	
-	protected Long importWays(final InputStream input, final Notification notif, final ImportSettings settings) {
+	protected Long importWays(final InputStream input, final Notification2 notif, final ImportSettings settings) {
 		poiDbHelper.beginAdd();
 		addressDbHelper.beginAdd();
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {
@@ -219,7 +220,7 @@ public class DbCreator {
 		return count;
 	}
 	
-	protected Long importNodes(final InputStream input, final Notification notif, final ImportSettings settings) {
+	protected Long importNodes(final InputStream input, final Notification2 notif, final ImportSettings settings) {
 		poiDbHelper.beginAdd();
 		addressDbHelper.beginAdd();
 		Long count = OsmImporter.processAll(input, new ItemPipe<Entity>() {

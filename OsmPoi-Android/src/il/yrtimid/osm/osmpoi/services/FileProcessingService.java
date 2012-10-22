@@ -9,6 +9,9 @@ import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
+import il.yrtimid.osm.osmpoi.dbcreator.common.DbCreator;
+import il.yrtimid.osm.osmpoi.dbcreator.common.INotificationManager;
+import il.yrtimid.osm.osmpoi.dbcreator.common.Notification2;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.pbf.OsmImporter;
 import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
@@ -64,7 +67,8 @@ public class FileProcessingService extends Service {
 	NotificationManager notificationManager;
 	PendingIntent contentIntent;
 	Context context;
-
+	INotificationManager notificationManager2; 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -87,9 +91,11 @@ public class FileProcessingService extends Service {
 		poiDbHelper = OsmPoiApplication.databases.getPoiDb();
 		addressDbHelper = OsmPoiApplication.databases.getAddressDb();
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+		
 		Intent notificationIntent = new Intent(this, SearchActivity.class);
 		contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		
+		notificationManager2 = new AndroidNotificationManager(context, contentIntent);
 	}
 
 	/*
@@ -231,102 +237,34 @@ public class FileProcessingService extends Service {
 	
 	private void importToDB(String sourceFilePath) {
 		try {
-			
-			Log.d("Importing file: "+sourceFilePath);
+			Log.d("Importing file from: "+sourceFilePath);
 			if (sourceFilePath.startsWith("/")){
 				//local file, can use directly
 			}else {
 				sourceFilePath = downloadFile(sourceFilePath);
 			}
-
-			File sourceFile = new File(sourceFilePath);
-			if ((sourceFile.exists() && sourceFile.canRead())){
-
-				long startTime = System.currentTimeMillis();
-				final Notification notif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
-				notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-
 			
-				notif.setLatestEventInfo(context, "PBF Import", "Clearing DB...", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB, notif);
-	
-				startForeground(IMPORT_TO_DB, notif);
-	
-				final ImportSettings settings = Preferences.getImportSettings(context);
-	
-				if (settings.isClearBeforeImport()){
-					poiDbHelper.clearAll();
-					addressDbHelper.clearAll();
-				}
-				
-				notif.setLatestEventInfo(context, "PBF Import", "Importing in progress...", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB, notif);
-	
-				
-				InputStream input;
-	
-				if (settings.isImportRelations()){
-					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					importRelations(input, notif, settings);
-					Log.d("Finished importing relations");
-				}
-				
-				if (settings.isImportWays()){
-					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					importWays(input, notif, settings);
-					Log.d("Finished importing ways");
-				}
-				
-				if (settings.isImportNodes()){
-					input = new BufferedInputStream(new FileInputStream(sourceFile));
-					importNodes(input, notif, settings);
-					Log.d("Finished importing nodes");
-				}
-				
-				notif.setLatestEventInfo(context, "PBF Import", "Post-import calculations...", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB, notif);
-				
-				if(settings.isBuildGrid()){
-					notif.setLatestEventInfo(context, "PBF Import", "Creating grid...", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB, notif);
-					poiDbHelper.initGrid();
-					
-					notif.setLatestEventInfo(context, "PBF Import", "Optimizing grid...", contentIntent);
-					notificationManager.notify(IMPORT_TO_DB, notif);
-					poiDbHelper.optimizeGrid(settings.getGridSize());
-				}
-	
-				stopForeground(true);
+			final ImportSettings settings = Preferences.getImportSettings(context);
 			
-				long endTime = System.currentTimeMillis();
-				int workTime = Math.round((endTime-startTime)/1000/60);
-
-				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
-				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-				finalNotif.setLatestEventInfo(context, "PBF Import", "Import done successfully. ("+workTime+"min.)", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB, finalNotif);
-			}else {
-				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
-				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-				finalNotif.setLatestEventInfo(context, "PBF Import", "Import failed. File not found.", contentIntent);
-				notificationManager.notify(IMPORT_TO_DB, finalNotif);
-			}
-
+			DbCreator creator = new DbCreator(poiDbHelper, addressDbHelper, notificationManager2);
+			creator.importToDB(sourceFilePath, settings);
+			
 		} catch (Exception ex) {
 			Log.wtf("Exception while importing PBF into DB", ex);
 			try{
-				Notification finalNotif = new Notification(R.drawable.ic_launcher, "Importing file into DB", System.currentTimeMillis());
+				Notification2 finalNotif = new Notification2("Importing file into DB", System.currentTimeMillis());
 				finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
-				finalNotif.setLatestEventInfo(context, "PBF Import", "Import failed. "+ex.getMessage(), contentIntent);
-				notificationManager.notify(IMPORT_TO_DB, finalNotif);
+				finalNotif.setLatestEventInfo("PBF Import", "Import failed. "+ex.getMessage());
+				notificationManager2.notify(IMPORT_TO_DB, finalNotif);
+				
+				stopForeground(true);
 			}
 			catch(Exception ex2){
 				Log.wtf("Exception while importing PBF into DB", ex2);
 			}
 		}
 	}
-
-
+	
 	public Long importRelations(final InputStream input, final Notification notif, final ImportSettings settings) {
 		poiDbHelper.beginAdd();
 		addressDbHelper.beginAdd();

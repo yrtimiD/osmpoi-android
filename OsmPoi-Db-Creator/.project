@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>DbCreator-Common</name>
+			<type>2</type>
+			<location>/home/yrtimid/Projects/workspace/OsmPoi-Android/DbCreator-Common</location>
+		</link>
+	</linkedResources>
 </projectDescription>

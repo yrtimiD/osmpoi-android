@@ -13,7 +13,7 @@ import java.util.Collection;
 import il.yrtimid.osm.osmpoi.Pair;
 import il.yrtimid.osm.osmpoi.dal.IDbFiller;
 import il.yrtimid.osm.osmpoi.dal.Queries;
-import il.yrtimid.osm.osmpoi.dbcreator.Log;
+import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.domain.Bound;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.Node;
