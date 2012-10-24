@@ -41,10 +41,5 @@
 			<type>2</type>
 			<location>/home/yrtimid/Projects/workspace/OsmPoi-Android/DbCreator-Common</location>
 		</link>
-		<link>
-			<name>dbcreator</name>
-			<type>2</type>
-			<location>/home/yrtimid/Projects/workspace/OsmPoi-Android/OsmPoi-Db-Creator/src/il/yrtimid/osm/osmpoi/dbcreator/common</location>
-		</link>
 	</linkedResources>
 </projectDescription>

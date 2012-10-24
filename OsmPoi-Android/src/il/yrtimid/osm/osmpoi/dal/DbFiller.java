@@ -338,7 +338,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 			//calc new cell size to be 1/2 of the old one
 			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7) from "+Queries.GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
 			cur.moveToFirst();
-			Double newCellSize = cur.getDouble(1);
+			Double newCellSize = cur.getDouble(0);
 			cur.close();
 			
 			//create new grid cells from all nodes in old cell

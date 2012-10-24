@@ -20,7 +20,8 @@
             android:title="@string/offline_search" >
             <Preference
                 android:key="preference_download"
-                android:title="@string/preference_online_download" android:summary="@string/preference_online_download_summary"/>
+                android:summary="@string/preference_online_download_summary"
+                android:title="@string/preference_online_download" />
             <Preference
                 android:key="preference_import_pbf"
                 android:summary="@string/import_pbf_summary"
@@ -31,29 +32,11 @@
                 android:title="@string/import_settings" >
                 <PreferenceScreen android:title="Import nodes" >
                     <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_node_highway"
-                        android:title="Highway" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_node_building"
-                        android:persistent="true"
-                        android:title="Buildings" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_nodes_barrier"
-                        android:title="Barrier" />
-                    <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="include_node_other"
                         android:title="All other" />
                 </PreferenceScreen>
                 <PreferenceScreen android:title="Import ways" >
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_way_building"
-                        android:persistent="true"
-                        android:title="Buildings" />
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:enabled="false"
@@ -108,7 +91,6 @@
                         android:defaultValue="true"
                         android:key="include_relation_operator"
                         android:title="operators" />
-                    
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="include_relation_other"
@@ -119,34 +101,22 @@
                     android:defaultValue="false"
                     android:key="import_addresses"
                     android:title="Import addresses" />
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:dependency="debug_show_debug_preferences"
-                    android:key="debug_import_build_grid"
-                    android:summary="debug option"
-                    android:title="Build grid (debug)" />
-                <CheckBoxPreference
-                    android:defaultValue="True"
-                    android:dependency="debug_show_debug_preferences"
-                    android:key="debug_import_cleardb"
-                    android:summary="debug option"
-                    android:title="Clear DB before import (debug)" />
-            </PreferenceScreen>
 
-            <Preference
-                android:dependency="debug_show_debug_preferences"
-                android:key="debug_rebuild_grid"
-                android:persistent="false"
-                android:shouldDisableView="true"
-                android:summary="debug option"
-                android:title="Rebuild grid (debug)" />
-            <Preference
-                android:dependency="debug_show_debug_preferences"
-                android:key="debug_clear_db"
-                android:persistent="false"
-                android:shouldDisableView="true"
-                android:summary="debug option"
-                android:title="Clear DB (debug)" />
+                <PreferenceCategory
+                    android:orderingFromXml="true"
+                    android:title="Debug" >
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="debug_import_build_grid"
+                        android:summary="debug option"
+                        android:title="Build grid (debug)" />
+                    <CheckBoxPreference
+                        android:defaultValue="True"
+                        android:key="debug_import_cleardb"
+                        android:summary="debug option"
+                        android:title="Clear DB before import (debug)" />
+                </PreferenceCategory>
+            </PreferenceScreen>
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -155,20 +125,31 @@
                 android:summaryOn="@string/db_on_sdcard_true"
                 android:title="@string/db_on_sdcard" />
 
-            <EditTextPreference
-                android:defaultValue="1000"
-                android:dependency="debug_show_debug_preferences"
-                android:key="grid_size"
-                android:numeric="integer"
-                android:persistent="true"
-                android:summary="Maximum count of nodes in one cell"
-                android:title="Size of grid cell (debug)" />
+            <PreferenceCategory
+                android:orderingFromXml="true"
+                android:title="Debug" >
+                <Preference
+                    android:key="debug_rebuild_grid"
+                    android:persistent="false"
+                    android:shouldDisableView="true"
+                    android:summary="debug option"
+                    android:title="Rebuild grid (debug)" />
+                <Preference
+                    android:key="debug_clear_db"
+                    android:persistent="false"
+                    android:shouldDisableView="true"
+                    android:summary="debug option"
+                    android:title="Clear DB (debug)" />
 
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="debug_show_debug_preferences"
-                android:persistent="false"
-                android:title="Enable debug options" />
+                <EditTextPreference
+                    android:defaultValue="1000"
+                    android:key="grid_size"
+                    android:numeric="integer"
+                    android:persistent="true"
+                    android:summary="Maximum count of nodes in one cell"
+                    android:title="Size of grid cell (debug)" />
+            </PreferenceCategory>
+
         </PreferenceScreen>
         <PreferenceScreen
             android:enabled="false"
@@ -186,6 +167,14 @@
             android:entryValues="@array/languages_code"
             android:key="result_language"
             android:title="@string/result_language" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:orderingFromXml="true"
+        android:title="Debug" >
+        <Preference
+            android:key="preference_debug_reset"
+            android:summary="Resets all preferences to their default values"
+            android:title="Reset preferences" />
     </PreferenceCategory>
 
 </PreferenceScreen>

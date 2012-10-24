@@ -17,6 +17,7 @@ import il.yrtimid.osm.osmpoi.ui.Preferences;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Location;
 
 import android.preference.PreferenceManager;
@@ -75,6 +76,13 @@ public class OsmPoiApplication extends Application {
 	}
 	
 	public static class Config {
+		public static void reset(Context context){
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			Editor editor = prefs.edit();
+			editor.clear();
+			editor.commit();
+		}
+		
 		public static void reloadConfig(Context context) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 

@@ -36,7 +36,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	private static final String PREFERENCE_CLEAR_DB = "debug_clear_db";
 	private static final String PREFERENCE_BUILD_GRID = "debug_rebuild_grid";
 	private static final String PREFERENCE_DOWNLOAD = "preference_download";
-	private static final String PREFERENCE_DEBUG_SHOW = "debug_show_debug_preferences";
+	private static final String PREFERENCE_DEBUG_RESET = "preference_debug_reset";
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -54,7 +54,8 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_BUILD_GRID).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
-		findPreference(PREFERENCE_DEBUG_SHOW).setOnPreferenceChangeListener(this);
+		findPreference(PREFERENCE_DEBUG_RESET).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
 	}
 
 	/*
@@ -107,6 +108,10 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		} else if (PREFERENCE_DOWNLOAD.equals(key)){
 			Intent intent = new Intent(this, DownloadActivity.class);
 			startActivity(intent);
+		} else if (PREFERENCE_DEBUG_RESET.equals(key)){
+			OsmPoiApplication.Config.reset(this);
+			OsmPoiApplication.Config.reloadConfig(this);
+			this.finish();
 		}
 
 		return false;
@@ -273,9 +278,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setClearBeforeImport(prefs.getBoolean("debug_import_cleardb", true));
 		
 		settings.setKey(EntityType.Node, "name*", true);
-		settings.setKey(EntityType.Node, "highway", prefs.getBoolean("include_node_highway", false));
-		settings.setKey(EntityType.Node, "building",prefs.getBoolean("include_node_building", false));
-		settings.setKey(EntityType.Node, "barrier", prefs.getBoolean("include_node_barrier", false));
 		if (prefs.getBoolean("include_node_other", true) == true){
 			settings.setKey(EntityType.Node, "*", true);
 		}else {
@@ -283,7 +285,6 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		}
 		
 		settings.setKey(EntityType.Way, "name*", true);
-		settings.setKey(EntityType.Way, "building",prefs.getBoolean("include_way_building", false));
 		settings.setKey(EntityType.Way, "highway",prefs.getBoolean("include_way_highway", false));
 		if (prefs.getBoolean("include_way_other", false) == true){
 			settings.setKey(EntityType.Way, "*", true);
