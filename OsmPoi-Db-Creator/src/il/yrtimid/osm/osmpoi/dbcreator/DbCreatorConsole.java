@@ -1,20 +1,18 @@
 package il.yrtimid.osm.osmpoi.dbcreator;
 
-import java.io.Console;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.sql.SQLException;
-import java.util.Collection;
-
 import il.yrtimid.osm.osmpoi.ImportSettings;
 import il.yrtimid.osm.osmpoi.SortedProperties;
 import il.yrtimid.osm.osmpoi.db.SqliteJDBCCachedFiller;
 import il.yrtimid.osm.osmpoi.db.SqliteJDBCGridReader;
-import il.yrtimid.osm.osmpoi.dbcreator.common.*;
+import il.yrtimid.osm.osmpoi.dbcreator.common.DbCreator;
 import il.yrtimid.osm.osmpoi.domain.GridCell;
 import il.yrtimid.osm.osmpoi.domain.Point;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Collection;
 
 /**
  * 
@@ -29,6 +27,7 @@ public class DbCreatorConsole {
 	private static ImportSettings settings = null;
 	private static final String ARGUMENT_CREATE = "--create";
 	private static final String ARGUMENT_SAVE_GRID = "--save-grid";
+	private static final String ARGUMENT_REBUILD_GRID = "--rebuild-grid";
 
 	/**
 	 * @param args
@@ -36,7 +35,10 @@ public class DbCreatorConsole {
 	public static void main(String[] args) {
 		createSettings();
 
-		// args = new String[0]; ////////////// DEBUG /////////////////////
+		//////////////DEBUG /////////////////////
+//		args = new String[2]; 
+//		args[0] = "--rebuild-grid";
+//		args[1] = "/home/yrtimid/Projects/workspace/poi.db";
 
 		if (args.length == 2) {
 			if (ARGUMENT_CREATE.equals(args[0])) {
@@ -45,14 +47,45 @@ public class DbCreatorConsole {
 			} else if (ARGUMENT_SAVE_GRID.equals(args[0])) {
 				saveGrid(args[1]);
 				return;
+			} else if (ARGUMENT_REBUILD_GRID.equals(args[0])){
+				rebuildGrid(args[1]);
+				return;
 			}
 		}
 
 		printHelp();
 	}
 
+	private static void printHelp() {
+		System.out.println("Usage:");
+		System.out.println(ARGUMENT_CREATE + " <pbf file name>\tcreate new DB from PBF file");
+		System.out.println(ARGUMENT_SAVE_GRID + " <db file>\toutputs grid from DB in poly format (dev option)");
+		System.out.println(ARGUMENT_REBUILD_GRID + " <db file>\trebuilds grid (dev option)");
+		System.out.println("");
+	}
+
+	private static void createSettings() {
+		try {
+			File propsFile = new File(PROPERTIES_FILE_NAME);
+			SortedProperties props = new SortedProperties();
+
+			if (propsFile.exists()) {
+				props.load(new FileInputStream(propsFile));
+				settings = ImportSettings.createFromProperties(props);
+			} else {
+				settings = ImportSettings.getDefault();
+				settings.writeToProperties(props);
+				props.store(new FileOutputStream(propsFile), "OsmPoi-Db-Creator default settings");
+				System.out.println("New " + PROPERTIES_FILE_NAME + " file created with default settings");
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
-	 * @param string
+	 * @param dbFilePath path to the db file with grid
 	 */
 	private static void saveGrid(String dbFilePath) {
 		PrintStream stream = System.out;
@@ -80,6 +113,10 @@ public class DbCreatorConsole {
 		}
 	}
 
+	/**
+	 * 
+	 * @param sourceFilePath path to the *.pbf file to import from
+	 */
 	private static void create(String sourceFilePath) {
 		String poiDbName = "poi.db";
 		String addrDbName = "addr.db";
@@ -112,35 +149,21 @@ public class DbCreatorConsole {
 
 		System.out.println("Done.");
 	}
-
-	/**
-	 * 
-	 */
-	private static void printHelp() {
-		System.out.println("Usage:");
-		System.out.println(ARGUMENT_CREATE + " <pbf file name>\tcreate new DB from PBF file");
-		System.out.println(ARGUMENT_SAVE_GRID + " <db file>\toutputs grid from DB in poly format");
-		System.out.println("");
-	}
-
-	private static void createSettings() {
+	
+	private static void rebuildGrid(String dbFilePath) {
 		try {
-			File propsFile = new File(PROPERTIES_FILE_NAME);
-			SortedProperties props = new SortedProperties();
+			File dbFile = new File(dbFilePath);
+			if (dbFile.canRead()) {
 
-			if (propsFile.exists()) {
-				props.load(new FileInputStream(propsFile));
-				settings = ImportSettings.createFromProperties(props);
+				DbCreator creator = new DbCreator(new SqliteJDBCCachedFiller(dbFilePath), null, new ConsoleNotificationManager());
+				creator.rebuildGrid(settings);
+				
 			} else {
-				settings = ImportSettings.getDefault();
-				settings.writeToProperties(props);
-				props.store(new FileOutputStream(propsFile), "OsmPoi-Db-Creator default settings");
-				System.out.println("New " + PROPERTIES_FILE_NAME + " file created with default settings");
-
+				System.err.println("Can't read db file: " + dbFilePath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+		
 }

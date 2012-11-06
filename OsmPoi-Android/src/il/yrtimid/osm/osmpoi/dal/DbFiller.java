@@ -336,27 +336,39 @@ public class DbFiller extends DbCreator implements IDbFiller {
 		try{
 			Log.d("splitGridCell id:"+id);
 			//calc new cell size to be 1/2 of the old one
-			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7) from "+Queries.GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
-			cur.moveToFirst();
-			Double newCellSize = cur.getDouble(0);
-			cur.close();
 			
-			//create new grid cells from all nodes in old cell
-			String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
-					+" SELECT minLat, minLon, minLat+? maxLat, minLon+? maxLon FROM ("
-					+" SELECT DISTINCT CAST(lat/? as INT)*? minLat, CAST(lon/? as INT)*? minLon FROM nodes WHERE grid_id=?"
-					+" );";	
-			Log.d(sql_generate_grid);
-			Log.d("newCellSize="+newCellSize);
-			db.execSQL(sql_generate_grid, new Object[] {newCellSize,newCellSize,newCellSize,newCellSize,newCellSize,newCellSize, id});
+			Cursor cur = db.rawQuery("SELECT round((maxLat-minLat)/2,7) dLat, round((maxLon-minLon)/2,7) dLon from "+Queries.GRID_TABLE+" WHERE id=?", new String[]{id.toString()});
+			cur.moveToFirst();
+			Double newCellSizeLat = cur.getDouble(0);
+			Double newCellSizeLon = cur.getDouble(1);
+			cur.close();
+
+			Log.d("newCellSizeLat="+newCellSizeLat+" newCellSizeLon="+newCellSizeLon);
+
+			String create4NewCellsSql;
+			create4NewCellsSql = "INSERT INTO grid (minLat, minLon, maxLat, maxLon) \n"
+					+" SELECT * FROM (\n"
+					+" SELECT minLat, minLon, minLat+%1$f, minLon+%2$f FROM grid where id = %3$d\n"
+					+" union all\n"
+					+" SELECT minLat+%1$f, minLon, maxLat, minLon+%2$f FROM grid where id = %3$d\n"
+					+" union all\n"
+					+" SELECT minLat, minLon+%2$f, minLat+%1$f, maxLon FROM grid where id = %3$d\n"
+					+" union all\n"
+					+" SELECT minLat+%1$f, minLon+%2$f, maxLat, maxLon FROM grid where id = %3$d\n"
+					+" )\n";
+
+			create4NewCellsSql = String.format(create4NewCellsSql, newCellSizeLat, newCellSizeLon, id);
+			Log.d(create4NewCellsSql);
+			
+			db.execSQL(create4NewCellsSql);
 			
 			//delete old cell
 			db.delete(Queries.GRID_TABLE, "id=?", new String[]{id.toString()});
 			
 			//update nodes to use new cells
-			String update_nodes = "UPDATE nodes SET grid_id = (SELECT g.id FROM "+Queries.GRID_TABLE+" g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id=?";
-			Log.d(update_nodes);
-			db.execSQL(update_nodes, new Object[]{id});
+			String updateNodesSql = "UPDATE nodes SET grid_id = (SELECT g.id FROM "+Queries.GRID_TABLE+" g WHERE lat>=minLat AND lat<=maxLat AND lon>=minLon AND lon<=maxLon limit 1) WHERE grid_id="+id.toString();
+			Log.d(updateNodesSql);
+			db.execSQL(updateNodesSql);
 			
 		}catch (Exception e) {
 			Log.wtf("splitGridCell", e);

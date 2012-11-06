@@ -29,7 +29,7 @@ public class ImportSettings {
 	Boolean isBuildGrid = true;
 	Boolean isClearBeforeImport = true;
 	Boolean importAddresses = false;
-	Integer gridSize = Integer.MAX_VALUE;
+	Integer gridCellSize = Integer.MAX_VALUE;
 	
 	public ImportSettings() {
 		excludedKeys.add("created_by");
@@ -109,7 +109,7 @@ public class ImportSettings {
  		
  		settings.setImportAddresses(false);
  		
- 		settings.setGridSize(1000000);
+ 		settings.setGridCellSize(1000000);
  		
 		return settings;
 	}
@@ -194,12 +194,12 @@ public class ImportSettings {
 		this.importAddresses = importAddresses;
 	}
 	
-	public int getGridSize() {
-		return gridSize;
+	public int getGridCellSize() {
+		return gridCellSize;
 	}
 	
-	public void setGridSize(int gridSize) {
-		this.gridSize = gridSize;
+	public void setGridCellSize(int gridCellSize) {
+		this.gridCellSize = gridCellSize;
 	}
 	
 	
@@ -257,7 +257,7 @@ public class ImportSettings {
 
 	public void writeToProperties(Properties props){
 		props.setProperty("import.isBuildGrid", isBuildGrid.toString());
-		props.setProperty("import.gridSize", gridSize.toString());
+		props.setProperty("import.gridCellSize", gridCellSize.toString());
 		props.setProperty("import.importAddresses", importAddresses.toString());
 		
 		for(EntityType entityType : tagsInclude.keySet()){
@@ -279,7 +279,7 @@ public class ImportSettings {
 		ImportSettings settings = new ImportSettings();
 		
 		settings.setBuildGrid(Boolean.parseBoolean(props.getProperty("import.isBuildGrid", "true")));
-		settings.setGridSize(Integer.parseInt(props.getProperty("import.gridSize", new Integer(Integer.MAX_VALUE).toString())));
+		settings.setGridCellSize(Integer.parseInt(props.getProperty("import.gridCellSize", new Integer(Integer.MAX_VALUE).toString())));
 		settings.setImportAddresses(Boolean.parseBoolean(props.getProperty("import.importAddresses", "false")));
 		
 		for(Object key : props.keySet()){

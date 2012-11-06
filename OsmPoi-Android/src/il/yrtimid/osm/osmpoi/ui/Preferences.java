@@ -312,7 +312,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		
  		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
  		
- 		settings.setGridSize(Integer.parseInt(prefs.getString("grid_size", "1000")));
+ 		settings.setGridCellSize(Integer.parseInt(prefs.getString("grid_size", "1000")));
  		
 		return settings;
 	}

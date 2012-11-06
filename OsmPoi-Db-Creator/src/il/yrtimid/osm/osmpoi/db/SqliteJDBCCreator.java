@@ -14,17 +14,18 @@ import java.sql.*;
  * @author yrtimid
  *
  */
-public class SqliteJDBCCreator implements IDatabase {
+public class SqliteJDBCCreator extends SqliteJDBCDatabase implements IDatabase {
 
 	protected Connection conn;
-	String filePath;
 	
 	/**
 	 * @throws Exception 
 	 * 
 	 */
 	public SqliteJDBCCreator(String filePath) throws Exception {
-		this.filePath = filePath;
+		super(filePath);
+
+		this.conn = getConnection();
 	}
 	
 	/* (non-Javadoc)
@@ -32,9 +33,6 @@ public class SqliteJDBCCreator implements IDatabase {
 	 */
 	@Override
 	public void create() throws Exception {
-		Class.forName("org.sqlite.JDBC");
-		this.conn = DriverManager.getConnection("jdbc:sqlite:"+filePath);
-		
 		createAllTables();
 	}
 	

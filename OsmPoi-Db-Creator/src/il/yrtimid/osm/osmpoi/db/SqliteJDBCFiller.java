@@ -307,43 +307,47 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 
 			Log.d("splitGridCell id:"+id);
 			//calc new cell size to be 1/2 of the old one
-			String sql = "SELECT round((maxLat-minLat)/2,7) from "+Queries.GRID_TABLE+" WHERE id="+id.toString();
-			cur = statement.executeQuery(sql);
+			String getNewCellSizeSql = "SELECT round((maxLat-minLat)/2,7) dLat, round((maxLon-minLon)/2,7) dLon from "+Queries.GRID_TABLE+" WHERE id="+id.toString();
+			cur = statement.executeQuery(getNewCellSizeSql);
 			cur.next();
-			Double newCellSize = cur.getDouble(1);
+			Double newCellSizeLat = cur.getDouble(1);
+			Double newCellSizeLon = cur.getDouble(2);
 			cur.close();
 			statement.close();
 			
+			Log.d("newCellSizeLat="+newCellSizeLat+" newCellSizeLon="+newCellSizeLon);
 			
-			//create new grid cells from all nodes in old cell
-			String sql_generate_grid = "INSERT INTO grid (minLat, minLon, maxLat, maxLon)"
-					+" SELECT minLat, minLon, minLat+? maxLat, minLon+? maxLon FROM ("
-					+" SELECT DISTINCT CAST(lat/? as INT)*? minLat, CAST(lon/? as INT)*? minLon FROM nodes WHERE grid_id=?"
-					+" );";	
-			Log.d(sql_generate_grid);
-			Log.d("newCellSize="+newCellSize);
-			prepStatement = conn.prepareStatement(sql_generate_grid);
-			prepStatement.setDouble(1, newCellSize);
-			prepStatement.setDouble(2, newCellSize);
-			prepStatement.setDouble(3, newCellSize);
-			prepStatement.setDouble(4, newCellSize);
-			prepStatement.setDouble(5, newCellSize);
-			prepStatement.setDouble(6, newCellSize);
-			prepStatement.setInt(7, id);
-
+			String create4NewCellsSql;
+			create4NewCellsSql = "INSERT INTO grid (minLat, minLon, maxLat, maxLon) \n"
+					+" SELECT * FROM (\n"
+					+" SELECT minLat, minLon, minLat+%1$f, minLon+%2$f FROM grid where id = %3$d\n"
+					+" union all\n"
+					+" SELECT minLat+%1$f, minLon, maxLat, minLon+%2$f FROM grid where id = %3$d\n"
+					+" union all\n"
+					+" SELECT minLat, minLon+%2$f, minLat+%1$f, maxLon FROM grid where id = %3$d\n"
+					+" union all\n"
+					+" SELECT minLat+%1$f, minLon+%2$f, maxLat, maxLon FROM grid where id = %3$d\n"
+					+" )\n";
+			
+			create4NewCellsSql = String.format(create4NewCellsSql, newCellSizeLat, newCellSizeLon, id);
+			Log.d(create4NewCellsSql);
+			prepStatement = conn.prepareStatement(create4NewCellsSql);
 			prepStatement.executeUpdate();
 			prepStatement.close();
 			
 			//delete old cell
 			statement = conn.createStatement();
-			statement.executeUpdate("DELETE FROM "+Queries.GRID_TABLE+" WHERE id="+id.toString());
+			String deleteOldCellSql = "DELETE FROM "+Queries.GRID_TABLE+" WHERE id="+id.toString();
+			Log.d(deleteOldCellSql);
+			int deleteResult = statement.executeUpdate(deleteOldCellSql);
+			Log.d("deleted "+deleteResult+" cells");
 			statement.close();
 			
 			//update nodes to use new cells
 			statement = conn.createStatement();
-			String update_nodes = "UPDATE nodes SET grid_id = (SELECT g.id FROM "+Queries.GRID_TABLE+" g WHERE lat>=minLat AND lat<maxLat AND lon>=minLon AND lon<maxLon) WHERE grid_id="+id.toString();
-			Log.d(update_nodes);
-			statement.executeUpdate(update_nodes);
+			String updateNodesSql = "UPDATE nodes SET grid_id = (SELECT g.id FROM "+Queries.GRID_TABLE+" g WHERE lat>=minLat AND lat<=maxLat AND lon>=minLon AND lon<=maxLon limit 1) WHERE grid_id="+id.toString();
+			Log.d(updateNodesSql);
+			statement.executeUpdate(updateNodesSql);
 		}finally{
 			if (cur != null)
 				cur.close();

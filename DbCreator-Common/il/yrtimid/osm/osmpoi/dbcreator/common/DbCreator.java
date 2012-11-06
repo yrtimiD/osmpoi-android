@@ -25,6 +25,7 @@ import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
  */
 public class DbCreator {
 	static final int IMPORT_TO_DB = 1;
+	public static final int BUILD_GRID = 40;
 	
 	INotificationManager notificationManager;
 	IDbCachedFiller poiDbHelper;
@@ -63,7 +64,7 @@ public class DbCreator {
 
 				long startTime = System.currentTimeMillis();
 				final Notification2 notif = new Notification2("Importing file into DB", System.currentTimeMillis());
-				//notif.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+				notif.flags |= Notification2.FLAG_ONGOING_EVENT | Notification2.FLAG_NO_CLEAR;
 
 			
 				notif.setLatestEventInfo("PBF Import", "Clearing DB...");
@@ -108,19 +109,19 @@ public class DbCreator {
 					
 					notif.setLatestEventInfo("PBF Import", "Optimizing grid...");
 					notificationManager.notify(IMPORT_TO_DB, notif);
-					poiDbHelper.optimizeGrid(settings.getGridSize());
+					poiDbHelper.optimizeGrid(settings.getGridCellSize());
 				}
 	
 				long endTime = System.currentTimeMillis();
 				int workTime = Math.round((endTime-startTime)/1000/60);
 
 				Notification2 finalNotif = new Notification2("Importing file into DB", System.currentTimeMillis());
-				//finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+				finalNotif.flags |= Notification2.FLAG_AUTO_CANCEL;
 				finalNotif.setLatestEventInfo("PBF Import", "Import done successfully. ("+workTime+"min.)");
 				notificationManager.notify(IMPORT_TO_DB, finalNotif);
 			}else {
 				Notification2 finalNotif = new Notification2("Importing file into DB", System.currentTimeMillis());
-				//finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;
+				finalNotif.flags |= Notification2.FLAG_AUTO_CANCEL;
 				finalNotif.setLatestEventInfo("PBF Import", "Import failed. File not found.");
 				notificationManager.notify(IMPORT_TO_DB, finalNotif);
 			}
@@ -279,5 +280,33 @@ public class DbCreator {
 		return count;
 	}
 
-	
+	public void rebuildGrid(final ImportSettings settings){
+		try {
+			long startTime = System.currentTimeMillis();
+			
+			final Notification2 notif = new Notification2("Rebuilding grid", System.currentTimeMillis());
+			notif.flags |= Notification2.FLAG_ONGOING_EVENT | Notification2.FLAG_NO_CLEAR;
+			
+			notif.setLatestEventInfo("Rebuilding grid", "Clearing old grid...");
+			notificationManager.notify(BUILD_GRID, notif);
+
+			notif.setLatestEventInfo("Rebuilding grid", "Creating grid...");
+			notificationManager.notify(BUILD_GRID, notif);
+			poiDbHelper.initGrid();
+
+			notif.setLatestEventInfo("Rebuilding grid", "Optimizing grid...");
+			notificationManager.notify(BUILD_GRID, notif);
+			poiDbHelper.optimizeGrid(settings.getGridCellSize());
+
+			long endTime = System.currentTimeMillis();
+			int workTime = Math.round((endTime-startTime)/1000/60);
+			Notification2 finalNotif = new Notification2("Rebuilding grid", System.currentTimeMillis());
+			finalNotif.flags |= Notification2.FLAG_AUTO_CANCEL;
+			finalNotif.setLatestEventInfo("Rebuilding grid", "Done successfully. ("+workTime+"min)");
+			notificationManager.notify(IMPORT_TO_DB, finalNotif);
+
+		} catch (Exception ex) {
+			Log.wtf("Exception while rebuilding grid", ex);
+		}
+	}
 }

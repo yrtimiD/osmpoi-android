@@ -219,7 +219,7 @@ public class FileProcessingService extends Service {
 
 			notif.setLatestEventInfo(context, "Rebuilding grid", "Optimizing grid...", contentIntent);
 			notificationManager.notify(BUILD_GRID, notif);
-			poiDbHelper.optimizeGrid(settings.getGridSize());
+			poiDbHelper.optimizeGrid(settings.getGridCellSize());
 
 			stopForeground(true);
 			

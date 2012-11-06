@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="OsmPoi-Commin"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="DbCreator-Common"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
@@ -8,7 +9,5 @@
 	<classpathentry exported="true" kind="lib" path="/home/yrtimid/Projects/workspace/OsmPoi-Android/libs/osmpbf.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/yrtimid/Projects/workspace/OsmPoi-Android/libs/protobuf-java-2.4.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/yrtimid/Projects/workspace/OsmPoi-Android/libs/OsmPoi-Pbf.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/yrtimid/Projects/workspace/OsmPoi-Android/libs/OsmPoi-Common.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/OsmPoi-Common"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
