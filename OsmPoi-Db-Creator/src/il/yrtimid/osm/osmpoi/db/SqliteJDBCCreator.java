@@ -33,6 +33,7 @@ public class SqliteJDBCCreator extends SqliteJDBCDatabase implements IDatabase {
 	 */
 	@Override
 	public void create() throws Exception {
+		this.conn = getConnection();
 		createAllTables();
 	}
 	
@@ -78,5 +79,6 @@ public class SqliteJDBCCreator extends SqliteJDBCDatabase implements IDatabase {
 	@Override
 	public void drop() {
 		new File(filePath).delete();
+		this.conn = null;
 	}
 }

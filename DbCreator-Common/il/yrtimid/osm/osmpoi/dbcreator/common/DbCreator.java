@@ -42,16 +42,12 @@ public class DbCreator {
 	}
 	
 	/**
+	 * @throws Exception 
 	 * 
 	 */
-	public void createEmptyDatabases() {
-		try {
-			poiDbHelper.create();
-			addressDbHelper.create();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+	public void createEmptyDatabases() throws Exception {
+		poiDbHelper.create();
+		addressDbHelper.create();
 	}
 
 	public void importToDB(String sourceFilePath, ImportSettings settings) {
