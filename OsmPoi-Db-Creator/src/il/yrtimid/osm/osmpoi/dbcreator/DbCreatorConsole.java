@@ -35,10 +35,10 @@ public class DbCreatorConsole {
 	public static void main(String[] args) {
 		createSettings();
 
-		//////////////DEBUG /////////////////////
+		//////////////DEBUG/////////////////////
 //		args = new String[2]; 
 //		args[0] = "--create";
-//		args[1] = "/home/yrtimid/Projects/workspace/israel_and_palestine.osm.pbf";
+//		args[1] = "israel_and_palestine.osm.pbf";
 
 		if (args.length == 2) {
 			if (ARGUMENT_CREATE.equals(args[0])) {

@@ -44,6 +44,13 @@ public class Point {
 		this.longitude = longitude;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("Lat:%f Lon:%f", latitude, longitude);
+	}
 
 	public int getDistance(double latitude, double longitude) {
 		return Util.getDistance(this.latitude, this.longitude, latitude, longitude);

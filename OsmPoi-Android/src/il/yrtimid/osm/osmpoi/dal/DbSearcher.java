@@ -92,10 +92,10 @@ public class DbSearcher extends DbCreator {
 			cur = db.rawQuery("select * from grid where id=?", new String[] { Integer.toString(cellId) });
 			if (cur.moveToFirst()) {
 				double minLat, minLon, maxLat, maxLon;
-				minLat = cur.getInt(cur.getColumnIndex("minLat"));
-				minLon = cur.getInt(cur.getColumnIndex("minLon"));
-				maxLat = cur.getInt(cur.getColumnIndex("maxLat"));
-				maxLon = cur.getInt(cur.getColumnIndex("maxLon"));
+				minLat = cur.getDouble(cur.getColumnIndex("minLat"));
+				minLon = cur.getDouble(cur.getColumnIndex("minLon"));
+				maxLat = cur.getDouble(cur.getColumnIndex("maxLat"));
+				maxLon = cur.getDouble(cur.getColumnIndex("maxLon"));
 
 				int d1 = from.getDistance(minLat, minLon);
 				int d2 = from.getDistance(minLat, maxLon);
@@ -104,7 +104,7 @@ public class DbSearcher extends DbCreator {
 
 				distance = Math.max(d1, Math.max(d2, Math.max(d3, d4)));
 			}
-
+			Log.d("Distance from "+from.toString()+" to cell "+cellId+" is "+distance);
 			return distance;
 		} catch (Exception e) {
 			Log.wtf("getDistanceToCell", e);
