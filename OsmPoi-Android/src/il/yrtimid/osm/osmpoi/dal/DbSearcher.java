@@ -54,7 +54,7 @@ public class DbSearcher extends DbCreator {
 	 * @param count
 	 *            how much cells to return
 	 * */
-	private Integer[] getGrid(Point p, int count) {
+	private List<Integer> getGrid(Point p, int count) {
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cur = null;
 		try {
@@ -67,7 +67,7 @@ public class DbSearcher extends DbCreator {
 				} while (cur.moveToNext());
 			}
 
-			return ids.toArray(new Integer[ids.size()]);
+			return ids;
 		} catch (Exception e) {
 			Log.wtf("getGrid", e);
 			return null;
@@ -175,23 +175,29 @@ public class DbSearcher extends DbCreator {
 
 		int gridSize = 2;
 		boolean lastRun = false;
+		List<Integer> lastGrid = new ArrayList<Integer>();
 		try {
 			Cursor cur = null;
 			do {
-				Integer[] gridIds = getGrid(point, gridSize * gridSize);
-				Log.d("Grid size: " + gridIds.length);
-				int radius = getDistanceToCell(point, gridIds[gridIds.length - 1]);
+				List<Integer> grid = getGrid(point, gridSize * gridSize);
+				Log.d("Grid size: " + grid.size());
+				int radius = getDistanceToCell(point, grid.get(grid.size() - 1));
 				newItemNotifier.pushRadius(radius);
 
 				if (gridSize > 2) { // not first run, the whole grid may have
 									// only one cell
-					if (gridSize * gridSize > gridIds.length) {
-						if (gridIds.length > ((gridSize - 1) * (gridSize - 1)))// new grid bigger than previous
+					if (gridSize * gridSize > grid.size()) {
+						if (grid.size() > ((gridSize - 1) * (gridSize - 1)))// new grid bigger than previous
 							lastRun = true;
 						else
 							return true;
 					}
 				}
+				
+				grid.removeAll(lastGrid);
+				lastGrid.addAll(grid);
+				Integer[] gridIds = grid.toArray(new Integer[grid.size()]);
+				
 				int nodesCount = 0;
 				int waysCount = 0;
 				int relationsCount = 0;
