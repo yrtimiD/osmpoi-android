@@ -109,7 +109,7 @@ public class ImportSettings {
  		
  		settings.setImportAddresses(false);
  		
- 		settings.setGridCellSize(1000000);
+ 		settings.setGridCellSize(50000);
  		
 		return settings;
 	}
