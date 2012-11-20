@@ -403,11 +403,12 @@ public class FileProcessingService extends Service {
 		byte[] buffer = new byte[1024];
 		int downloadedSize = 0;
 		int totalSize = 0;
+		File outputPath = null;
 		try{
 			URL u = new URL(path);
 
 			String outputFileName = URLUtil.guessFileName(path, null, null);
-			File outputPath = new File(homeFolder,outputFileName);
+			outputPath = new File(homeFolder,outputFileName);
 			OutputStream output = new BufferedOutputStream(new FileOutputStream(outputPath), buffer.length);
 			
 			URLConnection conn = u.openConnection();
@@ -441,7 +442,9 @@ public class FileProcessingService extends Service {
         
 		}catch(Exception e){
 			Log.wtf("downloadFile", e);
-			
+			if (outputPath.exists()){
+				outputPath.delete();
+			}
 			stopForeground(true);
 			Notification finalNotif = new Notification(R.drawable.ic_launcher, "Downloading file", System.currentTimeMillis());
 			finalNotif.flags |= Notification.FLAG_AUTO_CANCEL;

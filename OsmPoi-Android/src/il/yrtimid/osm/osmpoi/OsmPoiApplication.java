@@ -83,6 +83,18 @@ public class OsmPoiApplication extends Application {
 			editor.commit();
 		}
 		
+		public static void resetIncludeExclude(Context context){
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			Editor editor = prefs.edit();
+			editor.remove(Preferences.NODES_INCLUDE);
+			editor.remove(Preferences.NODES_EXCLUDE);
+			editor.remove(Preferences.WAYS_INCLUDE);
+			editor.remove(Preferences.WAYS_EXCLUDE);
+			editor.remove(Preferences.RELATIONS_INCLUDE);
+			editor.remove(Preferences.RELATIONS_EXCLUDE);
+			editor.commit();
+		}
+		
 		public static void reloadConfig(Context context) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 

@@ -37,6 +37,13 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 	private static final String PREFERENCE_BUILD_GRID = "debug_rebuild_grid";
 	private static final String PREFERENCE_DOWNLOAD = "preference_download";
 	private static final String PREFERENCE_DEBUG_RESET = "preference_debug_reset";
+	private static final String PREFERENCE_INCLUDE_EXCLUDE_RESET = "include_exclude_reset";
+	public static final String NODES_INCLUDE = "nodes_include";
+	public static final String NODES_EXCLUDE = "nodes_exclude";
+	public static final String WAYS_INCLUDE = "ways_include";
+	public static final String WAYS_EXCLUDE = "ways_exclude";
+	public static final String RELATIONS_INCLUDE = "relations_include";
+	public static final String RELATIONS_EXCLUDE = "relations_exclude";
 	
 	private static final int INTERNAL_PICK_FILE_REQUEST_FOR_IMPORT = 1;
 	SharedPreferences prefs;
@@ -56,6 +63,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_DEBUG_RESET).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);
+		findPreference(PREFERENCE_INCLUDE_EXCLUDE_RESET).setOnPreferenceClickListener(this);
 	}
 
 	/*
@@ -110,6 +118,10 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 			startActivity(intent);
 		} else if (PREFERENCE_DEBUG_RESET.equals(key)){
 			OsmPoiApplication.Config.reset(this);
+			OsmPoiApplication.Config.reloadConfig(this);
+			this.finish();
+		} else if (PREFERENCE_INCLUDE_EXCLUDE_RESET.equals(key)){
+			OsmPoiApplication.Config.resetIncludeExclude(this);
 			OsmPoiApplication.Config.reloadConfig(this);
 			this.finish();
 		}
@@ -277,45 +289,34 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 		settings.setBuildGrid(prefs.getBoolean("debug_import_build_grid", true));
 		settings.setClearBeforeImport(prefs.getBoolean("debug_import_cleardb", true));
 		
-		settings.setKey(EntityType.Node, "name*", true);
-		if (prefs.getBoolean("include_node_other", true) == true){
-			settings.setKey(EntityType.Node, "*", true);
-		}else {
-			settings.resetKey(EntityType.Node, "*");
-		}
-		
-		settings.setKey(EntityType.Way, "name*", true);
-		settings.setKey(EntityType.Way, "highway",prefs.getBoolean("include_way_highway", false));
-		if (prefs.getBoolean("include_way_other", false) == true){
-			settings.setKey(EntityType.Way, "*", true);
-		}else {
-			settings.resetKey(EntityType.Way, "*");
-		}
-		
-		
-		//settings.setKey(EntityType.Relation, "name*", true);
-		settings.setKey(EntityType.Relation, "landuse",prefs.getBoolean("include_relation_landuse", false)); 
-		settings.setKey(EntityType.Relation, "natural",prefs.getBoolean("include_relation_natural", false)); 
-		settings.setKey(EntityType.Relation, "leisure",prefs.getBoolean("include_relation_leisure", false)); 
-		settings.setKey(EntityType.Relation, "boundary",prefs.getBoolean("include_relation_boundary", false)); 
-		settings.setKey(EntityType.Relation, "area",prefs.getBoolean("include_relation_area", false)); 
-		settings.setKey(EntityType.Relation, "waterway",prefs.getBoolean("include_relation_waterway", false)); 
-		settings.setKeyValue(EntityType.Relation, "type", "restriction", prefs.getBoolean("include_relation_restriction", false));
-		settings.setKeyValue(EntityType.Relation, "type", "enforcement", prefs.getBoolean("include_relation_enforcement", false));
-		settings.setKeyValue(EntityType.Relation, "type", "network", prefs.getBoolean("include_relation_network", true));
-		settings.setKeyValue(EntityType.Relation, "type", "operator", prefs.getBoolean("include_relation_operator", true));
-		if (prefs.getBoolean("include_relation_other", false) == true){
-			settings.setKey(EntityType.Relation, "*", true);
-		}else{
-			settings.resetKey(EntityType.Relation, "*");
-		}
-		
+		updateSettings(settings,EntityType.Node, prefs.getString(NODES_INCLUDE, ""), true);
+		updateSettings(settings,EntityType.Node, prefs.getString(NODES_EXCLUDE, ""), false);
+
+		updateSettings(settings,EntityType.Way, prefs.getString(WAYS_INCLUDE, ""), true);
+		updateSettings(settings,EntityType.Way, prefs.getString(WAYS_EXCLUDE, ""), false);
+
+		updateSettings(settings,EntityType.Relation, prefs.getString(RELATIONS_INCLUDE, ""), true);
+		updateSettings(settings,EntityType.Relation, prefs.getString(RELATIONS_EXCLUDE, ""), false);
+
  		settings.setImportAddresses(prefs.getBoolean("import_addresses", false));
  		
  		settings.setGridCellSize(Integer.parseInt(prefs.getString("grid_size", "1000")));
  		
 		return settings;
 	}
+
+	private static void updateSettings(ImportSettings settings, EntityType type, String value, boolean isInclude) {
+		String[] lines = value.split("\n");
+		for(String l : lines){
+			String[] t = l.split("=");
+			if (t.length == 2){
+				settings.setKeyValue(type, t[0], t[1], isInclude);
+			}
+		}
+		
+	}
+	
+	
 	
 	/*private void checkFileSize(String url){
 		try {

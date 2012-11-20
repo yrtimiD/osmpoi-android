@@ -30,72 +30,17 @@
             <PreferenceScreen
                 android:summary="@string/import_settings_summary"
                 android:title="@string/import_settings" >
-                <PreferenceScreen android:title="Import nodes" >
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="include_node_other"
-                        android:title="All other" />
-                </PreferenceScreen>
-                <PreferenceScreen android:title="Import ways" >
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:enabled="false"
-                        android:key="include_way_highway"
-                        android:persistent="true"
-                        android:summary="Will be imported if &quot;Import addresses&quot; checked"
-                        android:title="Roads" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_way_other"
-                        android:persistent="false"
-                        android:title="All other" />
-                </PreferenceScreen>
-                <PreferenceScreen android:title="Import relations" >
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_landuse"
-                        android:title="Landuses" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_natural"
-                        android:title="Naturals" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_leisure"
-                        android:title="Leisures" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_boundary"
-                        android:title="Boundaries" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_area"
-                        android:title="Areas" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_waterway"
-                        android:title="Waterways" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_restriction"
-                        android:title="restrictions" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_enforcement"
-                        android:title="enforcement" />
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="include_relation_network"
-                        android:title="networks" />
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="include_relation_operator"
-                        android:title="operators" />
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="include_relation_other"
-                        android:title="All other" />
-                </PreferenceScreen>
+
+                <EditTextPreference android:key="nodes_include" android:title="Nodes include"
+                    android:defaultValue="highway=bus_stop\nname*=*" />
+                <EditTextPreference android:key="nodes_exclude" android:title="Nodes exclude"/>
+                <EditTextPreference android:key="ways_include" android:title="Ways include"
+                    android:defaultValue="name*=*\nbuilding=*" />
+                <EditTextPreference android:key="ways_exclude" android:title="Ways exclude"
+                    android:defaultValue="highway=*" />
+                <EditTextPreference android:key="relations_include" android:title="Relations include"
+                    android:defaultValue="type=health\ntype=network" />
+                <EditTextPreference android:key="relations_exclude" android:title="Relations exclude"/>
 
                 <CheckBoxPreference
                     android:defaultValue="false"
@@ -116,6 +61,7 @@
                         android:summary="debug option"
                         android:title="Clear DB before import (debug)" />
                 </PreferenceCategory>
+                <Preference android:key="include_exclude_reset" android:title="Reset"/>
             </PreferenceScreen>
 
             <CheckBoxPreference
