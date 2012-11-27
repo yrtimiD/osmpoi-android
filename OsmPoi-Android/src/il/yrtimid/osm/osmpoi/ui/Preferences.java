@@ -57,7 +57,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 
 		findPreference(PREFERENCE_IMPORT_PBF).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_CLEAR_DB).setOnPreferenceClickListener(this);
-		findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
+		//findPreference(SEARCH_SOURCE).setOnPreferenceChangeListener(this);
 		findPreference(IS_DB_ON_SDCARD).setOnPreferenceChangeListener(this);
 		findPreference(PREFERENCE_BUILD_GRID).setOnPreferenceClickListener(this);
 		findPreference(PREFERENCE_DOWNLOAD).setOnPreferenceClickListener(this);

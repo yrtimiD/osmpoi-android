@@ -31,6 +31,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Actual search running and results view activity 
+ * @author yrtimid
+ *
+ */
 public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OrientationChangeListener, OnClickListener {
 	//public static final String SEARCH_TYPE = "SEARCH_TYPE";
 	public static final String SEARCH_PARAMETER = "SEARCH_PARAMETER";

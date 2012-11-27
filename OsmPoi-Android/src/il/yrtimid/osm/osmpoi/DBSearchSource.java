@@ -63,27 +63,11 @@ public class DBSearchSource implements ISearchSource {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * il.yrtimid.osm.osmpoi.SearchSource#getByKeyValue(il.yrtimid.osm.osmpoi
-	 * .nodematchers.EntityMatcher, il.yrtimid.osm.osmpoi.NewItemNotifier)
-	 */
-	@Override
-	public void getByDistanceAndKeyValue(SearchByKeyValue search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	protected void getByDistanceAndKeyValue(SearchByKeyValue search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findAroundPlaceByTag(search, newItemNotifier, cancel);		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * il.yrtimid.osm.osmpoi.SearchSource#getByDistance(il.yrtimid.osm.osmpoi
-	 * .CircleArea, int, il.yrtimid.osm.osmpoi.NewItemNotifier)
-	 */
-	@Override
-	public void getByDistance(SearchAround search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	protected void getByDistance(SearchAround search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findAroundPlace(search, newItemNotifier, cancel);
 	}
 
@@ -99,19 +83,11 @@ public class DBSearchSource implements ISearchSource {
 		return "Offline search";
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.ISearchSource#getById(il.yrtimid.osm.osmpoi.searchparameters.SearchById, il.yrtimid.osm.osmpoi.SearchPipe, il.yrtimid.osm.osmpoi.CancelFlag)
-	 */
-	@Override
-	public void getById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	protected void getById(SearchById search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findById(search, newItemNotifier, cancel);
 	}
 
-	/* (non-Javadoc)
-	 * @see il.yrtimid.osm.osmpoi.ISearchSource#getByParentId(il.yrtimid.osm.osmpoi.searchparameters.SearchById, il.yrtimid.osm.osmpoi.SearchPipe, il.yrtimid.osm.osmpoi.CancelFlag)
-	 */
-	@Override
-	public void getByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
+	protected void getByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel) {
 		poiDb.findByParentId(search, newItemNotifier, cancel);
 	}
 

@@ -9,6 +9,7 @@
     <string-array name="search_sources_values">
         <item>NONE</item>
         <item>DB</item>
+        <item>ONLINE</item>
     </string-array>
     <string-array name="languages">
         <item>Default</item>

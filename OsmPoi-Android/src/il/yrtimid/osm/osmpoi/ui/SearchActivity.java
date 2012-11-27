@@ -33,11 +33,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * Main view with category list and other search options (starred items, custom search)
+ * @author yrtimid
+ *
+ */
 public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener {
 
 	private static final String EXTRA_CATEGORY = "CATEGORY";
 	
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

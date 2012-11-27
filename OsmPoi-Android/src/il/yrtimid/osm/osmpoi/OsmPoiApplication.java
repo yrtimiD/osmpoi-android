@@ -171,6 +171,9 @@ public class OsmPoiApplication extends Application {
 				case DB:
 					OsmPoiApplication.searchSource = DBSearchSource.create(context);
 					break;
+				case ONLINE:
+					OsmPoiApplication.searchSource = OverpassAPISearchSource.create(context);
+					break;
 				default:
 					OsmPoiApplication.searchSource = null;
 					break;

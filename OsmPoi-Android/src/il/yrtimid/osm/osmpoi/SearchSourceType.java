@@ -9,5 +9,6 @@ package il.yrtimid.osm.osmpoi;
  */
 public enum SearchSourceType {
 		NONE,
-		DB
+		DB,
+		ONLINE
 }

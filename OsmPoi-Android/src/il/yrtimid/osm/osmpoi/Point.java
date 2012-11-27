@@ -52,10 +52,21 @@ public class Point {
 		return String.format("Lat:%f Lon:%f", latitude, longitude);
 	}
 
+	/**
+	 * Calculates distance between current point and specified point in meters
+	 * @param latitude
+	 * @param longitude
+	 * @return
+	 */
 	public int getDistance(double latitude, double longitude) {
 		return Util.getDistance(this.latitude, this.longitude, latitude, longitude);
 	}
 
+	/**
+	 * Calculates distance between current point and specified point in meters
+	 * @param anotherPoint
+	 * @return
+	 */
 	public int getDistance(Point anotherPoint) {
 		return Util.getDistance(this.latitude, this.longitude, anotherPoint.latitude, anotherPoint.longitude);
 	}
