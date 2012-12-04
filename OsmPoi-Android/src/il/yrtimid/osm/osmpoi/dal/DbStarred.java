@@ -12,10 +12,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.domain.Entity;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 
 /**

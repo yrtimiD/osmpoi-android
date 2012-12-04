@@ -3,7 +3,6 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.Pair;
 import il.yrtimid.osm.osmpoi.domain.Bound;
 import il.yrtimid.osm.osmpoi.domain.Entity;
@@ -12,6 +11,7 @@ import il.yrtimid.osm.osmpoi.domain.Relation;
 import il.yrtimid.osm.osmpoi.domain.RelationMember;
 import il.yrtimid.osm.osmpoi.domain.Tag;
 import il.yrtimid.osm.osmpoi.domain.Way;
+import il.yrtimid.osm.osmpoi.logging.Log;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -197,7 +197,7 @@ public class DbFiller extends DbCreator implements IDbFiller {
 	public void addWayNodes(Way way) throws SQLException {
 		try {
 			SQLiteDatabase db = getWritableDatabase();
-			for(Node node : way.getWayNodes()){
+			for(Node node : way.getNodes()){
 				ContentValues values = new ContentValues();
 				values.put("way_id", way.getId());
 				values.put("node_id", node.getId());

@@ -177,7 +177,7 @@ public class SqliteJDBCFiller extends SqliteJDBCCreator implements IDbFiller {
 			statement = conn.prepareStatement("INSERT OR IGNORE INTO "+Queries.WAY_NODES_TABLE+" (way_id, node_id) VALUES(?,?)");
 
 			statement.setLong(1, way.getId());
-			for(Node node : way.getWayNodes()){
+			for(Node node : way.getNodes()){
 				statement.setLong(2, node.getId());
 				
 				statement.executeUpdate();

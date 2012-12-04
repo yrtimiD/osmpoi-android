@@ -3,6 +3,8 @@
  */
 package il.yrtimid.osm.osmpoi;
 
+import il.yrtimid.osm.osmpoi.logging.Log;
+
 import java.util.Date;
 
 import android.content.Context;

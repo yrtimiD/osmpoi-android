@@ -3,7 +3,10 @@
  */
 package il.yrtimid.osm.osmpoi.pbf;
 
+import org.openstreetmap.osmosis.core.task.v0_6.SinkSource;
+
 import il.yrtimid.osm.osmpoi.domain.Entity;
+import il.yrtimid.osm.osmpoi.osmosis.core.task.v0_6.Sink;
 
 /**
  * @author yrtimid

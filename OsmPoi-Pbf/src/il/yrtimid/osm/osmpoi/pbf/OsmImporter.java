@@ -2,6 +2,8 @@ package il.yrtimid.osm.osmpoi.pbf;
 
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.osmosis.core.task.v0_6.NullSink;
+
 import java.io.InputStream;
 import crosby.binary.file.BlockInputStream;
 import crosby.binary.osmosis.OsmosisBinaryParser;

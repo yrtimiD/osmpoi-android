@@ -27,5 +27,7 @@ public enum EntityType {
 	/**
 	 * Represents a relationship between multiple entities.
 	 */
-	Relation
+	Relation,
+	
+	NodeRef
 }

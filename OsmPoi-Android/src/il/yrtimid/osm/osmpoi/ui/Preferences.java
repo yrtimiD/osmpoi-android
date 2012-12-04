@@ -1,10 +1,10 @@
 package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.ImportSettings;
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.EntityType;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 
 import java.io.File;

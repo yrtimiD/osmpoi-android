@@ -38,7 +38,7 @@ public class AssociatedMatcher extends TagMatcher {
 			break;
 		case Way:
 			if (this.entityType.equals(EntityType.Node)){
-				for(Node n : ((Way)entity).getWayNodes()){
+				for(Node n : ((Way)entity).getNodes()){
 					if (n.getId() == id) return true;
 				}
 			}

@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.services.FileProcessingService;
 import il.yrtimid.osm.osmpoi.ui.DownloadItem.ItemType;
 import android.app.ListActivity;

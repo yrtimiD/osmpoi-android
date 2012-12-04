@@ -5,7 +5,6 @@ package il.yrtimid.osm.osmpoi.dal;
 
 import il.yrtimid.osm.osmpoi.CancelFlag;
 import il.yrtimid.osm.osmpoi.CollectionPipe;
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.Util;
@@ -17,6 +16,7 @@ import il.yrtimid.osm.osmpoi.domain.Relation;
 import il.yrtimid.osm.osmpoi.domain.RelationMember;
 import il.yrtimid.osm.osmpoi.domain.Tag;
 import il.yrtimid.osm.osmpoi.domain.Way;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
@@ -506,6 +506,8 @@ public class DbSearcher extends DbCreator {
 				}
 			};
 			return getMembersByRelationId(search, pipe, cancel);
+		default:
+			break;
 		}
 
 		return false;
@@ -656,6 +658,8 @@ public class DbSearcher extends DbCreator {
 			case Relation:
 				sql = "select k,v from " + Queries.RELATION_TAGS_TABLE + " where relation_id = ?";
 				break;
+			default:
+				break;
 			}
 			
 			cur = db.rawQuery(sql, new String[] { Long.toString(entity.getId()) });
@@ -728,7 +732,7 @@ public class DbSearcher extends DbCreator {
 			{
 				CollectionPipe<Entity> pipe = new CollectionPipe<Entity>();
 				getNodesByWayId(search, pipe, cancel);
-				List<Node> list = ((Way)entity).getWayNodes();
+				List<Node> list = ((Way)entity).getNodes();
 				for(Entity e: pipe.getItems()){
 					list.add((Node)e);
 				}

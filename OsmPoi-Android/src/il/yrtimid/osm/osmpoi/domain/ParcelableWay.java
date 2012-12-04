@@ -32,7 +32,7 @@ public class ParcelableWay extends ParcelableEntity implements Parcelable {
 		super.readFromParcel(way, source);
 		List<ParcelableNode> pWayNodes = new ArrayList<ParcelableNode>();
 		source.readTypedList(pWayNodes, ParcelableNode.CREATOR);
-		List<Node> wayNodes = way.getWayNodes();
+		List<Node> wayNodes = way.getNodes();
 		for(ParcelableNode pn : pWayNodes){
 			wayNodes.add(pn.getNode());
 		}
@@ -72,7 +72,7 @@ public class ParcelableWay extends ParcelableEntity implements Parcelable {
 		super.writeToParcel(dest, flags);
 		
 		List<ParcelableNode> pWayNodes = new ArrayList<ParcelableNode>();
-		List<Node> wayNodes = way.getWayNodes();
+		List<Node> wayNodes = way.getNodes();
 		for(Node n : wayNodes){
 			pWayNodes.add(new ParcelableNode(n));
 		}

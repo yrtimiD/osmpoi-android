@@ -14,16 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>DbCreator-Common</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/OsmPoi-Android/DbCreator-Common</locationURI>
-		</link>
-		<link>
-			<name>OsmPoi-Common</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/OsmPoi-Android/OsmPoi-Common/src</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

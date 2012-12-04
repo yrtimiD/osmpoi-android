@@ -78,6 +78,8 @@ public class ParcelableRelationMember implements Parcelable {
 		case Relation:
 			dest.writeParcelable(new ParcelableRelation((Relation)member.getMember()), flags);
 			break;
+		default:
+			break;
 		}
 
 	}

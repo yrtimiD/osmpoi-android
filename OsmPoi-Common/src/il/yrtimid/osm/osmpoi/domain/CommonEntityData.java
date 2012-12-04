@@ -19,6 +19,10 @@ public class CommonEntityData {
 	protected TagCollection tags;
 
 	protected CommonEntityData(){}
+
+	public CommonEntityData(long id) {
+		this(id, 0, new ArrayList<Tag>());
+	}
 	
 	public CommonEntityData(long id, Date date) {
 		this(id, date.getTime(), new ArrayList<Tag>());

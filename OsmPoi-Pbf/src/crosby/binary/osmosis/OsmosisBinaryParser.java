@@ -2,7 +2,7 @@
 package crosby.binary.osmosis;
 
 import il.yrtimid.osm.osmpoi.domain.*;
-import il.yrtimid.osm.osmpoi.pbf.Sink;
+import il.yrtimid.osm.osmpoi.osmosis.core.task.v0_6.Sink;
 
 import java.util.ArrayList;
 import java.util.Date;

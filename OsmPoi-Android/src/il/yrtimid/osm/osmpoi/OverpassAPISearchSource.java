@@ -1,5 +1,6 @@
 package il.yrtimid.osm.osmpoi;
 
+import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
@@ -45,7 +46,13 @@ public class OverpassAPISearchSource implements ISearchSource {
 			int radiusInMeters = c.getDistance(c.latitude+radius, c.longitude+radius);
 			newItemNotifier.pushRadius(radiusInMeters);
 			
-			List<Entity> result = OsmOverpassAPI.Search(c.latitude, c.longitude, radius, (KeyValueMatcher)search.getMatcher());
+			List<Entity> result;
+			try {
+				result = OsmOverpassAPI.Search(c.latitude, c.longitude, radius, (KeyValueMatcher)search.getMatcher());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				break;
+			}
 			for(Entity e : result){
 				newItemNotifier.pushItem(e);
 			}

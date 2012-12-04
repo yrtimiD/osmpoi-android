@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class Way extends Entity implements Comparable<Way> {
 	
-	private List<Node> wayNodes;
+	private List<Node> nodes;
+	private List<WayNode> wayNodes;
 	
 	protected Way() {
 		this(new CommonEntityData());
@@ -29,11 +30,12 @@ public class Way extends Entity implements Comparable<Way> {
 	public Way(CommonEntityData entityData) {
 		super(entityData);
 		
-		this.wayNodes = new ArrayList<Node>();
+		this.nodes = new ArrayList<Node>();
+		this.wayNodes = new ArrayList<WayNode>();
 	}
 	
 	public Way(long wayId){
-		this(new CommonEntityData(wayId, -1));
+		this(new CommonEntityData(wayId));
 	}
 	
 	/**
@@ -44,10 +46,11 @@ public class Way extends Entity implements Comparable<Way> {
 	 * @param wayNodes
 	 *            The way nodes to apply to the object
 	 */
-	public Way(CommonEntityData entityData, List<Node> wayNodes) {
+	public Way(CommonEntityData entityData, List<Node> nodes) {
 		super(entityData);
 		
-		this.wayNodes = new ArrayList<Node>(wayNodes);
+		this.nodes = new ArrayList<Node>(nodes);
+		this.wayNodes = new ArrayList<WayNode>();
 	}
 	
 
@@ -96,12 +99,12 @@ public class Way extends Entity implements Comparable<Way> {
 		Iterator<Node> j;
 		
 		// The list with the most entities is considered bigger.
-		if (wayNodes.size() != comparisonWayNodes.size()) {
-			return wayNodes.size() - comparisonWayNodes.size();
+		if (nodes.size() != comparisonWayNodes.size()) {
+			return nodes.size() - comparisonWayNodes.size();
 		}
 		
 		// Check the individual way nodes.
-		i = wayNodes.iterator();
+		i = nodes.iterator();
 		j = comparisonWayNodes.iterator();
 		while (i.hasNext()) {
 			int result = i.next().compareTo(j.next());
@@ -145,7 +148,7 @@ public class Way extends Entity implements Comparable<Way> {
 		}
 		
 		wayNodeListResult = compareNodes(
-			comparisonWay.getWayNodes()
+			comparisonWay.getNodes()
 		);
 		
 		if (wayNodeListResult != 0) {
@@ -155,17 +158,21 @@ public class Way extends Entity implements Comparable<Way> {
 		return compareTags(comparisonWay.getTags());
 	}
 	
-	public List<Node> getWayNodes() {
-		return wayNodes;
+	public List<Node> getNodes() {
+		return nodes;
 	}
 
+	public List<WayNode> getWayNodes() {
+		return wayNodes;
+	}
+	
     /**
      * Is this way closed? (A way is closed if the first node id equals the last node id.)
      *
      * @return True or false
      */
     public boolean isClosed() {
-        return wayNodes.get(0).getId() == wayNodes.get(wayNodes.size() - 1).getId();
+        return nodes.get(0).getId() == nodes.get(nodes.size() - 1).getId();
     }
 
     /** 

@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import il.yrtimid.osm.osmpoi.Log;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import android.content.ContentValues;
 import android.content.Context;

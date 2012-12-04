@@ -4,7 +4,6 @@
 package il.yrtimid.osm.osmpoi.services;
 
 import il.yrtimid.osm.osmpoi.ImportSettings;
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
@@ -13,6 +12,7 @@ import il.yrtimid.osm.osmpoi.dbcreator.common.DbCreator;
 import il.yrtimid.osm.osmpoi.dbcreator.common.INotificationManager;
 import il.yrtimid.osm.osmpoi.dbcreator.common.Notification2;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.pbf.OsmImporter;
 import il.yrtimid.osm.osmpoi.pbf.ProgressNotifier;
 import il.yrtimid.osm.osmpoi.ui.SearchActivity;
@@ -22,7 +22,6 @@ import il.yrtimid.osm.osmpoi.ui.Util;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;

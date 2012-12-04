@@ -1,12 +1,12 @@
 package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.CancelFlag;
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.ResultItem;
 import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
 import android.content.Context;
 import android.os.AsyncTask;

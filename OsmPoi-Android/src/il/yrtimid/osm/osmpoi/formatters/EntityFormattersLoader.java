@@ -3,7 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi.formatters;
 
-import il.yrtimid.osm.osmpoi.Log;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 
 import java.io.IOException;

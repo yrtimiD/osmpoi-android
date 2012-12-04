@@ -1,15 +1,19 @@
 package il.yrtimid.osm.osmpoi.dal;
 
 
+import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.CommonEntityData;
 import il.yrtimid.osm.osmpoi.domain.TagCollection;
 import il.yrtimid.osm.osmpoi.tagmatchers.KeyValueMatcher;
+import il.yrtimid.osm.osmpoi.xml.FastXmlParser;
+import il.yrtimid.osm.osmpoi.xml.XmlReader;
 
 import java.io.*;
 import java.net.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.*;
 
@@ -22,6 +26,9 @@ public class OsmOverpassAPI {
 	private static final String BBOX = "(%f,%f,%f,%f)";//lower latitude, lower longitude, upper latitude, upper longitude
 	private static final String KV_QUERY = "'%s'='%s'";
 	private static final String NODES_AND_WAYS_BY_KV = "node[%s]%s->.n;way[%s]%s->.w;(.n;.w;.w>;);out body;";//query,bbox,query,bbox
+
+	
+	private static final Logger LOG = Logger.getLogger(OsmOverpassAPI.class.getName());
 	
 	/**
 	 * 
@@ -78,6 +85,8 @@ public class OsmOverpassAPI {
 				}
 				
 				osmEntities.add(node);
+			}else if (item.getNodeName().equals("way")) {
+//TODO:
 			}
 
 		}
@@ -96,7 +105,7 @@ public class OsmOverpassAPI {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	private static Document getDataViaOverpass(String query) throws IOException, ParserConfigurationException, SAXException {
+	private static InputStream getDataViaOverpass(String query) throws IOException, ParserConfigurationException, SAXException {
 		String hostname = OVERPASS_API;
 
 		URL osm = new URL(hostname);
@@ -111,9 +120,10 @@ public class OsmOverpassAPI {
 		printout.flush();
 		printout.close();
 
-		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-		return docBuilder.parse(connection.getInputStream());
+		//DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+		//DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+		//return docBuilder.parse(connection.getInputStream());
+		return connection.getInputStream();
 	}
 	
 	/**
@@ -123,17 +133,32 @@ public class OsmOverpassAPI {
 	 * @param radius
 	 * @param kvQuery only k=v supported
 	 * @return
+	 * @throws IOException 
 	 */
-	public static List<il.yrtimid.osm.osmpoi.domain.Entity> Search(Double lat, Double lon, Double radius, KeyValueMatcher matcher){
+	public static List<il.yrtimid.osm.osmpoi.domain.Entity> Search(Double lat, Double lon, Double radius, KeyValueMatcher matcher) throws IOException{
 		List<il.yrtimid.osm.osmpoi.domain.Entity> result = new ArrayList<il.yrtimid.osm.osmpoi.domain.Entity>();
+		InputStream inputStream = null;
 		try {
-		String query = getQueryForKV(lat, lon, radius, matcher.getKey(), matcher.getValue());
-		Document doc;
+			String query = getQueryForKV(lat, lon, radius, matcher.getKey(), matcher.getValue());
+			//Document doc;
 		
-			doc = getDataViaOverpass(query);
-			result = getEntities(doc);
+			inputStream = getDataViaOverpass(query);
+			String xml = Util.readText(inputStream, "UTF-8");
+			//result = getEntities(doc);
+			//result = XmlReader.parseEntitiesFromXMLStream(inputStream);
+			LOG.finest(xml);
+			result = XmlReader.parseEntitiesFromXML(xml);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new IOException("Can't get data from Overpass");
+		}
+		finally{
+			if (inputStream != null)
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
 		return result;
 	}

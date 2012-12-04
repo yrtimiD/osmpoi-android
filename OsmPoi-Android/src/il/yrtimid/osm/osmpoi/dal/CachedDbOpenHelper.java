@@ -3,9 +3,9 @@
  */
 package il.yrtimid.osm.osmpoi.dal;
 
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.logging.Log;
 
 import java.io.File;
 import java.sql.SQLException;

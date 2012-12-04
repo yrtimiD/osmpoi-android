@@ -2,6 +2,7 @@ package il.yrtimid.osm.osmpoi.pbf;
 
 import il.yrtimid.osm.osmpoi.ItemPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.osmosis.core.task.v0_6.Sink;
 
 
 public class EntityHandler implements Sink {

@@ -1,5 +1,8 @@
 package il.yrtimid.osm.osmpoi;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import il.yrtimid.osm.osmpoi.CircleArea;
@@ -201,7 +204,7 @@ public class Util {
 			node = (Node) entity;
 			break;
 		case Way:
-			List<Node> wayNodes = ((Way)entity).getWayNodes();
+			List<Node> wayNodes = ((Way)entity).getNodes();
 			if (wayNodes.size()>0) node = wayNodes.get(0);
 			break;
 		case Relation:
@@ -214,8 +217,17 @@ public class Util {
 				}
 			}
 			break;
+		default:
+			break;
 		}
 		return node;
 	}
-	
+
+	public static String readText(InputStream is, String charset) throws IOException {
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    byte[] bytes = new byte[4096];
+	    for(int len;(len = is.read(bytes))>0;)
+	        baos.write(bytes, 0, len);
+	    return new String(baos.toByteArray(), charset);
+	}
 }

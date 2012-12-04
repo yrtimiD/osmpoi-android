@@ -3,10 +3,10 @@
  */
 package il.yrtimid.osm.osmpoi.categories;
 
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.categories.Category.Type;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 
 import java.io.IOException;

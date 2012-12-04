@@ -7,8 +7,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import il.yrtimid.osm.osmpoi.Log;
 import il.yrtimid.osm.osmpoi.domain.*;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
