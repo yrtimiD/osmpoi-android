@@ -4,7 +4,10 @@ package il.yrtimid.osm.osmpoi.dal;
 import il.yrtimid.osm.osmpoi.Util;
 import il.yrtimid.osm.osmpoi.domain.CommonEntityData;
 import il.yrtimid.osm.osmpoi.domain.TagCollection;
+import il.yrtimid.osm.osmpoi.tagmatchers.AndMatcher;
 import il.yrtimid.osm.osmpoi.tagmatchers.KeyValueMatcher;
+import il.yrtimid.osm.osmpoi.tagmatchers.OrMatcher;
+import il.yrtimid.osm.osmpoi.tagmatchers.TagMatcher;
 import il.yrtimid.osm.osmpoi.xml.FastXmlParser;
 import il.yrtimid.osm.osmpoi.xml.XmlReader;
 
@@ -20,78 +23,128 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import android.app.Application;
+
 public class OsmOverpassAPI {
 
-	private static final String OVERPASS_API = "http://www.overpass-api.de/api/interpreter";
-	private static final String BBOX = "(%f,%f,%f,%f)";//lower latitude, lower longitude, upper latitude, upper longitude
-	private static final String KV_QUERY = "'%s'='%s'";
-	private static final String NODES_AND_WAYS_BY_KV = "node[%s]%s->.n;way[%s]%s->.w;(.n;.w;.w>;);out body;";//query,bbox,query,bbox
-
-	
 	private static final Logger LOG = Logger.getLogger(OsmOverpassAPI.class.getName());
 	
-	/**
-	 * 
-	 * @param lat center
-	 * @param lon center
-	 * @param radius 0.01+
-	 * @param k
-	 * @param v
-	 * @return
-	 */
-	private static String getQueryForKV(Double lat, Double lon, Double radius, String k, String v){
+	private static final String OVERPASS_API = "http://www.overpass-api.de/api/interpreter";
+	private static final String BBOX = "(%f,%f,%f,%f)";//lower latitude, lower longitude, upper latitude, upper longitude
+	private static final String KV_QUERY = "['%1$s'='%2$s']";//1-k,2-v
+	//private static final String NODES_AND_WAYS_BY_KV = "node[%s]%s->.n;way[%s]%s->.w;(.n;.w;.w>;);out body;";//query,bbox,query,bbox
+	private static final String NODES_WAYS_REL_BY_KV = "node%1$s%2$s;way%1$s%2$s;rel%1$s%2$s;";//1-query,2-bbox 
+	
+	private static final String UNION_RECURSIVE = "(%s);(._;>;);out body;";//query
+	
+	
+	
+
+
+	private static String getQuery(Double lat, Double lon, Double radius, TagMatcher matcher) throws Exception {
 		String bbox = String.format(BBOX, lat-radius, lon-radius, lat+radius, lon+radius);
-		String kv = String.format(KV_QUERY, k, v);
-		return String.format(NODES_AND_WAYS_BY_KV, kv, bbox, kv, bbox);
+		String query = convertTagMatcher(matcher, bbox);
+				
+		query = String.format(UNION_RECURSIVE, query);
+		return query;
 	}
 	
-	/**
-	 * 
-	 * @param xmlDocument 
-	 * @return a list of OSM entities extracted from xml
-	 */
-	private static List<il.yrtimid.osm.osmpoi.domain.Entity> getEntities(Document xmlDocument) {
-		List<il.yrtimid.osm.osmpoi.domain.Entity> osmEntities = new ArrayList<il.yrtimid.osm.osmpoi.domain.Entity>();
-
-		Node osmRoot = xmlDocument.getFirstChild();
-		NodeList osmXMLNodes = osmRoot.getChildNodes();
-		for (int i = 1; i < osmXMLNodes.getLength(); i++) {
-			Node item = osmXMLNodes.item(i);
-			if (item.getNodeName().equals("node")) {
-				
-				NamedNodeMap attributes = item.getAttributes();
-				
-				Node namedItemID = attributes.getNamedItem("id");
-				Node namedItemLat = attributes.getNamedItem("lat");
-				Node namedItemLon = attributes.getNamedItem("lon");
-
-				Long id = Long.valueOf(namedItemID.getNodeValue());
-				Double latitude = Double.valueOf(namedItemLat.getNodeValue());
-				Double longitude = Double.valueOf(namedItemLon.getNodeValue());
-
-				il.yrtimid.osm.osmpoi.domain.CommonEntityData entityData = new CommonEntityData(id, 0);
-				il.yrtimid.osm.osmpoi.domain.Node node = new il.yrtimid.osm.osmpoi.domain.Node(entityData, latitude, longitude);
-				TagCollection tags = node.getTags();
-
-				NodeList tagXMLNodes = item.getChildNodes();
-				for (int j = 1; j < tagXMLNodes.getLength(); j++) {
-					Node tagItem = tagXMLNodes.item(j);
-					NamedNodeMap tagAttributes = tagItem.getAttributes();
-					if (tagAttributes != null) {
-						String k = tagAttributes.getNamedItem("k").getNodeValue();
-						String v = tagAttributes.getNamedItem("v").getNodeValue();
-						tags.add(new il.yrtimid.osm.osmpoi.domain.Tag(k, v));
-					}
+	private static String convertTagMatcher(TagMatcher matcher, String bbox) throws Exception{
+		if (matcher instanceof OrMatcher){
+			List<TagMatcher> all = ((OrMatcher) matcher).getAllSiblings();
+			StringBuilder b = new StringBuilder();
+			for (TagMatcher tm : all){
+				if (tm instanceof KeyValueMatcher){
+					String q = convertKeyValueMatcher((KeyValueMatcher)tm);
+					b.append(String.format(NODES_WAYS_REL_BY_KV, q, bbox));
 				}
-				
-				osmEntities.add(node);
-			}else if (item.getNodeName().equals("way")) {
-//TODO:
 			}
-
-		}
-		return osmEntities;
+			return b.toString();
+		}else if (matcher instanceof AndMatcher){
+			List<TagMatcher> all = ((AndMatcher) matcher).getAllSiblings();
+			StringBuilder b = new StringBuilder();
+			for (TagMatcher tm : all){
+				if (tm instanceof KeyValueMatcher){
+					String q = convertKeyValueMatcher((KeyValueMatcher)tm);
+					b.append(q);
+				}
+			}
+			return String.format(NODES_WAYS_REL_BY_KV, b.toString(), bbox);
+		}else if (matcher instanceof KeyValueMatcher){
+			String q = convertKeyValueMatcher((KeyValueMatcher) matcher);
+			return String.format(NODES_WAYS_REL_BY_KV, q, bbox);
+		}else 
+			throw new Exception(matcher.toString()+" is not supported or implemented");
 	}
+	
+
+	
+	private static String convertKeyValueMatcher(KeyValueMatcher matcher){
+		return String.format(KV_QUERY, matcher.getKey(), matcher.getValue());
+	}
+	
+//	/**
+//	 * 
+//	 * @param lat center
+//	 * @param lon center
+//	 * @param radius 0.01+
+//	 * @param k
+//	 * @param v
+//	 * @return
+//	 */
+//	private static String getQueryForKV(Double lat, Double lon, Double radius, String k, String v){
+//		String bbox = String.format(BBOX, lat-radius, lon-radius, lat+radius, lon+radius);
+//		String kv = String.format(KV_QUERY, k, v);
+//		return String.format(NODES_AND_WAYS_BY_KV, kv, bbox, kv, bbox);
+//	}
+	
+	/**
+//	 * 
+//	 * @param xmlDocument 
+//	 * @return a list of OSM entities extracted from xml
+//	 */
+//	private static List<il.yrtimid.osm.osmpoi.domain.Entity> getEntities(Document xmlDocument) {
+//		List<il.yrtimid.osm.osmpoi.domain.Entity> osmEntities = new ArrayList<il.yrtimid.osm.osmpoi.domain.Entity>();
+//
+//		Node osmRoot = xmlDocument.getFirstChild();
+//		NodeList osmXMLNodes = osmRoot.getChildNodes();
+//		for (int i = 1; i < osmXMLNodes.getLength(); i++) {
+//			Node item = osmXMLNodes.item(i);
+//			if (item.getNodeName().equals("node")) {
+//				
+//				NamedNodeMap attributes = item.getAttributes();
+//				
+//				Node namedItemID = attributes.getNamedItem("id");
+//				Node namedItemLat = attributes.getNamedItem("lat");
+//				Node namedItemLon = attributes.getNamedItem("lon");
+//
+//				Long id = Long.valueOf(namedItemID.getNodeValue());
+//				Double latitude = Double.valueOf(namedItemLat.getNodeValue());
+//				Double longitude = Double.valueOf(namedItemLon.getNodeValue());
+//
+//				il.yrtimid.osm.osmpoi.domain.CommonEntityData entityData = new CommonEntityData(id, 0);
+//				il.yrtimid.osm.osmpoi.domain.Node node = new il.yrtimid.osm.osmpoi.domain.Node(entityData, latitude, longitude);
+//				TagCollection tags = node.getTags();
+//
+//				NodeList tagXMLNodes = item.getChildNodes();
+//				for (int j = 1; j < tagXMLNodes.getLength(); j++) {
+//					Node tagItem = tagXMLNodes.item(j);
+//					NamedNodeMap tagAttributes = tagItem.getAttributes();
+//					if (tagAttributes != null) {
+//						String k = tagAttributes.getNamedItem("k").getNodeValue();
+//						String v = tagAttributes.getNamedItem("v").getNodeValue();
+//						tags.add(new il.yrtimid.osm.osmpoi.domain.Tag(k, v));
+//					}
+//				}
+//				
+//				osmEntities.add(node);
+//			}else if (item.getNodeName().equals("way")) {
+////TODO:
+//			}
+//
+//		}
+//		return osmEntities;
+//	}
 //
 //	public static List<il.yrtimid.osm.osmpoi.domain.Node> getOSMNodesInVicinity(double lat, double lon, double vicinityRange) throws IOException, SAXException, ParserConfigurationException {
 //		return OSMWrapperAPI.getNodes(getXML(lon, lat, vicinityRange));
@@ -135,11 +188,12 @@ public class OsmOverpassAPI {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static List<il.yrtimid.osm.osmpoi.domain.Entity> Search(Double lat, Double lon, Double radius, KeyValueMatcher matcher) throws IOException{
+	public static List<il.yrtimid.osm.osmpoi.domain.Entity> Search(Double lat, Double lon, Double radius, TagMatcher matcher) throws IOException{
 		List<il.yrtimid.osm.osmpoi.domain.Entity> result = new ArrayList<il.yrtimid.osm.osmpoi.domain.Entity>();
 		InputStream inputStream = null;
 		try {
-			String query = getQueryForKV(lat, lon, radius, matcher.getKey(), matcher.getValue());
+			//String query = getQueryForKV(lat, lon, radius, matcher.getKey(), matcher.getValue());
+			String query = getQuery(lat, lon, radius, matcher);
 			//Document doc;
 		
 			inputStream = getDataViaOverpass(query);
@@ -162,4 +216,5 @@ public class OsmOverpassAPI {
 		}
 		return result;
 	}
+
 }

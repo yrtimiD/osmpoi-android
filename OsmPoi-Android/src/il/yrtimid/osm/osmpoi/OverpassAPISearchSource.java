@@ -42,13 +42,13 @@ public class OverpassAPISearchSource implements ISearchSource {
 		while (results < search.getMaxResults()){
 			if (cancel.isCancelled()) break;
 			
-			radius += 0.002d;
+			radius += 0.01d;
 			int radiusInMeters = c.getDistance(c.latitude+radius, c.longitude+radius);
 			newItemNotifier.pushRadius(radiusInMeters);
 			
 			List<Entity> result;
 			try {
-				result = OsmOverpassAPI.Search(c.latitude, c.longitude, radius, (KeyValueMatcher)search.getMatcher());
+				result = OsmOverpassAPI.Search(c.latitude, c.longitude, radius, search.getMatcher());
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				break;
