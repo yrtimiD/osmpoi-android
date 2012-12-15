@@ -126,9 +126,12 @@ public class OsmPoiApplication extends Application {
 						poiDbLocation = new File(folder, POI_DATABASE_NAME);
 						addressDbLocation = new File(folder, ADDRESS_DATABASE_NAME);
 						starredDbLocation = new File(folder, STARRED_DATABASE_NAME);
+					}else{
+						throw new RuntimeException("DB path isn't writable: "+folder.getPath());
 					}
 				}catch(Exception e){
 					Log.wtf("Checking external storage DB", e);
+					throw new RuntimeException("Can't load databases",e);
 				}
 			}else{
 				poiDbLocation = new File(POI_DATABASE_NAME);
