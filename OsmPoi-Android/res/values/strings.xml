@@ -30,11 +30,7 @@
 	<string name="search_cancelled">Search has been cancelled</string>
 	<string name="offline_search">Offline search settings</string>
 	<string name="offline_search_summary">Settings for offline search mode</string>
-	<string name="pbf_file_summary">Local OSM extract file in PBF format</string>
-	<string name="compact">Compact</string>
-	<string name="service_name">OsmPoi file import service</string>
-	<string name="select_pbf_file">Select PBF file</string>
-	<string name="clean_db_confirm">This will destroy previously imported data!</string>
+	
 	<string name="custom_search">Custom search</string>
 	<string name="cant_parse">Query can not be recognized</string>
 	<string name="help">Help</string>
@@ -56,18 +52,8 @@
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
     <string name="about_map_icons2">Map icons CC-0 from &lt;a href=\'http://www.sjjb.co.uk/mapicons\'&gt;SJJB Management&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
-	<string name="db_on_sdcard">Store database on sdcard</string>
-	<string name="db_on_sdcard_true">Database file will be stored on external storage</string>
-	<string name="db_on_sdcard_false">Database file will be stored on internal storage</string>
-	<string name="import_settings">Import Settings</string>
-	<string name="import_settings_summary">Customization of import process</string>
-	<string name="import_pbf">Import local file</string>
-	<string name="import_pbf_summary">Select and import local PBF file</string>
-	<string name="large_file_confirm">Selected file is too large. Do you want to continue?</string>
-	<string name="confirm_download_and_import">Selected file %1$s (%2$s) created on %3$s will be downloaded and then imported.</string>
-	<string name="file_unavailable">Selected file %1$s isn\'t available right now.</string>
-	<string name="preference_online_download">Download offline data</string>
-	<string name="preference_online_download_summary">Select, download and import offline area data</string>
 	<string name="no_search_source_explanation">Please see About > Help for How To Start</string>
-	<string name="around_me">Around me</string> 
+	<string name="around_me">Around me</string>
+	<string name="install_db">Install offline database</string> 
+	<string name="install_db_summary">Installs externally prepared offline search database</string>
 </resources>

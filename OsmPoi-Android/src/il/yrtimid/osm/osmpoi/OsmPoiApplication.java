@@ -89,54 +89,35 @@ public class OsmPoiApplication extends Application {
 			editor.commit();
 		}
 		
-		public static void resetIncludeExclude(Context context){
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			Editor editor = prefs.edit();
-			editor.remove(Preferences.NODES_INCLUDE);
-			editor.remove(Preferences.NODES_EXCLUDE);
-			editor.remove(Preferences.WAYS_INCLUDE);
-			editor.remove(Preferences.WAYS_EXCLUDE);
-			editor.remove(Preferences.RELATIONS_INCLUDE);
-			editor.remove(Preferences.RELATIONS_EXCLUDE);
-			editor.commit();
-		}
-		
 		public static void reloadConfig(Context context) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
 			searchSourceType = (SearchSourceType) Enum.valueOf(SearchSourceType.class, prefs.getString(Preferences.SEARCH_SOURCE, "NONE"));
 			resultLanguage = prefs.getString(Preferences.RESULT_LANGUAGE, "");
 
-			Boolean isDbOnSdcard = prefs.getBoolean(Preferences.IS_DB_ON_SDCARD, false);
-			setupDbLocation(context, isDbOnSdcard);
+			setupDbLocation(context);
 			
 			OsmPoiApplication.databases.reset();
 			
 			tryCreateSearchSource(context);
 		}
 
-		private static Boolean setupDbLocation(Context context, Boolean isDbOnSdcard) {
+		private static Boolean setupDbLocation(Context context) {
 			poiDbLocation = null;
 			addressDbLocation = null;
 			
-			if (isDbOnSdcard){
-				try{
-					File folder = Preferences.getHomeFolder(context);
-					if (folder.canWrite()){
-						poiDbLocation = new File(folder, POI_DATABASE_NAME);
-						addressDbLocation = new File(folder, ADDRESS_DATABASE_NAME);
-						starredDbLocation = new File(folder, STARRED_DATABASE_NAME);
-					}else{
-						throw new RuntimeException("DB path isn't writable: "+folder.getPath());
-					}
-				}catch(Exception e){
-					Log.wtf("Checking external storage DB", e);
-					throw new RuntimeException("Can't load databases",e);
+			try{
+				File folder = Preferences.getHomeFolder(context);
+				if (folder.canWrite()){
+					poiDbLocation = new File(folder, POI_DATABASE_NAME);
+					addressDbLocation = new File(folder, ADDRESS_DATABASE_NAME);
+					starredDbLocation = new File(folder, STARRED_DATABASE_NAME);
+				}else{
+					throw new RuntimeException("DB path isn't writable: "+folder.getPath());
 				}
-			}else{
-				poiDbLocation = new File(POI_DATABASE_NAME);
-				addressDbLocation = new File(ADDRESS_DATABASE_NAME);
-				starredDbLocation = new File(STARRED_DATABASE_NAME);
+			}catch(Exception e){
+				Log.wtf("Checking external storage DB", e);
+				throw new RuntimeException("Can't load databases",e);
 			}
 			
 			return (poiDbLocation!=null) && (addressDbLocation!=null);

@@ -37,11 +37,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>DbCreator-Common</name>
-			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/DbCreator-Common/src</locationURI>
-		</link>
-		<link>
 			<name>OsmPoi-Common</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/OsmPoi-Common/src</locationURI>
@@ -50,11 +45,6 @@
 			<name>OsmPoi-Osmosis</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/OsmPoi-Osmosis/src</locationURI>
-		</link>
-		<link>
-			<name>OsmPoi-Pbf</name>
-			<type>2</type>
-			<location>/home/yrtimid/Projects/workspace42/OsmPoi-Android/OsmPoi-Pbf/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="il.yrtimid.osm.osmpoi"
-    android:versionCode="19"
-    android:versionName="0.15" android:installLocation="auto"> 
+    android:versionCode="20"
+    android:versionName="0.16" android:installLocation="auto"> 
 
     <uses-sdk android:minSdkVersion="8"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -27,9 +27,7 @@
         <activity android:name=".ui.ResultItemActivity"></activity>
         <activity android:name="com.kaloer.filepicker.FilePickerActivity">
         </activity>
-        <service android:exported="false" android:name=".services.FileProcessingService" android:label="@string/service_name"></service>
         <activity android:name=".ui.AboutActivity"></activity>
-        <activity android:name=".ui.DownloadActivity"></activity>
     </application>
 
 </manifest>
