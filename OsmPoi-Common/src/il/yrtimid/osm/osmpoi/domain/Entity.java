@@ -9,7 +9,7 @@ import java.util.Collection;
  * 
  * @author Brett Henderson
  */
-public abstract class Entity{
+public abstract class Entity implements Comparable<Entity>{
 	
 	protected CommonEntityData entityData;
 	
@@ -97,4 +97,34 @@ public abstract class Entity{
 		return entityData.compareTags(comparisonTags);
 	}
 	
+	public int compareTo(Entity o){
+		if (this.getType() != o.getType()){
+			return this.getType().compareTo(o.getType());
+		}else {
+			return (Long.valueOf(this.getId())).compareTo(Long.valueOf(o.getId()));
+		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Entity){
+			Entity e = (Entity)o;
+			return this.getType() == e.getType() && this.getId() == e.getId(); 
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		/*
+		 * As per the hashCode definition, this doesn't have to be unique it just has to return the
+		 * same value for any two objects that compare equal. Using both id and version will provide
+		 * a good distribution of values but is simple to calculate.
+		 */
+		return (int) getId();
+	}
 }

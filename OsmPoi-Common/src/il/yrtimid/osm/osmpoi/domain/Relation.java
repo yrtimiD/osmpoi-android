@@ -12,7 +12,7 @@ import java.util.List;
  * 
  * @author Brett Henderson
  */
-public class Relation extends Entity implements Comparable<Relation>{
+public class Relation extends Entity{
 	private List<RelationMember> members;
 	
 	protected Relation(){
@@ -49,8 +49,6 @@ public class Relation extends Entity implements Comparable<Relation>{
 		this(new CommonEntityData(relationId, -1));
 	}
 	
-
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -58,110 +56,6 @@ public class Relation extends Entity implements Comparable<Relation>{
 	public EntityType getType() {
 		return EntityType.Relation;
 	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Relation) {
-			return compareTo((Relation) o) == 0;
-		} else {
-			return false;
-		}
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		/*
-		 * As per the hashCode definition, this doesn't have to be unique it
-		 * just has to return the same value for any two objects that compare
-		 * equal. Using both id and version will provide a good distribution of
-		 * values but is simple to calculate.
-		 */
-		return (int) getId();
-	}
-	
-	
-	/**
-	 * Compares this member list to the specified member list. The bigger list
-	 * is considered bigger, if that is equal then each relation member is
-	 * compared.
-	 * 
-	 * @param comparisonMemberList
-	 *            The member list to compare to.
-	 * @return 0 if equal, < 0 if considered "smaller", and > 0 if considered
-	 *         "bigger".
-	 */
-	protected int compareMemberList(Collection<RelationMember> comparisonMemberList) {
-		Iterator<RelationMember> i;
-		Iterator<RelationMember> j;
-		
-		// The list with the most entities is considered bigger.
-		if (members.size() != comparisonMemberList.size()) {
-			return members.size() - comparisonMemberList.size();
-		}
-		
-		// Check the individual node references.
-		i = members.iterator();
-		j = comparisonMemberList.iterator();
-		while (i.hasNext()) {
-			int result = i.next().compareTo(j.next());
-			
-			if (result != 0) {
-				return result;
-			}
-		}
-		
-		// There are no differences.
-		return 0;
-	}
-
-
-	/**
-	 * Compares this relation to the specified relation. The relation comparison
-	 * is based on a comparison of id, version, timestamp, and tags in that order.
-	 * 
-	 * @param comparisonRelation
-	 *            The relation to compare to.
-	 * @return 0 if equal, < 0 if considered "smaller", and > 0 if considered
-	 *         "bigger".
-	 */
-	public int compareTo(Relation comparisonRelation) {
-		int memberListResult;
-		
-		if (this.getId() < comparisonRelation.getId()) {
-			return -1;
-		}
-		if (this.getId() > comparisonRelation.getId()) {
-			return 1;
-		}
-
-
-		
-		if (this.getTimestamp()<comparisonRelation.getTimestamp()) {
-			return -1;
-		}
-		if (this.getTimestamp()>comparisonRelation.getTimestamp()) {
-			return 1;
-		}
-		
-		memberListResult = compareMemberList(
-			comparisonRelation.members
-		);
-		
-		if (memberListResult != 0) {
-			return memberListResult;
-		}
-		
-		return compareTags(comparisonRelation.getTags());
-	}
-	
 	
 	public List<RelationMember> getMembers() {
 		return members;

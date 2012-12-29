@@ -9,7 +9,7 @@ import java.util.Collection;
  * 
  * @author Brett Henderson
  */
-public class Node extends Entity implements Comparable<Node>{
+public class Node extends Entity{
 
 	protected double latitude;
 	protected double longitude;
@@ -60,67 +60,6 @@ public class Node extends Entity implements Comparable<Node>{
 			return false;
 		}
 	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		/*
-		 * As per the hashCode definition, this doesn't have to be unique it just has to return the
-		 * same value for any two objects that compare equal. Using both id and version will provide
-		 * a good distribution of values but is simple to calculate.
-		 */
-		return (int) getId();
-	}
-
-
-	/**
-	 * Compares this node to the specified node. The node comparison is based on a comparison of id,
-	 * version, latitude, longitude, timestamp and tags in that order.
-	 * 
-	 * @param comparisonNode
-	 *            The node to compare to.
-	 * @return 0 if equal, < 0 if considered "smaller", and > 0 if considered "bigger".
-	 */
-	public int compareTo(Node comparisonNode) {
-		if (this.getId() < comparisonNode.getId()) {
-			return -1;
-		}
-
-		if (this.getId() > comparisonNode.getId()) {
-			return 1;
-		}
-
-		if (this.latitude < comparisonNode.latitude) {
-			return -1;
-		}
-
-		if (this.latitude > comparisonNode.latitude) {
-			return 1;
-		}
-
-		if (this.longitude < comparisonNode.longitude) {
-			return -1;
-		}
-
-		if (this.longitude > comparisonNode.longitude) {
-			return 1;
-		}
-
-		if (this.getTimestamp()<comparisonNode.getTimestamp()){
-			return -1;
-		}
-		
-		if (this.getTimestamp()>comparisonNode.getTimestamp()){
-			return 1;
-		}
-		
-
-		return compareTags(comparisonNode.getTags());
-	}
-
 
 	/**
 	 * Gets the latitude.
