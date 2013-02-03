@@ -55,7 +55,7 @@ public class OsmPoiApplication extends Application {
 		
 		Logger logger = Logger.getLogger(Log.TAG);
 		logger.addHandler(new AndroidLogHandler());
-	}
+	} 
 
 	public static Boolean hasLocation(){
 		return location!=null;

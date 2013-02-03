@@ -58,14 +58,16 @@ public final class R {
         public static final int listCategories=0x7f09001c;
         public static final int listResults=0x7f090028;
         public static final int location=0x7f090022;
-        public static final int mnu_about=0x7f09002f;
-        public static final int mnu_cancel=0x7f090032;
-        public static final int mnu_find_associated=0x7f09002d;
-        public static final int mnu_follow=0x7f090030;
-        public static final int mnu_open=0x7f09002c;
-        public static final int mnu_refresh=0x7f090033;
-        public static final int mnu_settings=0x7f09002e;
-        public static final int mnu_stop_follow=0x7f090031;
+        public static final int mnu_about=0x7f09002d;
+        public static final int mnu_cancel=0x7f090034;
+        public static final int mnu_find_associated=0x7f09002f;
+        public static final int mnu_follow=0x7f090032;
+        public static final int mnu_map=0x7f090031;
+        public static final int mnu_open=0x7f09002e;
+        public static final int mnu_refresh=0x7f090035;
+        public static final int mnu_search_around=0x7f090030;
+        public static final int mnu_settings=0x7f09002c;
+        public static final int mnu_stop_follow=0x7f090033;
         public static final int poi_cells=0x7f090006;
         public static final int poi_nodes=0x7f090003;
         public static final int poi_relations=0x7f090005;
@@ -110,8 +112,8 @@ public final class R {
         public static final int tag_row=0x7f030013;
     }
     public static final class menu {
-        public static final int item_menu=0x7f080000;
-        public static final int main_menu=0x7f080001;
+        public static final int main_menu=0x7f080000;
+        public static final int result_item_menu=0x7f080001;
         public static final int results_menu=0x7f080002;
     }
     public static final class plurals {
@@ -227,6 +229,7 @@ public final class R {
         public static final int file_location=0x7f0600d1;
         public static final int finance=0x7f060052;
         public static final int fishing=0x7f060053;
+        public static final int fixed_position=0x7f060101;
         public static final int florist=0x7f060054;
         public static final int follow=0x7f0600d7;
         public static final int food=0x7f060056;
@@ -324,6 +327,7 @@ public final class R {
         public static final int seafood=0x7f0600a2;
         public static final int search=0x7f0600cd;
         public static final int search_again=0x7f0600e5;
+        public static final int search_around=0x7f0600ff;
         public static final int search_cancelled=0x7f0600e7;
         public static final int search_finished=0x7f0600e6;
         public static final int search_mode=0x7f0600db;
@@ -336,6 +340,7 @@ public final class R {
         public static final int shop_brand=0x7f0600a8;
         public static final int shop_operator=0x7f0600a9;
         public static final int shopping=0x7f0600aa;
+        public static final int show_on_map=0x7f060100;
         public static final int slipway=0x7f0600ab;
         public static final int social_centre=0x7f0600ac;
         public static final int sports=0x7f0600ae;

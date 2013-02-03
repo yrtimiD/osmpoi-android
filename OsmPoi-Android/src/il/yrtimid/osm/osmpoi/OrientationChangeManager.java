@@ -16,7 +16,7 @@ import android.hardware.SensorManager;
 public class OrientationChangeManager implements SensorEventListener {
 
 	public interface OrientationChangeListener{
-		public void OnOrientationChanged(float azimuth);
+		public void OnOrientationChanged(int azimuth);
 	}
 	
 	private OrientationChangeListener listener;
@@ -24,6 +24,7 @@ public class OrientationChangeManager implements SensorEventListener {
 	private SensorManager sensorManager;
 	private Sensor orientation;
 
+	private int lastValue = 0;
 	
 	/**
 	 * 
@@ -39,7 +40,7 @@ public class OrientationChangeManager implements SensorEventListener {
 		if (this.listener == null){
 			sensorManager.unregisterListener(this);
 		}else {
-			sensorManager.registerListener(this, orientation, SensorManager.SENSOR_DELAY_UI);
+			sensorManager.registerListener(this, orientation, SensorManager.SENSOR_DELAY_NORMAL);
 		}
 	}
 
@@ -48,14 +49,19 @@ public class OrientationChangeManager implements SensorEventListener {
 	 */
 	@Override
 	public void onSensorChanged(SensorEvent event) {
+		/*
 		StringBuilder b = new StringBuilder();
 		for(float f : event.values){
 			b.append(f).append(" ");
 		}
-		//Log.d(b.toString());
+		Log.d(b.toString());
+		*/
 		
-		if (listener != null){
-			listener.OnOrientationChanged(event.values[0]);
+		int newValue = Math.round( event.values[0]);
+
+		if (newValue != lastValue && listener != null){
+			lastValue = newValue;
+			listener.OnOrientationChanged(newValue);
 		}
 	}
 

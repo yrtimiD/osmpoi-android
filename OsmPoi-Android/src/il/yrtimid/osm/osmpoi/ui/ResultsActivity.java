@@ -5,6 +5,7 @@ import java.security.InvalidParameterException;
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
+import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.SearchPipe;
 import il.yrtimid.osm.osmpoi.domain.*;
@@ -39,6 +40,8 @@ import android.widget.Toast;
 public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OrientationChangeListener, OnClickListener {
 	//public static final String SEARCH_TYPE = "SEARCH_TYPE";
 	public static final String SEARCH_PARAMETER = "SEARCH_PARAMETER";
+	public static final String AROUND_LAT = "AROUND_LAT";
+	public static final String AROUND_LON = "AROUND_LON";
 	
 	private static final int START_RESULTS = 20;
 	private static final int RESULTS_INCREMENT = 20;
@@ -89,6 +92,15 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		Bundle extras = getIntent().getExtras();
 		currentSearch = (BaseSearchParameter)extras.getParcelable(SEARCH_PARAMETER);
 		currentSearch.setMaxResults(START_RESULTS);
+		
+		if (currentSearch instanceof SearchAround){
+			Double lat = extras.getDouble(AROUND_LAT);
+			Double lon = extras.getDouble(AROUND_LON);
+			Point searchAround = new Point(lat, lon);
+
+			((SearchAround)currentSearch).setCenter(searchAround);
+			followingGPS = false;
+		}
 	}
 
 	/*
@@ -218,9 +230,6 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 				Toast.makeText(this, getText(R.string.cant_parse) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
 				return;
 			}
-			((SearchByKeyValue)currentSearch).setCenter(OsmPoiApplication.getCurrentLocationPoint());
-		}else if (currentSearch instanceof SearchAround){
-			((SearchAround)currentSearch).setCenter(OsmPoiApplication.getCurrentLocationPoint());
 		}
 		
 		cancelCurrentTask();
@@ -332,7 +341,7 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 	 * @see il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener#OnOrientationChanged(float)
 	 */
 	@Override
-	public void OnOrientationChanged(float azimuth) {
+	public void OnOrientationChanged(int azimuth) {
 		adapter.setAzimuth(azimuth);
 	}
 

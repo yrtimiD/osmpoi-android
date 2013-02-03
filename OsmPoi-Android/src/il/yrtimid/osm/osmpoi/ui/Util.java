@@ -1,6 +1,7 @@
 package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.R;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -72,18 +73,18 @@ public class Util {
 		if (meters<1000)
 			return String.format("%,dm", meters);
 		else
-			return String.format("%,dkm", meters/1000);
+			return String.format("%,dkm", Math.round(meters/1000.0f));
 	}
 	
 	public static String formatSize(int bytes){
 		if (bytes<1000)
 			return String.format("%dB", bytes);
 		else if (bytes<1000000)
-			return String.format("%.1fkB", bytes/1000.0);
+			return String.format("%.1fkB", bytes/1000.0f);
 		else if (bytes<1000000000)
-			return String.format("%.1fMB", bytes/1000000.0);
+			return String.format("%.1fMB", bytes/1000000.0f);
 		else 
-			return String.format("%.1fGB", bytes/1000000000.0);
+			return String.format("%.1fGB", bytes/1000000000.0f);
 	}
 	
 	public static String getLocalName(Context context, String key){

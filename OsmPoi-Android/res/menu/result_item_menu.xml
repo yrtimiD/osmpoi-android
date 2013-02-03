@@ -9,5 +9,7 @@
     <item android:id="@+id/mnu_find_associated"
         android:icon="@android:drawable/ic_menu_search"
         android:title="Find associated" />
+    <item android:id="@+id/mnu_search_around" 
+        android:title="@string/search_around" />
 
 </menu>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/mnu_follow" android:icon="@android:drawable/ic_menu_mylocation" android:title="@string/follow" android:menuCategory="container"></item>
+    <item android:id="@+id/mnu_map" android:icon="@android:drawable/ic_menu_mapmode" android:title="@string/show_on_map"></item><item android:id="@+id/mnu_follow" android:icon="@android:drawable/ic_menu_mylocation" android:title="@string/follow" android:menuCategory="container"></item>
     <item android:id="@+id/mnu_stop_follow" android:icon="@android:drawable/ic_menu_mylocation" android:title="@string/stop_follow" android:visible="true" android:menuCategory="container"></item>
     <item android:id="@+id/mnu_cancel" android:title="@string/cancel" android:icon="@android:drawable/ic_menu_close_clear_cancel" android:menuCategory="container"></item>
     <item android:id="@+id/mnu_refresh" android:title="@string/search_again" android:icon="@android:drawable/ic_menu_search" android:menuCategory="container"></item>
+    
 </menu>

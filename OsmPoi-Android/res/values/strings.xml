@@ -55,5 +55,8 @@
 	<string name="no_search_source_explanation">Please see About > Help for How To Start</string>
 	<string name="around_me">Around me</string>
 	<string name="install_db">Install offline database</string> 
-	<string name="install_db_summary">Installs externally prepared offline search database</string>
+	<string name="install_db_summary">Installs externally prepared offline search database</string> 
+	<string name="search_around">Search around</string> 
+	<string name="show_on_map">Show on map</string>
+	<string name="fixed_position">Fixed position</string>
 </resources>

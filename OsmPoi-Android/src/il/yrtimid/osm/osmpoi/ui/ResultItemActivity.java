@@ -7,6 +7,7 @@ import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
+import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByParentId;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,7 +35,7 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 	private DbStarred dbHelper;
 	private Entity entity;
 	private Location location;
-	private float azimuth = 0.0f;
+	private int azimuth = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,14 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		OsmPoiApplication.orientationManager.setOrientationChangeListener(null);
 	}
 	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.result_item_menu, menu);
+		return true;
+	}
+	
 	private void setIcon() {
 		ImageView imageType = ((ImageView)findViewById(R.id.imageType));
 		switch (entity.getType()) {
@@ -127,34 +136,42 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 			int bearing = Util.normalizeBearing(((int) location.bearingTo(nl)-(int)azimuth));
 			String distance = Util.formatDistance((int) location.distanceTo(nl));
 			tv.setText(String.format("%s %c (%d˚)", distance, Util.getDirectionChar(bearing), bearing));
+			Log.v("Item update: "+String.format("%s %c (%d˚)", distance, Util.getDirectionChar(bearing), bearing));
 		}
 		else {	
 			tv.setText("");
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.item_menu, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.mnu_open:
-			Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(entity);
+		{	Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(entity);
 			if (node != null){
 				String uri = String.format("geo:%f,%f?z=23", node.getLatitude(), node.getLongitude());
 				Intent pref = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
 				startActivity(pref);
 			}
 			return true;
+		}
 		case R.id.mnu_find_associated:
+		{
 			Intent intent = new Intent(this, ResultsActivity.class);
 			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, new SearchByParentId(entity.getType(), entity.getId()));
 			startActivity(intent);
+			return true;
+		}
+		case R.id.mnu_search_around:
+		{
+			Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(entity);
+			Intent intent = new Intent(this, SearchActivity.class);
+			intent.putExtra(SearchActivity.EXTRA_AROUND_LAT, node.getLatitude());
+			intent.putExtra(SearchActivity.EXTRA_AROUND_LON, node.getLongitude());
+			startActivity(intent);
+			return true;
+		}	
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -207,7 +224,7 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 	 * @see il.yrtimid.osm.osmpoi.OrientationChangeManager.OrientationChangeListener#OnOrientationChanged(float)
 	 */
 	@Override
-	public void OnOrientationChanged(float azimuth) {
+	public void OnOrientationChanged(int azimuth) {
 		this.azimuth = azimuth;
 		updateDistanceAndDirection();
 	}

@@ -3,6 +3,7 @@ package il.yrtimid.osm.osmpoi.ui;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.domain.*;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
+import il.yrtimid.osm.osmpoi.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +18,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TwoLineListItem;
 
+/**
+ * 
+ * @author Dmitry Gurovich (yrtimid at gmail.com)
+ *
+ */
 public class ResultsAdapter extends BaseAdapter {
 	LayoutInflater inflater;
 	Location location;
-	float azimuth = 0.0f;
+	int azimuth = 0;
 	List<Entity> items;
 	Comparator<Entity> comparator;
 	List<EntityFormatter> formatters;
@@ -65,7 +71,7 @@ public class ResultsAdapter extends BaseAdapter {
 		updateAndSort();
 	}
 
-	public void setAzimuth(float azimuth){
+	public void setAzimuth(int azimuth){
 		this.azimuth = azimuth;
 		notifyDataSetChanged();
 	}
@@ -74,7 +80,7 @@ public class ResultsAdapter extends BaseAdapter {
 		this.radius = radius;
 	}
 	
-	public void updateAndSort() {
+	private void updateAndSort() {
 		Collections.sort(items, this.comparator);
 		notifyDataSetChanged();
 	}
@@ -91,18 +97,30 @@ public class ResultsAdapter extends BaseAdapter {
 		String name = getEntityText(item);
 		listItem.getText1().setText(name);
 
+		String secondText = ""; 
 		if (this.location != null){
 			Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(item);
 			
 			if (node != null){	
-				Location nl = new Location(this.location);
+				Location nl = new Location("OSM");
 				nl.setLatitude(node.getLatitude());
 				nl.setLongitude(node.getLongitude());
-				int bearing = Util.normalizeBearing ((int) location.bearingTo(nl)-(int)azimuth);
-				listItem.getText2().setText(String.format("%s %c (%d˚)", Util.formatDistance((int) location.distanceTo(nl)), Util.getDirectionChar(bearing), bearing));
+
+				int bearing = Util.normalizeBearing (Math.round(location.bearingTo(nl))-(int)azimuth);
+				
+				int distance = Math.round(location.distanceTo(nl));
+
+//				int distance = il.yrtimid.osm.osmpoi.Util.getDistance(location.getLatitude(), location.getLongitude(),
+//						node.getLatitude(), node.getLongitude());
+				
+				String distanceStr = Util.formatDistance(distance);
+				secondText = String.format("%s %c", distanceStr, Util.getDirectionChar(bearing));
+
 			}
 		}
-
+		
+		listItem.getText2().setText(secondText);
+		
 		return convertView;
 	}
 

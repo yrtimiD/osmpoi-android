@@ -2,12 +2,14 @@ package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
+import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.R;
 import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
 import il.yrtimid.osm.osmpoi.searchparameters.BaseSearchParameter;
+import il.yrtimid.osm.osmpoi.searchparameters.SearchAround;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchById;
 import il.yrtimid.osm.osmpoi.searchparameters.SearchByKeyValue;
 
@@ -41,6 +43,11 @@ import android.widget.TextView;
 public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener {
 
 	private static final String EXTRA_CATEGORY = "CATEGORY";
+	public static final String EXTRA_AROUND_LAT = "AROUND_LAT";
+	public static final String EXTRA_AROUND_LON = "AROUND_LON";
+	
+	private Point around = null;
+	private TextView txtAccuracy; 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,10 +55,13 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.main);
 
+		txtAccuracy = (TextView) findViewById(R.id.textAccuracy);
+		
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 		setupCategories();
 		setupFormatters();
+		loadAround();
 	}
 
 	private void setupCategories() {
@@ -77,6 +87,17 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		if (OsmPoiApplication.formatters == null) 		
 			OsmPoiApplication.formatters = EntityFormattersLoader.load(this);
 	}
+
+	private void loadAround(){
+		Bundle extras = getIntent().getExtras();
+		if (extras!=null && extras.containsKey(EXTRA_AROUND_LAT) && extras.containsKey(EXTRA_AROUND_LON)){
+			Double lat = extras.getDouble(EXTRA_AROUND_LAT);
+			Double lon = extras.getDouble(EXTRA_AROUND_LON);
+			this.around = new Point(lat,lon);
+		}else {
+			this.around = null;
+		}
+	}
 	
 	@Override
 	protected void onStart() {
@@ -89,7 +110,10 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		OsmPoiApplication.Config.reloadConfig(this);
 		checkSearchSource();
 
-		OsmPoiApplication.locationManager.setLocationChangeListener(this);
+		if (around == null)
+			OsmPoiApplication.locationManager.setLocationChangeListener(this);
+		else 
+			txtAccuracy.setText(getString(R.string.fixed_position));
 		
 		//CharSequence lastSearch = Preferences.getLastSearch(this);
 		//EditText txtSearch = (EditText) findViewById(R.id.txtSearch);
@@ -169,9 +193,19 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		//intent.putExtra(ResultsActivity.SEARCH_TYPE, searchType);
 		if (search instanceof SearchByKeyValue){
 			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchByKeyValue)search);
-		}else if (search instanceof SearchById){
+		}
+		
+		if (search instanceof SearchById){
 			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchById)search);
 		} 
+		
+		if (search instanceof SearchAround){
+			if (this.around == null)
+				this.around = OsmPoiApplication.getCurrentLocationPoint();
+			
+			intent.putExtra(ResultsActivity.AROUND_LAT, around.getLatitude());
+			intent.putExtra(ResultsActivity.AROUND_LON, around.getLongitude());
+		}
 		
 		startActivity(intent);
 	}
@@ -238,6 +272,10 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	private void showCategory(Category cat) {
 		Intent intent = new Intent(this, SearchActivity.class);
 		intent.putExtra(EXTRA_CATEGORY, cat);
+		if (this.around != null){
+			intent.putExtra(SearchActivity.EXTRA_AROUND_LAT, around.getLatitude());
+			intent.putExtra(SearchActivity.EXTRA_AROUND_LON, around.getLongitude());
+		}
 		startActivity(intent);
 	}
 
@@ -247,7 +285,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	@Override
 	public void OnLocationChanged(Location loc) {
 		if (OsmPoiApplication.getCurrentLocation() != null) {
-			TextView txtAccuracy = (TextView) findViewById(R.id.textAccuracy);
 			Util.updateAccuracyText(txtAccuracy, OsmPoiApplication.getCurrentLocation());
 		}
 	}
