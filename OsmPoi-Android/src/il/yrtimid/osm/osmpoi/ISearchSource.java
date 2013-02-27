@@ -20,6 +20,8 @@ public interface ISearchSource {
 //	public void getByParentId(SearchByParentId search, SearchPipe<Entity> newItemNotifier, CancelFlag cancel);
 	public abstract void close();
 	public abstract String getName();
+	public abstract boolean supportsInlineSearch();
+	public abstract boolean isAvailable();
 }
 
 

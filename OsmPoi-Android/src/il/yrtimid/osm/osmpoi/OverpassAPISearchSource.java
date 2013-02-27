@@ -87,4 +87,16 @@ public class OverpassAPISearchSource implements ISearchSource {
 		return "OverpassAPI search";
 	}
 
+	@Override
+	public boolean supportsInlineSearch() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.ISearchSource#isAvailable()
+	 */
+	@Override
+	public boolean isAvailable() {
+		return true;//TODO: implement here checking of internet connection
+	}
 }

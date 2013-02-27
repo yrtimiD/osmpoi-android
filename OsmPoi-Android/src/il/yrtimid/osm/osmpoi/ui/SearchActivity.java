@@ -1,6 +1,7 @@
 package il.yrtimid.osm.osmpoi.ui;
 
 import il.yrtimid.osm.osmpoi.LocationChangeManager.LocationChangeListener;
+import il.yrtimid.osm.osmpoi.ISearchSource;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.Point;
 import il.yrtimid.osm.osmpoi.R;
@@ -17,8 +18,11 @@ import java.util.Collection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,7 +44,7 @@ import android.widget.TextView;
  * @author yrtimid
  *
  */
-public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener {
+public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener, OnSharedPreferenceChangeListener {
 
 	private static final String EXTRA_CATEGORY = "CATEGORY";
 	public static final String EXTRA_AROUND_LAT = "AROUND_LAT";
@@ -48,6 +52,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	
 	private Point around = null;
 	private TextView txtAccuracy; 
+	private boolean searchSourceWasChanged = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,16 +63,13 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		txtAccuracy = (TextView) findViewById(R.id.textAccuracy);
 		
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+	    pref.registerOnSharedPreferenceChangeListener(this);
 
-		setupCategories();
-		setupFormatters();
 		loadAround();
 	}
 
 	private void setupCategories() {
-		if (OsmPoiApplication.mainCategory == null) 		
-			OsmPoiApplication.mainCategory = CategoriesLoader.load(this);
-				
 		ListView list = (ListView)findViewById(R.id.listCategories);
 		
 		Bundle extras = getIntent().getExtras();
@@ -81,11 +83,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		CategoriesListAdapter adapter = new CategoriesListAdapter(this, cat);
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(this);
-	}
-
-	private void setupFormatters(){
-		if (OsmPoiApplication.formatters == null) 		
-			OsmPoiApplication.formatters = EntityFormattersLoader.load(this);
 	}
 
 	private void loadAround(){
@@ -107,8 +104,19 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		if (searchSourceWasChanged){
+			searchSourceWasChanged = false;
+			Intent thisIntent = getIntent();
+			thisIntent.removeExtra(EXTRA_CATEGORY);
+			finish();
+			startActivity(thisIntent);
+			return;
+		}
+
 		OsmPoiApplication.Config.reloadConfig(this);
 		checkSearchSource();
+		setupCategories();
 
 		if (around == null)
 			OsmPoiApplication.locationManager.setLocationChangeListener(this);
@@ -178,12 +186,12 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		View mainLayout = findViewById(R.id.layoutMain);
 		View warning = findViewById(R.id.layoutNoSearchSource_ref);
 
-		if (OsmPoiApplication.searchSource == null) {
-			mainLayout.setVisibility(View.GONE);
-			warning.setVisibility(View.VISIBLE);
-		} else {
+		if (OsmPoiApplication.searchSource.isAvailable()) {
 			mainLayout.setVisibility(View.VISIBLE);
 			warning.setVisibility(View.GONE);
+		}else {
+			mainLayout.setVisibility(View.GONE);
+			warning.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -287,6 +295,15 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		if (OsmPoiApplication.getCurrentLocation() != null) {
 			Util.updateAccuracyText(txtAccuracy, OsmPoiApplication.getCurrentLocation());
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see android.content.SharedPreferences.OnSharedPreferenceChangeListener#onSharedPreferenceChanged(android.content.SharedPreferences, java.lang.String)
+	 */
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals(Preferences.SEARCH_SOURCE))
+			searchSourceWasChanged = true;
 	}
 	
 

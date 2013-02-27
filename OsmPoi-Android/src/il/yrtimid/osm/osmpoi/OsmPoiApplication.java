@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.List;
 import java.util.logging.Logger;
 
+import il.yrtimid.osm.osmpoi.categories.CategoriesLoader;
 import il.yrtimid.osm.osmpoi.categories.Category;
 import il.yrtimid.osm.osmpoi.dal.CachedDbOpenHelper;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
@@ -14,6 +15,7 @@ import il.yrtimid.osm.osmpoi.dal.DbSearcher;
 import il.yrtimid.osm.osmpoi.dal.DbStarred;
 import il.yrtimid.osm.osmpoi.dal.IDbCachedFiller;
 import il.yrtimid.osm.osmpoi.formatters.EntityFormatter;
+import il.yrtimid.osm.osmpoi.formatters.EntityFormattersLoader;
 import il.yrtimid.osm.osmpoi.logging.AndroidLogHandler;
 import il.yrtimid.osm.osmpoi.logging.Log;
 import il.yrtimid.osm.osmpoi.ui.Preferences;
@@ -100,6 +102,11 @@ public class OsmPoiApplication extends Application {
 			OsmPoiApplication.databases.reset();
 			
 			tryCreateSearchSource(context);
+			
+			OsmPoiApplication.mainCategory = CategoriesLoader.load(context, OsmPoiApplication.searchSource);
+		
+			OsmPoiApplication.formatters = EntityFormattersLoader.load(context);
+
 		}
 
 		private static Boolean setupDbLocation(Context context) {
@@ -165,7 +172,7 @@ public class OsmPoiApplication extends Application {
 					OsmPoiApplication.searchSource = OverpassAPISearchSource.create(context);
 					break;
 				default:
-					OsmPoiApplication.searchSource = null;
+					OsmPoiApplication.searchSource = EmptySearchSource.create(context);
 					break;
 				}
 			} catch (Exception e) {

@@ -91,5 +91,16 @@ public class DBSearchSource implements ISearchSource {
 		poiDb.findByParentId(search, newItemNotifier, cancel);
 	}
 
+	@Override
+	public boolean supportsInlineSearch() {
+		return true;
+	}
 
+	/* (non-Javadoc)
+	 * @see il.yrtimid.osm.osmpoi.ISearchSource#isAvailable()
+	 */
+	@Override
+	public boolean isAvailable() {
+		return true;
+	}
 }

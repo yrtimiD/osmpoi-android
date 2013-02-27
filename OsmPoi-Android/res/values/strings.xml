@@ -52,7 +52,7 @@
     <string name="about_map_icons">&lt;a href=\'http://mapicons.nicolasmollet.com\'&gt;Map Icons Collection&lt;/a&gt; by Nicolas Mollet&lt;br /&gt;&lt;a href=\'http://creativecommons.org/licenses/by-sa/3.0/\'&gt;Creative Commons 3.0 BY-SA&lt;/a&gt;</string>
     <string name="about_map_icons2">Map icons CC-0 from &lt;a href=\'http://www.sjjb.co.uk/mapicons\'&gt;SJJB Management&lt;/a&gt;</string>
 	<string name="waiting_for_location">Waiting for location…</string>
-	<string name="no_search_source_explanation">Please see About > Help for How To Start</string>
+	<string name="no_search_source_explanation">Search mode not selected or current mode not available. Change search mode or see About > Help for How To Start</string>
 	<string name="around_me">Around me</string>
 	<string name="install_db">Install offline database</string> 
 	<string name="install_db_summary">Installs externally prepared offline search database</string> 

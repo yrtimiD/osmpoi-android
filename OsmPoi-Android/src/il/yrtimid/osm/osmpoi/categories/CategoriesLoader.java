@@ -3,6 +3,7 @@
  */
 package il.yrtimid.osm.osmpoi.categories;
 
+import il.yrtimid.osm.osmpoi.ISearchSource;
 import il.yrtimid.osm.osmpoi.OsmPoiApplication;
 import il.yrtimid.osm.osmpoi.categories.Category.Type;
 import il.yrtimid.osm.osmpoi.dal.DbAnalyzer;
@@ -31,7 +32,7 @@ import android.content.Context;
  *
  */
 public class CategoriesLoader {
-	public static Category load(Context context){
+	public static Category load(Context context, ISearchSource searchSource){
 		Category cat = null;
 		InputStream xmlStream = null;
 		try {
@@ -42,7 +43,7 @@ public class CategoriesLoader {
 			Document doc = builder.parse(xmlStream);
 			doc.getDocumentElement().normalize();
 			
-			cat = createSubCategories(context, doc.getDocumentElement()); 
+			cat = createSubCategories(context, doc.getDocumentElement(), searchSource); 
 		}catch(SAXException e){
 			Log.wtf("can't parse categories.xml", e);
 		}catch (ParserConfigurationException e){
@@ -65,7 +66,7 @@ public class CategoriesLoader {
 	 * @param documentElement
 	 * @param cat
 	 */
-	private static Category createSubCategories(Context context, Element root) {
+	private static Category createSubCategories(Context context, Element root, ISearchSource searchSource) {
 		Category cat = null;
 		
 		String elementName = root.getNodeName();
@@ -80,8 +81,12 @@ public class CategoriesLoader {
 			cat = new Category(Type.SEARCH);
 			cat.setSearchParameter(new SearchByKeyValue(query));
 		}else if (elementName.equals("inline")){
-			cat = new Category(Type.INLINE_SEARCH);
-			cat.setQuery(query);
+			if (searchSource.supportsInlineSearch()){
+				cat = new Category(Type.INLINE_SEARCH);
+				cat.setQuery(query);
+			}else {
+				return null;
+			}
 		}else if (elementName.equals("starred")){
 			cat = new Category(Type.STARRED);
 		}else if (elementName.equals("custom")){
@@ -103,7 +108,7 @@ public class CategoriesLoader {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			if (node instanceof Element){
-				Category subCat = createSubCategories(context, (Element)node);
+				Category subCat = createSubCategories(context, (Element)node, searchSource);
 				if (subCat != null)
 					cat.getSubCategories().add(subCat);
 			}
