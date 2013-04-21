@@ -99,7 +99,6 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 			Point searchAround = new Point(lat, lon);
 
 			((SearchAround)currentSearch).setCenter(searchAround);
-			followingGPS = false;
 		}
 	}
 

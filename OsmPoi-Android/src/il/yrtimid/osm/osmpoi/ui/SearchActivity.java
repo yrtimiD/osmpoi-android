@@ -47,10 +47,7 @@ import android.widget.TextView;
 public class SearchActivity extends Activity implements LocationChangeListener, OnItemClickListener, OnSharedPreferenceChangeListener {
 
 	private static final String EXTRA_CATEGORY = "CATEGORY";
-	public static final String EXTRA_AROUND_LAT = "AROUND_LAT";
-	public static final String EXTRA_AROUND_LON = "AROUND_LON";
 	
-	private Point around = null;
 	private TextView txtAccuracy; 
 	private boolean searchSourceWasChanged = false;
 	
@@ -66,7 +63,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 	    pref.registerOnSharedPreferenceChangeListener(this);
 
-		loadAround();
 	}
 
 	private void setupCategories() {
@@ -85,17 +81,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		list.setOnItemClickListener(this);
 	}
 
-	private void loadAround(){
-		Bundle extras = getIntent().getExtras();
-		if (extras!=null && extras.containsKey(EXTRA_AROUND_LAT) && extras.containsKey(EXTRA_AROUND_LON)){
-			Double lat = extras.getDouble(EXTRA_AROUND_LAT);
-			Double lon = extras.getDouble(EXTRA_AROUND_LON);
-			this.around = new Point(lat,lon);
-		}else {
-			this.around = null;
-		}
-	}
-	
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -118,10 +103,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		checkSearchSource();
 		setupCategories();
 
-		if (around == null)
-			OsmPoiApplication.locationManager.setLocationChangeListener(this);
-		else 
-			txtAccuracy.setText(getString(R.string.fixed_position));
+		OsmPoiApplication.locationManager.setLocationChangeListener(this);
 		
 		//CharSequence lastSearch = Preferences.getLastSearch(this);
 		//EditText txtSearch = (EditText) findViewById(R.id.txtSearch);
@@ -165,6 +147,16 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem item = menu.findItem(R.id.mnu_clear_center);
+		item.setVisible(OsmPoiApplication.hasCurrentSearchCenter());
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -177,6 +169,9 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 			
+		case R.id.mnu_clear_center:
+			OsmPoiApplication.clearCurrentSearchCenter();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -208,8 +203,7 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 		} 
 		
 		if (search instanceof SearchAround){
-			if (this.around == null)
-				this.around = OsmPoiApplication.getCurrentLocationPoint();
+			Point around = OsmPoiApplication.getCurrentSearchCenterPoint();
 			
 			intent.putExtra(ResultsActivity.AROUND_LAT, around.getLatitude());
 			intent.putExtra(ResultsActivity.AROUND_LON, around.getLongitude());
@@ -280,10 +274,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 	private void showCategory(Category cat) {
 		Intent intent = new Intent(this, SearchActivity.class);
 		intent.putExtra(EXTRA_CATEGORY, cat);
-		if (this.around != null){
-			intent.putExtra(SearchActivity.EXTRA_AROUND_LAT, around.getLatitude());
-			intent.putExtra(SearchActivity.EXTRA_AROUND_LON, around.getLongitude());
-		}
 		startActivity(intent);
 	}
 

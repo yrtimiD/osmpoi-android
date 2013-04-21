@@ -10,7 +10,7 @@
 	<string name="Accuracy">Accuracy:</string>
 	<string name="NA">N/A</string>
 	<string name="ID">ID</string>
-	<string name="locate">Locate</string>
+	<string name="share">Share location</string>
 	<string name="follow">Follow GPS</string>
 	<string name="Continue">Continue</string>
 	<string name="cancel">Cancel</string>
@@ -58,5 +58,5 @@
 	<string name="install_db_summary">Installs externally prepared offline search database</string> 
 	<string name="search_around">Search around</string> 
 	<string name="show_on_map">Show on map</string>
-	<string name="fixed_position">Fixed position</string>
+	<string name="clear_center">Clear current search around</string>
 </resources>

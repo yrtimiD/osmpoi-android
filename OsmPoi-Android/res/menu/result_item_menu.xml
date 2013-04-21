@@ -3,9 +3,9 @@
 
     <item
         android:id="@+id/mnu_open"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@android:drawable/ic_menu_share"
         android:menuCategory="container"
-        android:title="@string/locate" />
+        android:title="@string/share" />
     <item android:id="@+id/mnu_find_associated"
         android:icon="@android:drawable/ic_menu_search"
         android:title="Find associated" />

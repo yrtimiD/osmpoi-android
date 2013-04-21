@@ -42,7 +42,7 @@ public class OsmPoiApplication extends Application {
 	private static final String POI_DATABASE_NAME = "poi.db";
 	private static final String ADDRESS_DATABASE_NAME = "address.db";
 	private static final String STARRED_DATABASE_NAME = "starred.db";
-	
+	private static Point currentSearchCenter = null;
 	
 	
 	/* (non-Javadoc)
@@ -70,7 +70,22 @@ public class OsmPoiApplication extends Application {
 	public static Point getCurrentLocationPoint() {
 		return new Point(location.getLatitude(), location.getLongitude());
 	}
+	
+	public static Point getCurrentSearchCenterPoint(){
+		return currentSearchCenter == null? getCurrentLocationPoint() : currentSearchCenter;
+	}
 
+	public static void setCurrentSearchCenter(double lat, double lon){
+		currentSearchCenter = new Point (lat, lon);
+	}
+	
+	public static void clearCurrentSearchCenter(){
+		currentSearchCenter = null;
+	}
+	
+	public static boolean hasCurrentSearchCenter(){
+		return currentSearchCenter != null;
+	}
 	
 	public static boolean setCurrentLocation(Location location) {
 		if (Util.isBetterLocation(location, OsmPoiApplication.location)) {

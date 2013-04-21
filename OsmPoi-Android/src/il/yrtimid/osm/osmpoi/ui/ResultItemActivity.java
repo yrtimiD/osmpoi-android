@@ -166,9 +166,9 @@ public class ResultItemActivity extends Activity implements OnCheckedChangeListe
 		case R.id.mnu_search_around:
 		{
 			Node node = il.yrtimid.osm.osmpoi.Util.getFirstNode(entity);
+			OsmPoiApplication.setCurrentSearchCenter(node.getLatitude(),node.getLongitude());
+			
 			Intent intent = new Intent(this, SearchActivity.class);
-			intent.putExtra(SearchActivity.EXTRA_AROUND_LAT, node.getLatitude());
-			intent.putExtra(SearchActivity.EXTRA_AROUND_LON, node.getLongitude());
 			startActivity(intent);
 			return true;
 		}	
