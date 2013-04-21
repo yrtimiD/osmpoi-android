@@ -131,14 +131,9 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 		countProgress.setVisibility(View.VISIBLE);
 
 		AsyncTask<Void, Void, Long> taskCount = new AsyncTask<Void, Void, Long>() {
-			Long startTime;
-			Long finishTime;
-
 			@Override
 			protected Long doInBackground(Void... params) {
-				startTime = System.currentTimeMillis();
 				Long result = counter.getCount();
-				finishTime = System.currentTimeMillis();
 				return result;
 			}
 
@@ -152,7 +147,7 @@ public class AboutActivity extends TabActivity implements TabHost.TabContentFact
 				super.onPostExecute(result);
 				countProgress.setVisibility(View.GONE);
 				countText.setVisibility(View.VISIBLE);
-				countText.setText(result.toString() + " (" + (finishTime - startTime) / 1000 + "sec)");
+				countText.setText(result.toString());
 			}
 		};
 
