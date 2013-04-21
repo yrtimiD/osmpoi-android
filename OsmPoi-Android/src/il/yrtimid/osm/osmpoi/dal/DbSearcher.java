@@ -310,7 +310,7 @@ public class DbSearcher extends DbCreator {
 			String query = "select id, timestamp, lat, lon" + " from nodes" + " where " + inClause + " order by (abs(lat-?)+abs(lon-?))" + " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[]) args));
+			Log.d("Args: "+Util.join(", ", (Object[]) args));
 			Cursor cur = db.rawQuery(query, args);
 			return cur;
 		} catch (Exception e) {
@@ -374,7 +374,7 @@ public class DbSearcher extends DbCreator {
 					point.getLatitude().toString(), point.getLongitude().toString(),
 					limit.toString(), offset.toString() };
 			Log.d(outerQuery);
-			Log.d(Util.join(", ", (Object[]) args));
+			Log.d("Args: "+Util.join(", ", (Object[]) args));
 			Cursor cur = db.rawQuery(outerQuery, args);
 			return cur;
 		} catch (Exception e) {
@@ -396,7 +396,7 @@ public class DbSearcher extends DbCreator {
 					+ " limit ? offset ?";
 			String[] args = new String[] { point.getLatitude().toString(), point.getLongitude().toString(), limit.toString(), offset.toString() };
 			Log.d(query);
-			Log.d(Util.join(", ", (Object[]) args));
+			Log.d("Args: "+Util.join(", ", (Object[]) args));
 			db = getReadableDatabase();
 			Cursor cur = db.rawQuery(query, args);
 
@@ -474,7 +474,7 @@ public class DbSearcher extends DbCreator {
 					limit.toString(), offset.toString() };
 			
 			Log.d(outerQuery);
-			Log.d(Util.join(", ", (Object[]) args));
+			Log.d("Args: "+Util.join(", ", (Object[]) args));
 			Cursor cur = db.rawQuery(outerQuery, args);
 
 			return cur;
