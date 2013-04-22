@@ -71,9 +71,9 @@ public class Util {
 	
 	public static String formatDistance(int meters){
 		if (meters<1000)
-			return String.format("%,dm", meters);
+			return String.format("%dm", meters);
 		else
-			return String.format("%,dkm", Math.round(meters/1000.0f));
+			return String.format("%.1fkm", meters/1000.0f);
 	}
 	
 	public static String formatSize(int bytes){

@@ -72,7 +72,12 @@ public class OsmPoiApplication extends Application {
 	}
 	
 	public static Point getCurrentSearchCenterPoint(){
-		return currentSearchCenter == null? getCurrentLocationPoint() : currentSearchCenter;
+		if (currentSearchCenter == null){
+			return hasLocation()?getCurrentLocationPoint() :null;
+		}
+		else {
+			return currentSearchCenter;
+		}
 	}
 
 	public static void setCurrentSearchCenter(double lat, double lon){

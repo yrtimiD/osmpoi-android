@@ -40,8 +40,8 @@ import android.widget.Toast;
 public class ResultsActivity extends Activity implements OnItemClickListener, LocationChangeListener, OrientationChangeListener, OnClickListener {
 	//public static final String SEARCH_TYPE = "SEARCH_TYPE";
 	public static final String SEARCH_PARAMETER = "SEARCH_PARAMETER";
-	public static final String AROUND_LAT = "AROUND_LAT";
-	public static final String AROUND_LON = "AROUND_LON";
+	//public static final String AROUND_LAT = "AROUND_LAT";
+	//public static final String AROUND_LON = "AROUND_LON";
 	
 	private static final int START_RESULTS = 20;
 	private static final int RESULTS_INCREMENT = 20;
@@ -92,14 +92,6 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 		Bundle extras = getIntent().getExtras();
 		currentSearch = (BaseSearchParameter)extras.getParcelable(SEARCH_PARAMETER);
 		currentSearch.setMaxResults(START_RESULTS);
-		
-		if (currentSearch instanceof SearchAround){
-			Double lat = extras.getDouble(AROUND_LAT);
-			Double lon = extras.getDouble(AROUND_LON);
-			Point searchAround = new Point(lat, lon);
-
-			((SearchAround)currentSearch).setCenter(searchAround);
-		}
 	}
 
 	/*
@@ -220,6 +212,12 @@ public class ResultsActivity extends Activity implements OnItemClickListener, Lo
 				}
 			});
 			return;
+		}
+		else {
+			if (currentSearch instanceof SearchAround){
+				Point searchAround = OsmPoiApplication.getCurrentSearchCenterPoint();
+				((SearchAround)currentSearch).setCenter(searchAround);
+			}
 		}
 		
 		if (currentSearch instanceof SearchByKeyValue) {

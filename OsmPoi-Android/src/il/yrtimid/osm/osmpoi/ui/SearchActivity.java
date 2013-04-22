@@ -202,13 +202,6 @@ public class SearchActivity extends Activity implements LocationChangeListener, 
 			intent.putExtra(ResultsActivity.SEARCH_PARAMETER, (SearchById)search);
 		} 
 		
-		if (search instanceof SearchAround){
-			Point around = OsmPoiApplication.getCurrentSearchCenterPoint();
-			
-			intent.putExtra(ResultsActivity.AROUND_LAT, around.getLatitude());
-			intent.putExtra(ResultsActivity.AROUND_LON, around.getLongitude());
-		}
-		
 		startActivity(intent);
 	}
 
